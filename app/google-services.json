@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "926113944965",
+    "project_id": "amiibo-vault",
+    "storage_bucket": "amiibo-vault.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926113944965:android:e97288d4107f10166d20ec",
+        "android_client_info": {
+          "package_name": "com.softwavegames.amiibovault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBL1_w4j-VtZBAxBzeBK8QDJ2_vf_4no18"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
