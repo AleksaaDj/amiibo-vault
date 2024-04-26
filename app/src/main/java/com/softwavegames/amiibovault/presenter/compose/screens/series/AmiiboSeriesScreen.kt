@@ -1,11 +1,13 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.series
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -45,10 +50,24 @@ fun AmiiboGridScreen(
             }
         },
     )
-    Column(
+
+    val showProgress = remember {
+        mutableStateOf(true)
+    }
+
+    Box(
         modifier = Modifier
-            .padding(top = 70.dp, start = 5.dp, end = 0.dp, bottom = 5.dp)
+            .fillMaxWidth()
+            .padding(top = 70.dp, start = 5.dp, end = 0.dp, bottom = 5.dp),
+        contentAlignment = Alignment.Center
     ) {
+        if (showProgress.value) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .padding(top = 150.dp),
+                color = Color.Red,
+            )
+        }
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             modifier = Modifier
@@ -61,6 +80,7 @@ fun AmiiboGridScreen(
                     AmiiboGridItem(amiibo = amiiboList[it]) { amiibo ->
                         navigateToDetails(amiibo)
                     }
+                    showProgress.value = false
                 }
             }
         }

@@ -1,10 +1,8 @@
 package com.softwavegames.amiibovault
 
-import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
-import android.health.connect.datatypes.units.Length
 import android.nfc.NfcAdapter
 import android.nfc.TagLostException
 import android.os.Bundle
@@ -23,12 +21,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -41,7 +37,6 @@ import com.softwavegames.amiibovault.presenter.BottomNavigationBar
 import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.AmiiboNfcDetailsViewModel
 import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.reflect.InvocationTargetException
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -67,6 +62,7 @@ class MainActivity : ComponentActivity() {
             val navigationItemSelectedIndex = rememberSaveable { mutableIntStateOf(0) }
             val isAnimationFinished = rememberSaveable { mutableStateOf(false) }
 
+
             AmiiboMvvmComposeTheme {
                 LogoAnim {
                     isAnimationFinished.value = true
@@ -79,15 +75,23 @@ class MainActivity : ComponentActivity() {
                             AppNavigation.BottomNavScreens.AmiiboList.route -> {
                                 navigationItemSelectedIndex.intValue = 0
                                 bottomBarState.value = true
+                                disableForegroundDispatch()
                             }
 
                             AppNavigation.BottomNavScreens.AmiiboMyCollection.route -> {
                                 navigationItemSelectedIndex.intValue = 1
                                 bottomBarState.value = true
+                                disableForegroundDispatch()
+                            }
+
+                            AppNavigation.BottomNavScreens.NfcScanner.route -> {
+                                enableForegroundDispatch()
+                                bottomBarState.value = false
                             }
 
                             else -> {
                                 bottomBarState.value = false
+                                disableForegroundDispatch()
                             }
                         }
                     }
@@ -100,6 +104,7 @@ class MainActivity : ComponentActivity() {
 
                 if (isAnimationFinished.value) {
                     BottomNavigationBar(
+                        context = applicationContext,
                         navController = navController,
                         bottomBarState = bottomBarState,
                         navigationSelectedItem = navigationItemSelectedIndex

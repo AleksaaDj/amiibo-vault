@@ -47,7 +47,8 @@ fun AmiiboListScreen(
     amiiboList: List<Amiibo>?,
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit,
-    onSearchQueryChange: (String) -> Unit
+    onSearchQueryChange: (String) -> Unit,
+    onChangeListClick: () -> Unit
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -93,7 +94,10 @@ fun AmiiboListScreen(
         )
         IconButton(modifier = Modifier
             .padding(end = 10.dp, top = 5.dp),
-            onClick = { isList = !isList }
+            onClick = {
+                onChangeListClick()
+                isList = !isList
+            }
         ) {
             Icon(
                 painter = if (isList) painterResource(id = R.drawable.ic_grid) else painterResource(
@@ -121,7 +125,7 @@ fun AmiiboListScreen(
         )
 
         if (isList) {
-            val showProgress = remember {
+            val showProgress = rememberSaveable {
                 mutableStateOf(true)
             }
             Box(

@@ -1,5 +1,7 @@
 package com.softwavegames.amiibovault.presenter
 
+import android.content.Context
+import android.media.SoundPool
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -55,10 +57,16 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun BottomNavigationBar(
+    context: Context,
     navController: NavHostController,
     bottomBarState: MutableState<Boolean>,
-    navigationSelectedItem: MutableState<Int>
+    navigationSelectedItem: MutableState<Int>,
 ) {
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(2)
+        .build()
+    val buttonSound = soundPool.load(context, R.raw.button_click, 1)
+    val iconSound = soundPool.load(context, R.raw.icon_click, 1)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -107,7 +115,10 @@ fun BottomNavigationBar(
                         .size(90.dp)
                 ) {
                     FloatingActionButton(
-                        onClick = { navigateToNfcScanner(navController) },
+                        onClick = {
+                            soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                            navigateToNfcScanner(navController)
+                        },
                         shape = CircleShape,
                         backgroundColor = Color.DarkGray,
                         modifier = Modifier
@@ -128,6 +139,8 @@ fun BottomNavigationBar(
         },
         floatingActionButtonPosition = FabPosition.Center,
     ) { paddingValues ->
+
+
         NavHost(
             navController = navController,
             startDestination = AppNavigation.BottomNavScreens.AmiiboList.route,
@@ -135,14 +148,27 @@ fun BottomNavigationBar(
         ) {
             composable(AppNavigation.BottomNavScreens.AmiiboList.route) {
                 val viewModel: AmiiboSearchViewModel = hiltViewModel()
-                navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, null)
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    Constants.PARSED_AMIIBO,
+                    null
+                )
                 AmiiboListScreen(
                     amiiboList = viewModel.amiiboList.observeAsState().value,
                     amiiboLatest = viewModel.amiiboLatest.observeAsState().value,
                     navigateToDetails = { amiibo ->
-                        navigateToDetails(navController = navController, amiibo = amiibo)
+                        soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                        navigateToDetails(
+                            navController = navController,
+                            amiibo = amiibo,
+                        )
                     },
-                ) { viewModel.loadAmiibos(it) }
+                    onSearchQueryChange = {
+                        viewModel.loadAmiibos(it)
+                    },
+                    onChangeListClick = {
+                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                    }
+                )
             }
             composable(AppNavigation.NavigationItem.DetailsScreen.route) {
                 navController.previousBackStackEntry?.savedStateHandle?.get<Amiibo?>(Constants.PARSED_AMIIBO)
@@ -155,34 +181,41 @@ fun BottomNavigationBar(
                         DetailsScreen(
                             amiibo = it,
                             onBackClick = {
+                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
                                 navController.navigateUp()
                             },
                             navigateToMore = { amiibo ->
+                                soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
                                 navigateToMore(navController = navController, amiibo = amiibo)
                             },
                             navigateToCompatibility = { amiibo ->
+                                soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
                                 navigateToCompatibility(
                                     navController = navController,
                                     amiibo = amiibo
                                 )
                             },
                             saveToMyCollection = { amiibo ->
+                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
                                 viewModel.viewModelScope.launch {
                                     viewModel.upsertAmiiboToMyCollection(amiibo)
                                 }
                             },
                             removeFromMyCollection = { amiibo ->
+                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
                                 viewModel.viewModelScope.launch {
                                     viewModel.deleteAmiiboFromMyCollection(amiibo)
                                 }
                             },
                             isAmiiboSavedMyCollection = viewModel.amiiboSavedMyCollection.observeAsState(),
                             saveToWishlist = { amiibo ->
+                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
                                 viewModel.viewModelScope.launch {
                                     viewModel.upsertAmiiboToWishList(amiibo)
                                 }
                             },
                             removeFromWishlist = { amiibo ->
+                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
                                 viewModel.viewModelScope.launch {
                                     viewModel.deleteAmiiboFromWishList(amiibo)
                                 }
@@ -201,9 +234,17 @@ fun BottomNavigationBar(
                         AmiiboGridScreen(
                             amiiboList = viewModel.amiiboList.observeAsState().value,
                             navigateToDetails = { amiibo ->
-                                navigateToDetails(navController = navController, amiibo = amiibo)
+                                soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                                navigateToDetails(
+                                    navController = navController,
+                                    amiibo = amiibo
+                                )
+                            },
+                            onBackClick = {
+                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                navController.navigateUp()
                             }
-                        ) { navController.navigateUp() }
+                        )
                     }
             }
 
@@ -215,23 +256,33 @@ fun BottomNavigationBar(
                             viewModel.loadAmiiboConsoleInfo(it.tail)
                         }
                         CompatibilityScreen(
-                            amiiboGames = viewModel.amiiboConsolesList.observeAsState().value
-                        ) { navController.navigateUp() }
+                            amiiboGames = viewModel.amiiboConsolesList.observeAsState().value,
+                            onBackClick = {
+                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                navController.navigateUp()
+                            }
+                        )
                     }
             }
             composable(AppNavigation.BottomNavScreens.AmiiboMyCollection.route) {
                 val viewModel: CollectionScreenViewModel = hiltViewModel()
                 MyCollectionScreen(
                     amiiboListCollection = viewModel.amiiboListCollection.observeAsState().value,
-                    amiiboListWishlist = viewModel.amiiboListWishlist.observeAsState().value
-                ) { amiibo ->
-                    navigateToDetails(navController = navController, amiibo = amiibo)
-                }
+                    amiiboListWishlist = viewModel.amiiboListWishlist.observeAsState().value,
+                    navigateToDetails = { amiibo ->
+                        soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                        navigateToDetails(navController = navController, amiibo = amiibo)
+                    }
+                )
             }
             composable(AppNavigation.BottomNavScreens.NfcScanner.route) {
-                NfcScannerScreen { navController.navigateUp() }
+                NfcScannerScreen(
+                    onBackClick = {
+                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                        navController.navigateUp()
+                    }
+                )
             }
-
         }
     }
 }
@@ -258,7 +309,9 @@ data class BottomNavigationItem(
     }
 }
 
-private fun navigateToDetails(navController: NavController, amiibo: Amiibo) {
+private fun navigateToDetails(
+    navController: NavController, amiibo: Amiibo
+) {
     navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, amiibo)
     navController.navigate(
         route = AppNavigation.NavigationItem.DetailsScreen.route
