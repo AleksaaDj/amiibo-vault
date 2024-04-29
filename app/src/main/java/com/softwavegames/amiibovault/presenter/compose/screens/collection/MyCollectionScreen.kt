@@ -23,30 +23,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
-import com.softwavegames.amiibovault.Constants
+import com.softwavegames.amiibovault.util.Constants
 import com.softwavegames.amiibovault.R
-import com.softwavegames.amiibovault.Utils
+import com.softwavegames.amiibovault.util.Utils
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
@@ -55,7 +49,7 @@ import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
 @Composable
 fun MyCollectionScreen(
     modifier: Modifier = Modifier,
-    amiiboListCollection: List<Amiibo>?,
+    amiiboListCollection: List<AmiiboCollection>?,
     amiiboListWishlist: List<AmiiboWishlist>?,
     navigateToDetails: (Amiibo) -> Unit,
 ) {
@@ -70,7 +64,6 @@ fun MyCollectionScreen(
             easing = LinearEasing
         ), label = ""
     )
-
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -166,7 +159,7 @@ fun MyCollectionScreen(
 }
 
 @Composable
-fun MyCollection(amiiboList: List<Amiibo>, navigateToDetails: (amiibo: Amiibo) -> Unit) {
+fun MyCollection(amiiboList: List<AmiiboCollection>, navigateToDetails: (amiibo: Amiibo) -> Unit) {
     if (amiiboList.isNotEmpty()) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
@@ -175,7 +168,8 @@ fun MyCollection(amiiboList: List<Amiibo>, navigateToDetails: (amiibo: Amiibo) -
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             items(count = amiiboList.size) {
-                AmiiboGridItem(amiibo = amiiboList[it]) { amiibo ->
+                val amiiboConverted = Utils().convertAmiiboCollectionToAmiibo(amiiboList[it])
+                AmiiboGridItem(amiibo = amiiboConverted) { amiibo ->
                     navigateToDetails(amiibo)
                 }
             }

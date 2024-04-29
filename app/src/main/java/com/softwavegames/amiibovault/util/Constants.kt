@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault
+package com.softwavegames.amiibovault.util
 
 object Constants {
 
@@ -10,8 +10,6 @@ object Constants {
     const val PARSED_AMIIBO = "amiibo"
 
     const val SERIES = "series"
-
-
 
 
     enum class CollectionLists {

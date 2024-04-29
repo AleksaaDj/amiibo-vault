@@ -21,6 +21,20 @@ data class Amiibo(
 
 @Parcelize
 @Entity
+data class AmiiboCollection(
+    val amiiboSeries: String = "",
+    val character: String = "",
+    val gameSeries: String = "",
+    val head: String = "",
+    val image: String = "",
+    val name: String = "",
+    val release: Release? = null,
+    @PrimaryKey val tail: String = "",
+    val type: String = "",
+): Parcelable
+
+@Parcelize
+@Entity
 data class AmiiboWishlist(
     val amiiboSeries: String,
     val character: String,

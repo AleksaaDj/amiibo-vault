@@ -11,12 +11,6 @@ interface AmiiboApi {
     @GET("amiibo/?")
     suspend fun getAmiiboList(@Query("name") name:String): Response<AmiiboListResponse>
 
-    @GET("amiibo/?")
-    suspend fun getAmiiboFromSeriesList(@Query("gameseries") gameSeries: String): Response<AmiiboListResponse>
-
     @GET("amiibo/?&showusage")
     suspend fun getAmiiboConsoles(@Query("tail") tail: String): Response<Games>
-
-    @GET("amiibo/?")
-    suspend fun getAmiiboNfc(@Query("tail") tail: String): Response<AmiiboListResponse>
 }

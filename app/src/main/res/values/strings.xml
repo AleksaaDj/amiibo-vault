@@ -21,8 +21,10 @@
     <string name="add_to_my_collection">"  add to my collection"</string>
     <string name="remove_from_collection">remove from collection</string>
     <string name="amiibo_reader">amiibo reader</string>
-    <string name="tap_amiibo">Tap amiibo to back of the phone to scan.</string>
+    <string name="tap_amiibo">Enable NFC reading in Settings and Tap amiibo to back of the phone to scan.</string>
     <string name="search_amiibo">Search amiibo</string>
     <string name="logo">logo</string>
     <string name="title_activity_openning">OpenningActivity</string>
+    <string name="error_getting_compatible_games">Error getting compatible games</string>
+    <string name="error_getting_amiibo_list">Error getting amiibo list</string>
 </resources>

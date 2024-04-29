@@ -8,17 +8,17 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
-import com.softwavegames.amiibovault.Constants
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
-class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRepository) :
-    ViewModel() {
-
+class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRepository) : ViewModel() {
 
     private var _amiiboList = MutableLiveData<List<Amiibo>?>()
     var amiiboList: LiveData<List<Amiibo>?> = _amiiboList
@@ -27,26 +27,45 @@ class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRe
     var amiiboLatest: LiveData<Amiibo?> = _amiiboLatest
 
     init {
-        loadAmiibos("")
+        loadAmiibos()
         setupFirebase()
     }
-
-    fun loadAmiibos(name: String) {
-        viewModelScope.launch {
-            val amiiboListResponse = repository.getAmiiboList(name)
-            when (amiiboListResponse.isSuccessful) {
-                true -> {
-                    with(amiiboListResponse.body()) {
-                        val amiiboList = this?.amiibo
-                        _amiiboList.postValue(amiiboList)
+    private fun loadAmiibos() {
+        repository.selectAmiiboDbList().onEach { localList ->
+            if (localList.isEmpty()) {
+                try {
+                    val amiiboListResponse = repository.getAmiiboList("")
+                    when (amiiboListResponse.isSuccessful) {
+                        true -> {
+                            with(amiiboListResponse.body()) {
+                                val amiiboList = this?.amiibo
+                                amiiboList?.let { addAmiiboListToDatabase(amiiboList = it) }
+                                _amiiboList.postValue(amiiboList)
+                            }
+                        }
+                        else -> {
+                            Log.e("ErrorAmiiboList", amiiboListResponse.message())
+                        }
                     }
+                } catch (e: UnknownHostException) {
+                    Log.e("ErrorAmiiboList", "No Internet connection")
                 }
-
-                else -> {
-                    Log.e("ErrorAmiiboList", amiiboListResponse.message())
-                }
+            } else {
+                _amiiboList.postValue(localList)
             }
-        }
+        }.launchIn(viewModelScope)
+    }
+
+    fun searchAmiibo(name: String) {
+        var amiiboLocalList: List<Amiibo>
+        repository.searchAmiiboList(name).onEach { localList ->
+            amiiboLocalList = localList
+            _amiiboList.postValue(amiiboLocalList)
+        }.launchIn(viewModelScope)
+    }
+
+    private suspend fun addAmiiboListToDatabase(amiiboList: List<Amiibo>) {
+        repository.upsertAmiiboList(amiiboList)
     }
 
     private fun setupFirebase() {
@@ -55,6 +74,7 @@ class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRe
         database.child(Constants.FIREBASE_DB_AMIIBO).get().addOnSuccessListener { dataSnapshot ->
             val amiibo = dataSnapshot.getValue(Amiibo::class.java)
             _amiiboLatest.value = amiibo
+            loadAmiibos()
         }.addOnFailureListener {
             Log.e("firebase", "Error getting data", it)
         }

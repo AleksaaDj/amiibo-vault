@@ -2,13 +2,13 @@ package com.softwavegames.amiibovault.di
 
 import android.app.Application
 import androidx.room.Room
-import com.softwavegames.amiibovault.Constants.BASE_URL
-import com.softwavegames.amiibovault.Constants.DB_NAME
 import com.softwavegames.amiibovault.data.local.AmiiboDao
 import com.softwavegames.amiibovault.data.local.AmiiboDatabase
 import com.softwavegames.amiibovault.data.local.AmiiboTypeConverter
 import com.softwavegames.amiibovault.data.remote.AmiiboApi
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
+import com.softwavegames.amiibovault.util.Constants.BASE_URL
+import com.softwavegames.amiibovault.util.Constants.DB_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

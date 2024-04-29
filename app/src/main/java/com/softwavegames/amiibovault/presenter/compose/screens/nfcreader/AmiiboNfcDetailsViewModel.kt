@@ -5,7 +5,6 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.MifareUltralight
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +12,8 @@ import androidx.lifecycle.viewModelScope
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,23 +25,13 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
     private var _amiiboNfc = MutableLiveData<Amiibo?>()
     var amiiboNfc: LiveData<Amiibo?> = _amiiboNfc
 
+
     private fun loadAmiiboConsoleInfo(amiiboTail: String) {
-        viewModelScope.launch {
-            val amiiboListResponse = repository.getAmiiboNfc(amiiboTail)
-
-            when (amiiboListResponse.isSuccessful) {
-                true -> {
-                    with(amiiboListResponse.body()) {
-                        val amiiboList = this?.amiibo
-                        _amiiboNfc.postValue(amiiboList?.get(0))
-                    }
-                }
-
-                else -> {
-                    Log.e("ErrorAmiiboConsoles", amiiboListResponse.message())
-                }
+        repository.getAmiiboNfc(amiiboTail).onEach {
+            if(it.isNotEmpty()) {
+                _amiiboNfc.value = it[0]
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     /******************************************************************************

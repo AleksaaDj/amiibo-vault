@@ -3,7 +3,6 @@ package com.softwavegames.amiibovault
 class AppNavigation {
     enum class Screen {
         AmiiboDetails,
-        AmiiboDetailsOther,
         AmiiboGridScreen,
         AmiiboCompatibilityScreen
     }
@@ -17,7 +16,6 @@ class AppNavigation {
 
     sealed class NavigationItem(val route: String) {
         data object DetailsScreen : NavigationItem(Screen.AmiiboDetails.name)
-        data object DetailsScreenOther : NavigationItem(Screen.AmiiboDetailsOther.name)
         data object AmiiboGridScreen : NavigationItem(Screen.AmiiboGridScreen.name)
         data object AmiiboCompatibilityScreen : NavigationItem(Screen.AmiiboCompatibilityScreen.name)
     }

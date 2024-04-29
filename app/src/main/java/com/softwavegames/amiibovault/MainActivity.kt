@@ -11,31 +11,19 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.softwavegames.amiibovault.presenter.BottomNavigationBar
+import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
 import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.AmiiboNfcDetailsViewModel
 import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
+import com.softwavegames.amiibovault.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -61,7 +49,6 @@ class MainActivity : ComponentActivity() {
             val bottomBarState = rememberSaveable { mutableStateOf(true) }
             val navigationItemSelectedIndex = rememberSaveable { mutableIntStateOf(0) }
             val isAnimationFinished = rememberSaveable { mutableStateOf(false) }
-
 
             AmiiboMvvmComposeTheme {
                 LogoAnim {
@@ -91,7 +78,6 @@ class MainActivity : ComponentActivity() {
 
                             else -> {
                                 bottomBarState.value = false
-                                disableForegroundDispatch()
                             }
                         }
                     }
@@ -107,7 +93,7 @@ class MainActivity : ComponentActivity() {
                         context = applicationContext,
                         navController = navController,
                         bottomBarState = bottomBarState,
-                        navigationSelectedItem = navigationItemSelectedIndex
+                        navigationSelectedItem = navigationItemSelectedIndex,
                     )
                 }
             }
@@ -173,42 +159,10 @@ class MainActivity : ComponentActivity() {
         super.onPause()
         disableForegroundDispatch()
     }
-
-    public override fun onResume() {
-        super.onResume()
-        enableForegroundDispatch()
-    }
-
 }
 
-@Composable
-fun LogoAnim(onAnimationFinished: () -> Unit) {
-    val alphaValue = remember { Animatable(0f) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.opening),
-            contentDescription = "Boats",
-            alpha = alphaValue.value,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-        )
-        LaunchedEffect(key1 = this) {
-            alphaValue.animateTo(
-                1f,
-                animationSpec = tween(1600),
-            )
-            alphaValue.animateTo(
-                0f,
-                animationSpec = tween(1500),
-            )
-            onAnimationFinished()
-        }
-    }
-}
+
+
 
 

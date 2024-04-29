@@ -1,11 +1,13 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.search
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,6 +26,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,12 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
 import com.softwavegames.amiibovault.presenter.compose.common.LatestAmiiboCard
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,13 +115,24 @@ fun AmiiboListScreen(
 
     Column(
         modifier = Modifier
-            .padding(top = 70.dp)
+            .padding(top = 70.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        LatestAmiiboCard(
-            amiiboLatest = amiiboLatest,
-            navigateToDetails = navigateToDetails
-        )
+        val showProgress = rememberSaveable {
+            mutableStateOf(true)
+        }
+        val showErrorScreen = rememberSaveable {
+            mutableStateOf(false)
+        }
+
+        AnimatedVisibility(visible = amiiboLatest != null) {
+            LatestAmiiboCard(
+                amiiboLatest = amiiboLatest,
+                navigateToDetails = navigateToDetails
+            )
+        }
+
         Spacer(modifier = Modifier.height(5.dp))
 
         Divider(
@@ -125,20 +141,26 @@ fun AmiiboListScreen(
         )
 
         if (isList) {
-            val showProgress = rememberSaveable {
-                mutableStateOf(true)
-            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                if (showProgress.value) {
+
+                androidx.compose.animation.AnimatedVisibility(visible = showProgress.value) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .padding(top = 100.dp),
+                            .padding(top = 150.dp),
                         color = Color.Red,
                     )
+                    LaunchedEffect(this) {
+                        delay(4500)
+                        showProgress.value = false
+                        showErrorScreen.value = true
+                    }
+                }
+                androidx.compose.animation.AnimatedVisibility(visible = showErrorScreen.value) {
+                    EmptyScreen()
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -151,6 +173,7 @@ fun AmiiboListScreen(
                                 navigateToDetails(amiibo)
                             })
                             showProgress.value = false
+                            showErrorScreen.value = false
                         }
                     }
                 }
@@ -173,5 +196,22 @@ fun AmiiboListScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EmptyScreen() {
+    Box(
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(50.dp),
+            text = stringResource(R.string.error_getting_amiibo_list),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimary,
+            textAlign = TextAlign.Center,
+        )
     }
 }

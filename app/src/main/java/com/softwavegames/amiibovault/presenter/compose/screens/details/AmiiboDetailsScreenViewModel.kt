@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softwavegames.amiibovault.Utils
+import com.softwavegames.amiibovault.util.Utils
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,11 +23,13 @@ class AmiiboDetailsScreenViewModel @Inject constructor(private val repository: A
     var amiiboSavedWishlist: LiveData<Boolean?> = _amiiboSavedWishlist
 
     suspend fun upsertAmiiboToMyCollection(amiibo: Amiibo) {
-        repository.upsertAmiiboMyCollection(amiibo = amiibo)
+        val amiiboCollection = Utils().convertAmiiboToAmiiboCollection(amiibo)
+        repository.upsertAmiiboMyCollection(amiibo = amiiboCollection)
     }
 
     suspend fun deleteAmiiboFromMyCollection(amiibo: Amiibo) {
-        repository.deleteAmiiboMyCollection(amiibo = amiibo)
+        val amiiboCollection = Utils().convertAmiiboToAmiiboCollection(amiibo)
+        repository.deleteAmiiboMyCollection(amiibo = amiiboCollection)
     }
 
     fun checkIsAmiiboSavedInMyCollection(tail: String) {

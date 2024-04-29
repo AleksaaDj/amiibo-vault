@@ -4,9 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
 
-@Database(entities = [Amiibo::class, AmiiboWishlist::class], version = 6)
+@Database(entities = [Amiibo::class, AmiiboWishlist::class, AmiiboCollection::class], version = 21)
 @TypeConverters(AmiiboTypeConverter::class)
 abstract class AmiiboDatabase : RoomDatabase() {
 

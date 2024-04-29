@@ -38,7 +38,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.softwavegames.amiibovault.AppNavigation
-import com.softwavegames.amiibovault.Constants
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.CollectionScreenViewModel
@@ -52,6 +51,7 @@ import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboList
 import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboSearchViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboFromSeriesListViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboGridScreen
+import com.softwavegames.amiibovault.util.Constants
 import kotlinx.coroutines.launch
 
 
@@ -67,6 +67,7 @@ fun BottomNavigationBar(
         .build()
     val buttonSound = soundPool.load(context, R.raw.button_click, 1)
     val iconSound = soundPool.load(context, R.raw.icon_click, 1)
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -163,7 +164,7 @@ fun BottomNavigationBar(
                         )
                     },
                     onSearchQueryChange = {
-                        viewModel.loadAmiibos(it)
+                        viewModel.searchAmiibo(it)
                     },
                     onChangeListClick = {
                         soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)

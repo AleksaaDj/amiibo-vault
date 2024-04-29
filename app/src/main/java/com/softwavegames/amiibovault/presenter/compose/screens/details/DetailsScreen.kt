@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -103,8 +104,8 @@ fun DetailsScreen(
                 .size(220.dp)
                 .fillMaxWidth(),
             model = ImageRequest.Builder(context).data(amiibo.image).build(),
-            contentDescription = null
-
+            contentDescription = null,
+            error = painterResource(id = R.drawable.ic_image_placeholder)
         )
         Column(
             modifier = Modifier
@@ -287,7 +288,9 @@ fun ActionButtonPart(
                 textAlign = TextAlign.End,
                 color = Color.Red,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

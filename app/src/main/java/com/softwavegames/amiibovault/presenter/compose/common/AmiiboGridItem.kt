@@ -11,11 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 
 @Composable
@@ -36,6 +38,7 @@ fun AmiiboGridItem(
             model = ImageRequest.Builder(context).data(amiibo.image).build(),
             contentDescription = null,
             contentScale = ContentScale.Inside,
+            error = painterResource(R.drawable.ic_image_placeholder)
         )
 
         Text(
