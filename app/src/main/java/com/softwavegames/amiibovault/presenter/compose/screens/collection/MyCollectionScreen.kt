@@ -1,10 +1,14 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.collection
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,12 +35,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.softwavegames.amiibovault.util.Constants
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.util.Utils
@@ -71,15 +78,38 @@ fun MyCollectionScreen(
             titleContentColor = Color.Red,
         ),
         title = { Text(text = stringResource(R.string.collections)) },
+        actions = {
+            val context = LocalContext.current
+            IconButton(modifier = Modifier
+                .padding(end = 5.dp),
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Constants.DONATE_URL.toUri())
+                    try {
+                        context.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.error_opening_the_link), Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_kofi),
+                    contentDescription = stringResource(
+                        R.string.donate
+                    )
+                )
+            }
+        }
     )
 
     Column(
         modifier = Modifier
             .padding(top = 70.dp)
     ) {
-            if(amiiboListCollection?.size != null && amiiboListWishlist?.size != null) {
-                numberOfAmiibo =
-                    if (selectedTab == 0) amiiboListCollection.size else amiiboListWishlist.size
+        if (amiiboListCollection?.size != null && amiiboListWishlist?.size != null) {
+            numberOfAmiibo =
+                if (selectedTab == 0) amiiboListCollection.size else amiiboListWishlist.size
 
         }
         val current =

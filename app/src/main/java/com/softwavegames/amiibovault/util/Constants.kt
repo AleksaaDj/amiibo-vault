@@ -11,6 +11,8 @@ object Constants {
 
     const val SERIES = "series"
 
+    const val DONATE_URL = "https://ko-fi.com/softwavegames"
+
 
     enum class CollectionLists {
         MY_COLLECTION_LIST,
