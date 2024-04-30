@@ -18,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -69,7 +70,8 @@ fun AmiiboListItem(
 
                 Row(
                     modifier = modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
@@ -89,10 +91,10 @@ fun AmiiboListItem(
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 6.dp),
-                        verticalArrangement = Arrangement.SpaceBetween
+                        verticalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Text(
-                            modifier = modifier.padding(bottom = 10.dp, top = 5.dp),
+                            modifier = modifier.padding(top = 5.dp),
                             text = amiibo.name,
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = 17.sp,
@@ -102,7 +104,7 @@ fun AmiiboListItem(
                         )
 
                         Text(
-                            modifier = modifier.padding(bottom = 10.dp),
+                            modifier = modifier.padding(bottom = 8.dp),
                             text = amiibo.gameSeries,
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onPrimary,
@@ -116,7 +118,7 @@ fun AmiiboListItem(
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
                     }
                 }
             }

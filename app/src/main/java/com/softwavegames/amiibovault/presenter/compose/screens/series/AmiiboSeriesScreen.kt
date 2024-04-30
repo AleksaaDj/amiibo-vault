@@ -32,7 +32,8 @@ import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 fun AmiiboGridScreen(
     amiiboList: List<Amiibo>?,
     navigateToDetails: (Amiibo) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    isPortrait: Boolean
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -69,9 +70,12 @@ fun AmiiboGridScreen(
             )
         }
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(if (isPortrait) 3 else 5),
             modifier = Modifier
-                .padding(start = 24.dp, end = 20.dp),
+                .padding(
+                    start = if (isPortrait) 24.dp else 45.dp,
+                    end = if (isPortrait) 20.dp else 40.dp
+                ),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             contentPadding = PaddingValues(vertical = 10.dp),
         ) {

@@ -16,7 +16,7 @@ class AppNavigation {
 
     sealed class NavigationItem(val route: String) {
         data object DetailsScreen : NavigationItem(Screen.AmiiboDetails.name)
-        data object AmiiboGridScreen : NavigationItem(Screen.AmiiboGridScreen.name)
+        data object AmiiboSeriesScreen : NavigationItem(Screen.AmiiboGridScreen.name)
         data object AmiiboCompatibilityScreen : NavigationItem(Screen.AmiiboCompatibilityScreen.name)
     }
 

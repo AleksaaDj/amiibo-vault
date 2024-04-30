@@ -3,6 +3,7 @@ package com.softwavegames.amiibovault
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.nfc.NfcAdapter
 import android.nfc.TagLostException
 import android.os.Bundle
@@ -12,9 +13,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -49,6 +53,16 @@ class MainActivity : ComponentActivity() {
             val bottomBarState = rememberSaveable { mutableStateOf(true) }
             val navigationItemSelectedIndex = rememberSaveable { mutableIntStateOf(0) }
             val isAnimationFinished = rememberSaveable { mutableStateOf(false) }
+            var isPortrait by rememberSaveable { mutableStateOf(true) }
+            val configuration = LocalConfiguration.current
+            isPortrait = when (configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    false
+                }
+                else -> {
+                    true
+                }
+            }
 
             AmiiboMvvmComposeTheme {
                 LogoAnim {
@@ -94,6 +108,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         bottomBarState = bottomBarState,
                         navigationSelectedItem = navigationItemSelectedIndex,
+                        isPortrait = isPortrait
                     )
                 }
             }
@@ -153,6 +168,11 @@ class MainActivity : ComponentActivity() {
      */
     private fun disableForegroundDispatch() {
         nfcAdapter?.disableForegroundDispatch(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        enableForegroundDispatch()
     }
 
     public override fun onPause() {

@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,12 +53,14 @@ fun AmiiboListScreen(
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit,
     onSearchQueryChange: (String) -> Unit,
-    onChangeListClick: () -> Unit
+    onChangeListClick: () -> Unit,
+    isPortrait: Boolean
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var isList by rememberSaveable { mutableStateOf(true) }
     val sortedList: List<Amiibo>? = amiiboList?.sortedBy { it.name }
+
 
     Row(
         modifier = Modifier
@@ -126,16 +128,17 @@ fun AmiiboListScreen(
             mutableStateOf(false)
         }
 
-        AnimatedVisibility(visible = amiiboLatest != null) {
-            LatestAmiiboCard(
-                amiiboLatest = amiiboLatest,
-                navigateToDetails = navigateToDetails
-            )
+        if (isPortrait) {
+            AnimatedVisibility(visible = amiiboLatest != null) {
+                LatestAmiiboCard(
+                    amiiboLatest = amiiboLatest,
+                    navigateToDetails = navigateToDetails
+                )
+            }
+            Spacer(modifier = Modifier.height(5.dp))
         }
 
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.height(0.5.dp),
             color = Color.LightGray
         )
@@ -164,7 +167,10 @@ fun AmiiboListScreen(
                 }
                 LazyColumn(
                     modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp),
+                        .padding(
+                            start = if (isPortrait) 10.dp else 40.dp,
+                            end = if (isPortrait) 10.dp else 40.dp
+                        ),
                     contentPadding = PaddingValues(vertical = 10.dp),
                 ) {
                     if (sortedList != null) {
@@ -181,9 +187,9 @@ fun AmiiboListScreen(
             }
         } else {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
+                columns = GridCells.Fixed(if (isPortrait) 3 else 5),
                 modifier = Modifier
-                    .padding(start = 24.dp, end = 20.dp),
+                    .padding(start = if (isPortrait) 24.dp else 35.dp, end = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(vertical = 10.dp),
             ) {

@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,9 +56,12 @@ fun DetailsScreen(
     saveToMyCollection: (Amiibo) -> Unit,
     removeFromMyCollection: (Amiibo) -> Unit,
     isAmiiboSavedMyCollection: State<Boolean?>,
+    isPortrait: Boolean
 ) {
 
+
     val context = LocalContext.current
+
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -92,51 +97,100 @@ fun DetailsScreen(
         }
     )
 
-    Column(
-        modifier = Modifier
-            .padding(top = 80.dp)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        AsyncImage(
+    if (!isPortrait) {
+        Row(
             modifier = Modifier
-                .size(220.dp)
-                .fillMaxWidth(),
-            model = ImageRequest.Builder(context).data(amiibo.image).build(),
-            contentDescription = null,
-            error = painterResource(id = R.drawable.ic_image_placeholder)
-        )
-        Column(
-            modifier = Modifier
-                .padding(start = 52.dp, end = 52.dp)
+                .padding(top = 50.dp)
+                .fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
 
-            Spacer(modifier = Modifier.height(15.dp))
-
-            AmiiboDetailsInfo(amiibo = amiibo)
-
-            Divider(
+            AsyncImage(
                 modifier = Modifier
-                    .height(0.5.dp)
-                    .background(Color.LightGray)
+                    .size(190.dp)
+                    .padding(start = 75.dp)
+                    .weight(1f),
+                model = ImageRequest.Builder(context).data(amiibo.image).build(),
+                contentDescription = null,
+                error = painterResource(id = R.drawable.ic_image_placeholder)
             )
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(start = 112.dp, end = 122.dp)
+                    .weight(2f)
+            ) {
 
-            Spacer(modifier = Modifier.height(10.dp))
+                AmiiboDetailsInfo(amiibo = amiibo, isLandscape = true)
 
-            ActionButtonPart(
-                navigateToMore = { navigateToMore(amiibo) },
-                navigateToCompatibility = { navigateToCompatibility(amiibo) },
-                isAmiiboSavedMyCollection = isAmiiboSavedMyCollection,
-                saveToMyCollection = { saveToMyCollection(amiibo) },
-                removeFromMyCollection = { removeFromMyCollection(amiibo) }
+                HorizontalDivider(
+                    modifier = Modifier
+                        .height(0.5.dp)
+                        .background(Color.LightGray)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                ActionButtonPart(
+                    navigateToMore = { navigateToMore(amiibo) },
+                    navigateToCompatibility = { navigateToCompatibility(amiibo) },
+                    isAmiiboSavedMyCollection = isAmiiboSavedMyCollection,
+                    saveToMyCollection = { saveToMyCollection(amiibo) },
+                    removeFromMyCollection = { removeFromMyCollection(amiibo) },
+                    isLandscape = true
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .padding(top = 80.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            AsyncImage(
+                modifier = Modifier
+                    .size(220.dp)
+                    .fillMaxWidth(),
+                model = ImageRequest.Builder(context).data(amiibo.image).build(),
+                contentDescription = null,
+                error = painterResource(id = R.drawable.ic_image_placeholder)
             )
+            Column(
+                modifier = Modifier
+                    .padding(start = 52.dp, end = 52.dp)
+            ) {
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                AmiiboDetailsInfo(amiibo = amiibo, isLandscape = false)
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .height(0.5.dp)
+                        .background(Color.LightGray)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                ActionButtonPart(
+                    navigateToMore = { navigateToMore(amiibo) },
+                    navigateToCompatibility = { navigateToCompatibility(amiibo) },
+                    isAmiiboSavedMyCollection = isAmiiboSavedMyCollection,
+                    saveToMyCollection = { saveToMyCollection(amiibo) },
+                    removeFromMyCollection = { removeFromMyCollection(amiibo) },
+                    isLandscape = false
+                )
+
+            }
         }
     }
 }
 
 @Composable
-fun AmiiboDetailsInfo(amiibo: Amiibo) {
+fun AmiiboDetailsInfo(amiibo: Amiibo, isLandscape: Boolean) {
     Text(
         modifier = Modifier
             .fillMaxWidth(),
@@ -147,41 +201,41 @@ fun AmiiboDetailsInfo(amiibo: Amiibo) {
         fontWeight = FontWeight.Bold
     )
 
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(if (isLandscape) 5.dp else 20.dp))
 
     InfoDetailItem(label = stringResource(id = R.string.character), infoToDisplay = amiibo.name)
 
-    Divider(
+    HorizontalDivider(
         modifier = Modifier
             .height(0.5.dp)
             .background(Color.LightGray)
     )
 
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(if (isLandscape) 5.dp else 10.dp))
 
     InfoDetailItem(label = stringResource(R.string.game_series), infoToDisplay = amiibo.gameSeries)
 
-    Divider(
+    HorizontalDivider(
         modifier = Modifier
             .height(0.5.dp)
             .background(Color.LightGray)
     )
 
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(if (isLandscape) 5.dp else 10.dp))
 
     InfoDetailItem(label = stringResource(R.string.type), infoToDisplay = amiibo.type)
 
-    Divider(
+    HorizontalDivider(
         modifier = Modifier
             .height(0.5.dp)
             .background(Color.LightGray)
     )
 
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(if (isLandscape) 5.dp else 10.dp))
 
     InfoDetailItem(
         label = stringResource(R.string.release_date),
-        infoToDisplay = amiibo.release?.jp.toString()
+        infoToDisplay = amiibo.release?.jp.toString(),
     )
 
 }
@@ -220,11 +274,12 @@ fun ActionButtonPart(
     isAmiiboSavedMyCollection: State<Boolean?>,
     saveToMyCollection: () -> Unit,
     removeFromMyCollection: () -> Unit,
+    isLandscape: Boolean
 ) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp, start = 30.dp, end = 30.dp),
+            .padding(top = if (isLandscape) 0.dp else 10.dp, start = 30.dp, end = 30.dp),
         shape = MaterialTheme.shapes.small,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Black,
@@ -239,7 +294,12 @@ fun ActionButtonPart(
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 50.dp, end = 50.dp, top = 10.dp, bottom = 12.dp)
+            .padding(
+                start = 50.dp,
+                end = 50.dp,
+                top = if (isLandscape) 0.dp else 10.dp,
+                bottom = 10.dp
+            )
             .clickable {
                 navigateToCompatibility()
             },

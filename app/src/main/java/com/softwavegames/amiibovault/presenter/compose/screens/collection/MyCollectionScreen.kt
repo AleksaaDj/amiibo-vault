@@ -59,6 +59,7 @@ fun MyCollectionScreen(
     amiiboListCollection: List<AmiiboCollection>?,
     amiiboListWishlist: List<AmiiboWishlist>?,
     navigateToDetails: (Amiibo) -> Unit,
+    isPortrait: Boolean
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -105,50 +106,52 @@ fun MyCollectionScreen(
 
     Column(
         modifier = Modifier
-            .padding(top = 70.dp)
+            .padding(top = if (isPortrait) 70.dp else 50.dp)
     ) {
-        if (amiiboListCollection?.size != null && amiiboListWishlist?.size != null) {
-            numberOfAmiibo =
-                if (selectedTab == 0) amiiboListCollection.size else amiiboListWishlist.size
+        if (isPortrait) {
+            if (amiiboListCollection?.size != null && amiiboListWishlist?.size != null) {
+                numberOfAmiibo =
+                    if (selectedTab == 0) amiiboListCollection.size else amiiboListWishlist.size
 
-        }
-        val current =
-            if (selectedTab == 0) amiiboListCollection?.size?.toFloat() else amiiboListWishlist?.size?.toFloat()
-        val amiiboWorldwide = 849f
-        val percent = (current?.times(100.0f) ?: 0f) / amiiboWorldwide
-        Card(
-            modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.tertiary,
-            ),
-            shape = RoundedCornerShape(10.dp),
-        ) {
-            val text =
-                if (selectedTab == 0) stringResource(R.string.collection) else stringResource(
-                    R.string.wishlist
+            }
+            val current =
+                if (selectedTab == 0) amiiboListCollection?.size?.toFloat() else amiiboListWishlist?.size?.toFloat()
+            val amiiboWorldwide = 849f
+            val percent = (current?.times(100.0f) ?: 0f) / amiiboWorldwide
+            Card(
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 3.dp
+                ),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                ),
+                shape = RoundedCornerShape(10.dp),
+            ) {
+                val text =
+                    if (selectedTab == 0) stringResource(R.string.collection) else stringResource(
+                        R.string.wishlist
+                    )
+                Text(
+                    modifier = modifier
+                        .padding(start = 40.dp, top = 20.dp, bottom = 5.dp),
+                    text = amiiboCounter.toString() + stringResource(R.string.amiibo_in) + text,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 24.sp
                 )
-            Text(
-                modifier = modifier
-                    .padding(start = 40.dp, top = 20.dp, bottom = 5.dp),
-                text = amiiboCounter.toString() + stringResource(R.string.amiibo_in) + text,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                fontSize = 24.sp
-            )
 
-            AnimatedLinearProgressIndicator(indicatorProgress = percent / 100)
+                AnimatedLinearProgressIndicator(indicatorProgress = percent / 100)
 
-            Text(
-                modifier = modifier
-                    .padding(start = 40.dp, bottom = 20.dp),
-                text = amiiboWorldwide.toInt().toString() + stringResource(R.string.worldwide),
-                fontSize = 13.sp,
-                color = Color.Black
-            )
+                Text(
+                    modifier = modifier
+                        .padding(start = 40.dp, bottom = 20.dp),
+                    text = amiiboWorldwide.toInt().toString() + stringResource(R.string.worldwide),
+                    fontSize = 13.sp,
+                    color = Color.Black
+                )
+            }
         }
 
         val items = rememberSaveable {
@@ -162,7 +165,11 @@ fun MyCollectionScreen(
         Column {
             TextSwitch(
                 modifier = Modifier
-                    .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                    .padding(
+                        top = if (isPortrait) 10.dp else 0.dp,
+                        start = if (isPortrait) 10.dp else 50.dp,
+                        end = if (isPortrait) 10.dp else 50.dp
+                    ),
                 selectedIndex = selectedIndex,
                 items = items,
                 onSelectionChange = {
@@ -173,13 +180,13 @@ fun MyCollectionScreen(
 
             when (selectedTab) {
                 0 -> amiiboListCollection?.let {
-                    MyCollection(amiiboList = it) { amiibo ->
+                    MyCollection(isPortrait = isPortrait, amiiboList = it) { amiibo ->
                         navigateToDetails(amiibo)
                     }
                 }
 
                 1 -> amiiboListWishlist?.let {
-                    Wishlist(amiiboList = it) { amiibo ->
+                    Wishlist(isPortrait = isPortrait, amiiboList = it) { amiibo ->
                         navigateToDetails(amiibo)
                     }
                 }
@@ -189,12 +196,20 @@ fun MyCollectionScreen(
 }
 
 @Composable
-fun MyCollection(amiiboList: List<AmiiboCollection>, navigateToDetails: (amiibo: Amiibo) -> Unit) {
+fun MyCollection(
+    isPortrait: Boolean,
+    amiiboList: List<AmiiboCollection>,
+    navigateToDetails: (amiibo: Amiibo) -> Unit
+) {
     if (amiiboList.isNotEmpty()) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(if (isPortrait) 3 else 5),
             modifier = Modifier
-                .padding(start = 24.dp, end = 20.dp, top = 10.dp),
+                .padding(
+                    start = if (isPortrait) 24.dp else 60.dp,
+                    end = if (isPortrait) 20.dp else 45.dp,
+                    top = if (isPortrait) 10.dp else 0.dp
+                ),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             items(count = amiiboList.size) {
@@ -210,12 +225,20 @@ fun MyCollection(amiiboList: List<AmiiboCollection>, navigateToDetails: (amiibo:
 }
 
 @Composable
-fun Wishlist(amiiboList: List<AmiiboWishlist>, navigateToDetails: (amiibo: Amiibo) -> Unit) {
+fun Wishlist(
+    isPortrait: Boolean,
+    amiiboList: List<AmiiboWishlist>,
+    navigateToDetails: (amiibo: Amiibo) -> Unit
+) {
     if (amiiboList.isNotEmpty()) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(if (isPortrait) 3 else 5),
             modifier = Modifier
-                .padding(start = 24.dp, end = 20.dp, top = 10.dp),
+                .padding(
+                    start = if (isPortrait) 24.dp else 60.dp,
+                    end = if (isPortrait) 20.dp else 45.dp,
+                    top = if (isPortrait) 10.dp else 0.dp
+                ),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             items(count = amiiboList.size) {
@@ -273,11 +296,11 @@ fun AnimatedLinearProgressIndicator(
         label = "",
     )
     LinearProgressIndicator(
-        progress = progressAnimation,
-        color = Color.Red,
+        progress = { progressAnimation },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 40.dp, end = 40.dp, bottom = 5.dp)
+            .padding(start = 40.dp, end = 40.dp, bottom = 5.dp),
+        color = Color.Red,
     )
     progress = indicatorProgress
 

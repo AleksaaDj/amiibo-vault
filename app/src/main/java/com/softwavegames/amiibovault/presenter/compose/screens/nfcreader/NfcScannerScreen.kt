@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Surface
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -27,6 +27,7 @@ import com.softwavegames.amiibovault.R
 @Composable
 fun NfcScannerScreen(
     onBackClick: () -> Unit,
+    isPortrait: Boolean
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -53,7 +54,7 @@ fun NfcScannerScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 160.dp, start = 35.dp, end = 35.dp),
+                .padding(top = if (isPortrait) 160.dp else 30.dp, start = 35.dp, end = 35.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

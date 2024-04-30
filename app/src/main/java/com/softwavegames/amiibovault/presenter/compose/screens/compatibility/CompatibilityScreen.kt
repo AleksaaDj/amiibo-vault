@@ -53,6 +53,7 @@ import kotlinx.coroutines.delay
 fun CompatibilityScreen(
     amiiboGames: AmiiboGames?,
     onBackClick: () -> Unit,
+    isPortrait: Boolean
 ) {
 
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
@@ -83,6 +84,7 @@ fun CompatibilityScreen(
     }
 
     Column(
+        modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextSwitch(
@@ -97,9 +99,13 @@ fun CompatibilityScreen(
         )
         if (amiiboGames != null) {
             when (selectedTab) {
-                0 -> SwitchGamesList(consoleGamesList = amiiboGames.gamesSwitch)
-                1 -> DsGamesList(consoleGamesList = amiiboGames.games3DS)
-                2 -> WiiGamesList(consoleGamesList = amiiboGames.gamesWiiU)
+                0 -> SwitchGamesList(
+                    consoleGamesList = amiiboGames.gamesSwitch,
+                    isPortrait = isPortrait
+                )
+
+                1 -> DsGamesList(consoleGamesList = amiiboGames.games3DS, isPortrait = isPortrait)
+                2 -> WiiGamesList(consoleGamesList = amiiboGames.gamesWiiU, isPortrait = isPortrait)
             }
         } else {
             AnimatedVisibility(visible = !showErrorScreen) {
@@ -122,38 +128,44 @@ fun CompatibilityScreen(
 
 
 @Composable
-fun SwitchGamesList(consoleGamesList: List<GamesSwitch>) {
+fun SwitchGamesList(consoleGamesList: List<GamesSwitch>, isPortrait: Boolean) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
         }
     }
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.tertiary)
-            .padding(50.dp)
-    )
-    {
-        Card(
+    if (isPortrait) {
+        Box(
             modifier = Modifier
-                .padding(top = 10.dp, start = 20.dp, end = 20.dp),
-            shape = RoundedCornerShape(25.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 20.dp
-            )
+                .background(MaterialTheme.colorScheme.tertiary)
+                .padding(50.dp)
+        )
+        {
+            Card(
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 20.dp, end = 20.dp),
+                shape = RoundedCornerShape(25.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 20.dp
+                )
 
-        ) {
-            Image(
-                modifier = Modifier,
-                painter = painterResource(id = R.drawable.switch_console),
-                contentDescription = null
-            )
+            ) {
+                Image(
+                    modifier = Modifier,
+                    painter = painterResource(id = R.drawable.switch_console),
+                    contentDescription = null
+                )
+            }
         }
     }
     if (consoleGamesList.isNotEmpty()) {
         AnimatedVisibility(visibleState = state) {
             LazyColumn(
-                modifier = Modifier,
+                modifier = Modifier
+                    .padding(
+                        start = if (isPortrait) 0.dp else 50.dp,
+                        end = if (isPortrait) 0.dp else 50.dp
+                    ),
                 verticalArrangement = Arrangement.run { spacedBy(4.dp) },
                 contentPadding = PaddingValues(10.dp),
 
@@ -172,36 +184,42 @@ fun SwitchGamesList(consoleGamesList: List<GamesSwitch>) {
 }
 
 @Composable
-fun DsGamesList(consoleGamesList: List<Games3DS>) {
+fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
         }
     }
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.tertiary)
-            .padding(start = 115.dp, end = 115.dp, top = 22.dp, bottom = 24.dp)
-    )
-    {
-        Card(
-            modifier = Modifier, shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 20.dp
-            )
+    if (isPortrait) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.tertiary)
+                .padding(start = 115.dp, end = 115.dp, top = 22.dp, bottom = 24.dp)
+        )
+        {
+            Card(
+                modifier = Modifier, shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 20.dp
+                )
 
-        ) {
-            Image(
-                modifier = Modifier,
-                painter = painterResource(id = R.drawable.ds_console),
-                contentDescription = null
-            )
+            ) {
+                Image(
+                    modifier = Modifier,
+                    painter = painterResource(id = R.drawable.ds_console),
+                    contentDescription = null
+                )
+            }
         }
     }
     if (consoleGamesList.isNotEmpty()) {
         AnimatedVisibility(visibleState = state) {
             LazyColumn(
-                modifier = Modifier,
+                modifier = Modifier
+                    .padding(
+                        start = if (isPortrait) 0.dp else 50.dp,
+                        end = if (isPortrait) 0.dp else 50.dp
+                    ),
                 verticalArrangement = Arrangement.run { spacedBy(4.dp) },
                 contentPadding = PaddingValues(10.dp),
 
@@ -220,39 +238,44 @@ fun DsGamesList(consoleGamesList: List<Games3DS>) {
 }
 
 @Composable
-fun WiiGamesList(consoleGamesList: List<GamesWiiU>) {
+fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
         }
     }
-
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.tertiary)
-            .padding(start = 50.dp, end = 50.dp, top = 35.dp, bottom = 38.dp)
-    )
-    {
-        Card(
+    if (isPortrait) {
+        Box(
             modifier = Modifier
-                .padding(top = 10.dp, start = 20.dp, end = 20.dp),
-            shape = RoundedCornerShape(43.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 20.dp
-            )
+                .background(MaterialTheme.colorScheme.tertiary)
+                .padding(start = 50.dp, end = 50.dp, top = 35.dp, bottom = 38.dp)
+        )
+        {
+            Card(
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 20.dp, end = 20.dp),
+                shape = RoundedCornerShape(43.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 20.dp
+                )
 
-        ) {
-            Image(
-                modifier = Modifier,
-                painter = painterResource(id = R.drawable.wii_console),
-                contentDescription = null
-            )
+            ) {
+                Image(
+                    modifier = Modifier,
+                    painter = painterResource(id = R.drawable.wii_console),
+                    contentDescription = null
+                )
+            }
         }
     }
     if (consoleGamesList.isNotEmpty()) {
         AnimatedVisibility(visibleState = state) {
             LazyColumn(
-                modifier = Modifier,
+                modifier = Modifier
+                    .padding(
+                        start = if (isPortrait) 0.dp else 50.dp,
+                        end = if (isPortrait) 0.dp else 50.dp
+                    ),
                 verticalArrangement = Arrangement.run { spacedBy(4.dp) },
                 contentPadding = PaddingValues(10.dp),
 
