@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -35,73 +36,77 @@ fun LatestAmiiboCard(
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit
 ) {
-        val context = LocalContext.current
+    val context = LocalContext.current
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 5.dp)
-        ) {
-            if (amiiboLatest != null) {
-                Row(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 5.dp)
+    ) {
+        if (amiiboLatest != null) {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Card(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .offset(y = 40.dp)
-                        .fillMaxWidth()
-                        .clickable {
-                            navigateToDetails(amiiboLatest)
-                        },
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 20.dp
-                    ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                    ),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = stringResource(R.string.latest_amiibo),
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Normal,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        Text(
-                            text = amiiboLatest.name,
-                            fontSize = 18.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Text(
-                            text = amiiboLatest.gameSeries,
-                            fontSize = 14.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
-
-
-                }
+                AmiiboLatestDetails(amiiboLatest = amiiboLatest, navigateToDetails)
             }
             AsyncImage(
                 modifier = Modifier
                     .size(150.dp)
-                    .offset(x = 220.dp),
+                    .align(Alignment.CenterEnd)
+                    .fillMaxWidth(),
                 model = ImageRequest.Builder(context).data(amiiboLatest.image).build(),
                 contentDescription = null,
                 contentScale = ContentScale.Inside
+            )
+        }
+    }
+}
+
+@Composable
+private fun AmiiboLatestDetails(amiiboLatest: Amiibo, navigateToDetails: (Amiibo) -> Unit) {
+    Card(
+        modifier = Modifier
+            .wrapContentHeight()
+            .offset(y = 40.dp)
+            .fillMaxWidth()
+            .clickable {
+                navigateToDetails(amiiboLatest)
+            },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 20.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+        ),
+        shape = RoundedCornerShape(10.dp)
+    ) {
+
+        Column(
+            modifier = Modifier
+                .padding(15.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.latest_amiibo),
+                color = Color.Black,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Normal,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = amiiboLatest.name,
+                fontSize = 18.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = amiiboLatest.gameSeries,
+                fontSize = 14.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Normal
             )
         }
     }

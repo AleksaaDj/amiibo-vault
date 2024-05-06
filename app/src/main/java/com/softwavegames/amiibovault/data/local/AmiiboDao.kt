@@ -18,16 +18,15 @@ interface AmiiboDao {
      * Home List DB
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertAmiiboList(amiibo: List<Amiibo>)
-
+    suspend fun upsertAmiiboHomeList(amiibo: List<Amiibo>)
     @Query("SELECT * FROM Amiibo")
-    fun getAmiiboFromAmiiboList(): Flow<List<Amiibo>>
+    fun getAmiiboListFromHome(): Flow<List<Amiibo>>
     @Query("SELECT * FROM Amiibo WHERE name LIKE '%' || :name || '%'")
-    fun searchAmiiboList(name: String): Flow<List<Amiibo>>
+    fun searchAmiiboHome(name: String): Flow<List<Amiibo>>
     @Query("SELECT * FROM Amiibo WHERE gameSeries =:gameSeries ")
     fun getAmiiboListFromSeries(gameSeries: String): Flow<List<Amiibo>>
     @Query("SELECT * FROM Amiibo WHERE tail =:tail ")
-    fun getAmiiboNFC(tail: String): Flow<List<Amiibo>>
+    fun getAmiiboFromNFC(tail: String): Flow<List<Amiibo>>
 
     /**
      * Collection DB
@@ -35,11 +34,11 @@ interface AmiiboDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMyCollection(amiibo: AmiiboCollection)
     @Delete
-    suspend fun deleteFromMyCollection(amiibo: AmiiboCollection)
+    suspend fun deleteAmiiboFromMyCollection(amiibo: AmiiboCollection)
     @Query("SELECT * FROM AmiiboCollection")
-    fun getAmiiboFromMyCollection(): Flow<List<AmiiboCollection>>
+    fun getAmiiboListFromMyCollection(): Flow<List<AmiiboCollection>>
     @Query("SELECT * FROM AmiiboCollection WHERE tail =:tail")
-    fun getAmiiboSpecificCollection(tail: String): Flow<List<AmiiboCollection>>
+    fun getAmiiboFromMyCollection(tail: String): Flow<List<AmiiboCollection>>
 
     /**
      * Wishlist DB
@@ -47,9 +46,9 @@ interface AmiiboDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertWishlist(amiibo: AmiiboWishlist)
     @Delete
-    suspend fun deleteFromWishlist(amiibo: AmiiboWishlist)
+    suspend fun deleteAmiiboFromWishlist(amiibo: AmiiboWishlist)
     @Query("SELECT * FROM AmiiboWishlist")
-    fun getAmiiboFromWishlist(): Flow<List<AmiiboWishlist>>
+    fun getAmiiboListFromWishlist(): Flow<List<AmiiboWishlist>>
     @Query("SELECT * FROM AmiiboWishlist WHERE tail =:tail")
-    fun getAmiiboSpecificWishlist(tail: String): Flow<List<AmiiboWishlist>>
+    fun getAmiiboFromWishlist(tail: String): Flow<List<AmiiboWishlist>>
 }

@@ -13,9 +13,17 @@ object Constants {
 
     const val DONATE_URL = "https://ko-fi.com/softwavegames"
 
+    const val AMIIBO_WORLDWIDE_SIZE = 849f
 
     enum class CollectionLists {
         MY_COLLECTION_LIST,
         WISHLIST_LIST,
     }
+}
+
+object Console {
+    const val SWITCH = "Switch"
+    const val DS = "3DS"
+    const val WII = "WiiU"
+
 }

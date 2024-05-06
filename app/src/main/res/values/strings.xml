@@ -29,4 +29,6 @@
     <string name="error_getting_amiibo_list">Error getting amiibo list</string>
     <string name="donate">donate</string>
     <string name="error_opening_the_link">Error opening the link</string>
+    <string name="my_collection">my collection</string>
+    <string name="arrow_up">arrow up</string>
 </resources>

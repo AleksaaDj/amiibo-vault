@@ -24,32 +24,32 @@ class AmiiboDetailsScreenViewModel @Inject constructor(private val repository: A
 
     suspend fun upsertAmiiboToMyCollection(amiibo: Amiibo) {
         val amiiboCollection = Utils().convertAmiiboToAmiiboCollection(amiibo)
-        repository.upsertAmiiboMyCollection(amiibo = amiiboCollection)
+        repository.upsertAmiiboDbMyCollection(amiibo = amiiboCollection)
     }
 
     suspend fun deleteAmiiboFromMyCollection(amiibo: Amiibo) {
         val amiiboCollection = Utils().convertAmiiboToAmiiboCollection(amiibo)
-        repository.deleteAmiiboMyCollection(amiibo = amiiboCollection)
+        repository.deleteAmiiboFromDbMyCollection(amiibo = amiiboCollection)
     }
 
     fun checkIsAmiiboSavedInMyCollection(tail: String) {
-        repository.selectAmiiboSpecificDbMyCollection(tail).onEach {
+        repository.getAmiiboFromDbMyCollection(tail).onEach {
             _amiiboSavedMyCollection.value = it.isNotEmpty()
         }.launchIn(viewModelScope)
     }
 
     suspend fun upsertAmiiboToWishList(amiibo: Amiibo) {
         val amiiboWishlist = Utils().convertAmiiboToAmiiboWishlist(amiibo)
-        repository.upsertAmiiboWishlist(amiibo = amiiboWishlist)
+        repository.upsertAmiiboDbWishlist(amiibo = amiiboWishlist)
     }
 
     suspend fun deleteAmiiboFromWishList(amiibo: Amiibo) {
         val amiiboWishlist = Utils().convertAmiiboToAmiiboWishlist(amiibo)
-        repository.deleteAmiiboWishlist(amiibo = amiiboWishlist)
+        repository.deleteAmiiboFromDbWishlist(amiibo = amiiboWishlist)
     }
 
     fun checkIsAmiiboSavedInWishList(tail: String) {
-        repository.selectAmiiboSpecificDbWishlist(tail).onEach {
+        repository.getAmiiboFromDbWishlist(tail).onEach {
             _amiiboSavedWishlist.value = it.isNotEmpty()
         }.launchIn(viewModelScope)
     }

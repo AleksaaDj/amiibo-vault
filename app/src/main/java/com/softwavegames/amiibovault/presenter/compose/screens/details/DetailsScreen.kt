@@ -59,9 +59,7 @@ fun DetailsScreen(
     isPortrait: Boolean
 ) {
 
-
     val context = LocalContext.current
-
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -203,7 +201,10 @@ fun AmiiboDetailsInfo(amiibo: Amiibo, isLandscape: Boolean) {
 
     Spacer(modifier = Modifier.height(if (isLandscape) 5.dp else 20.dp))
 
-    InfoDetailItem(label = stringResource(id = R.string.character), infoToDisplay = amiibo.name)
+    InfoDetailItem(
+        label = stringResource(id = R.string.character),
+        infoToDisplay = amiibo.character
+    )
 
     HorizontalDivider(
         modifier = Modifier
@@ -257,9 +258,12 @@ fun InfoDetailItem(label: String, infoToDisplay: String) {
             fontWeight = FontWeight.Normal,
         )
         Text(
-            modifier = Modifier,
+            modifier = Modifier
+                .padding(start = 5.dp),
             text = infoToDisplay,
             fontSize = 16.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
         )

@@ -9,12 +9,12 @@ import com.softwavegames.amiibovault.model.Release
 class AmiiboTypeConverter {
 
     @TypeConverter
-    fun sourceToString(release: Release): String {
+    fun releaseToString(release: Release): String {
         return "${""}${""}${release.jp}${""}"
     }
 
     @TypeConverter
-    fun stringToSource(release: String): Release {
+    fun stringToRelease(release: String): Release {
         return release.split(",").let { releaseArray ->
             Release(releaseArray[0], releaseArray[0], releaseArray[0], releaseArray[0])
         }

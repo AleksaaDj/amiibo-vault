@@ -38,24 +38,28 @@ fun AmiiboListItem(
     amiibo: Amiibo,
     onClick: (Amiibo) -> Unit
 ) {
-    val context = LocalContext.current
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 6.dp, end = 6.dp, top = 4.dp, bottom = 4.dp)
             .clickable { onClick(amiibo) },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
-        shape = RoundedCornerShape(topStart = 5.dp, bottomStart = 5.dp, bottomEnd = 5.dp, topEnd = 5.dp),
-        ) {
+        shape = RoundedCornerShape(
+            topStart = 5.dp,
+            bottomStart = 5.dp,
+            bottomEnd = 5.dp,
+            topEnd = 5.dp
+        ),
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
         ) {
             Card(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.tertiary)
                     .clickable { onClick(amiibo) },
@@ -67,61 +71,66 @@ fun AmiiboListItem(
                 ),
                 shape = RoundedCornerShape(topStart = 5.dp, bottomStart = 5.dp, bottomEnd = 300.dp),
             ) {
-
-                Row(
-                    modifier = modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(90.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
-                    ) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(90.dp)
-                                .padding(5.dp),
-                            model = ImageRequest.Builder(context).data(amiibo.image).build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Inside,
-                            error = painterResource(R.drawable.ic_image_placeholder)
-                        )
-                    }
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 6.dp),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Text(
-                            modifier = modifier.padding(top = 5.dp),
-                            text = amiibo.name,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-                        Text(
-                            modifier = modifier.padding(bottom = 8.dp),
-                            text = amiibo.gameSeries,
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-
-
-                        amiibo.release?.jp?.let {
-                            Text(
-                                text = it,
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(5.dp))
-                    }
-                }
+                ListItemDetails(modifier = modifier, amiibo = amiibo)
             }
+        }
+    }
+}
+
+@Composable
+private fun ListItemDetails(modifier: Modifier, amiibo: Amiibo) {
+    val context = LocalContext.current
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(90.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(90.dp)
+                    .padding(5.dp),
+                model = ImageRequest.Builder(context).data(amiibo.image).build(),
+                contentDescription = null,
+                contentScale = ContentScale.Inside,
+                error = painterResource(R.drawable.ic_image_placeholder)
+            )
+        }
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 6.dp),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                modifier = modifier.padding(top = 5.dp),
+                text = amiibo.name,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Text(
+                modifier = modifier.padding(bottom = 8.dp),
+                text = amiibo.gameSeries,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+
+
+            amiibo.release?.jp?.let {
+                Text(
+                    text = it,
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+            Spacer(modifier = Modifier.width(5.dp))
         }
     }
 }

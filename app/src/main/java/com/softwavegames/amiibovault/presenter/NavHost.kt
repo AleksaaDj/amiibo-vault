@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -19,11 +23,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,48 +79,62 @@ fun BottomNavigationBar(
         .build()
     val buttonSound = soundPool.load(context, R.raw.button_click, 1)
     val iconSound = soundPool.load(context, R.raw.icon_click, 1)
-
+    val coroutineScope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
+    val showScrollToTopButtonList by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 10
+        }
+    }
+    val showScrollToTopButtonGrid by remember {
+        derivedStateOf {
+            gridState.firstVisibleItemIndex > 25
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (bottomBarState.value) {
-                NavigationBar(
-                    modifier = Modifier
-                        .height(70.dp),
-                    contentColor = Color.White,
-                    containerColor = Color.Black
-                ) {
-                    BottomNavigationItem().bottomNavigationItems()
-                        .forEachIndexed { index, navigationItem ->
-
-                            NavigationBarItem(
-                                colors = NavigationBarItemDefaults.colors(
-                                    indicatorColor = Color.DarkGray
-                                ),
-                                selected = index == navigationSelectedItem.value,
-                                icon = {
-                                    Icon(
-                                        navigationItem.icon,
-                                        contentDescription = navigationItem.label,
-                                        tint = Color.White
-                                    )
-                                },
-                                onClick = {
-                                    navigationSelectedItem.value = index
-                                    navController.navigate(navigationItem.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+                if (isPortrait) {
+                    NavigationBar(
+                        modifier = Modifier
+                            .height(70.dp),
+                        contentColor = Color.White,
+                        containerColor = Color.Black
+                    ) {
+                        BottomNavigationItem().bottomNavigationItems()
+                            .forEachIndexed { index, navigationItem ->
+                                NavigationBarItem(
+                                    colors = NavigationBarItemDefaults.colors(
+                                        indicatorColor = Color.DarkGray
+                                    ),
+                                    selected = index == navigationSelectedItem.value,
+                                    icon = {
+                                        Icon(
+                                            navigationItem.icon,
+                                            contentDescription = navigationItem.label,
+                                            tint = Color.White
+                                        )
+                                    },
+                                    onClick = {
+                                        navigationSelectedItem.value = index
+                                        navController.navigate(navigationItem.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
                                     }
-                                }
-                            )
-                        }
+                                )
+                            }
+                    }
                 }
             }
         },
+
         floatingActionButton = {
             if (bottomBarState.value) {
                 Box(
@@ -122,11 +147,11 @@ fun BottomNavigationBar(
                             navigateToNfcScanner(navController)
                         },
                         shape = CircleShape,
-                        containerColor = Color.DarkGray,
+                        containerColor = if (isPortrait) Color.DarkGray else Color.Black,
                         modifier = Modifier
                             .align(Alignment.Center)
                             .size(60.dp)
-                            .offset(y = 70.dp)
+                            .offset(y = if (isPortrait) 70.dp else 0.dp)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_nfc),
@@ -139,10 +164,42 @@ fun BottomNavigationBar(
                 }
             }
         },
-        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButtonPosition = if (isPortrait) FabPosition.Center else FabPosition.Start,
     ) { paddingValues ->
 
-
+        if (!isPortrait && bottomBarState.value) {
+            NavigationRail(
+                contentColor = Color.White,
+                containerColor = Color.Black
+            ) {
+                BottomNavigationItem().bottomNavigationItems()
+                    .forEachIndexed { index, navigationItem ->
+                        NavigationRailItem(
+                            colors = NavigationRailItemDefaults.colors(
+                                indicatorColor = Color.DarkGray
+                            ),
+                            selected = index == navigationSelectedItem.value,
+                            icon = {
+                                Icon(
+                                    navigationItem.icon,
+                                    contentDescription = navigationItem.label,
+                                    tint = Color.White
+                                )
+                            },
+                            onClick = {
+                                navigationSelectedItem.value = index
+                                navController.navigate(navigationItem.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+            }
+        }
         NavHost(
             navController = navController,
             startDestination = AppNavigation.BottomNavScreens.AmiiboList.route,
@@ -164,13 +221,28 @@ fun BottomNavigationBar(
                             amiibo = amiibo,
                         )
                     },
-                    onSearchQueryChange = {
-                        viewModel.searchAmiibo(it)
+                    onSearchQueryChange = { query, isList ->
+                        viewModel.searchAmiibo(query)
+                        if (query.isNotEmpty()) {
+                            coroutineScope.launch {
+                                scrollToTop(isList, listState, gridState)
+                            }
+                        }
                     },
                     onChangeListClick = {
                         soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
                     },
-                    isPortrait = isPortrait
+                    onScrollToTopClick = { isList ->
+                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                        coroutineScope.launch {
+                            scrollToTop(isList, listState, gridState)
+                        }
+                    },
+                    isPortrait = isPortrait,
+                    listState = listState,
+                    gridState = gridState,
+                    showScrollToTopList = showScrollToTopButtonList,
+                    showScrollToTopGrid = showScrollToTopButtonGrid
                 )
             }
             composable(AppNavigation.NavigationItem.DetailsScreen.route) {
@@ -348,4 +420,16 @@ private fun navigateToNfcScanner(navController: NavController) {
     navController.navigate(
         route = AppNavigation.BottomNavScreens.NfcScanner.route
     )
+}
+
+private suspend fun scrollToTop(
+    isList: Boolean,
+    listState: LazyListState,
+    gridState: LazyGridState
+) {
+    if (isList) {
+        listState.animateScrollToItem(0)
+    } else {
+        gridState.animateScrollToItem(0)
+    }
 }

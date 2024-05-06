@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface AmiiboApi {
 
     @GET("amiibo/?")
-    suspend fun getAmiiboList(@Query("name") name:String): Response<AmiiboListResponse>
+    suspend fun getAmiiboList(): Response<AmiiboListResponse>
 
     @GET("amiibo/?&showusage")
     suspend fun getAmiiboConsoles(@Query("tail") tail: String): Response<Games>

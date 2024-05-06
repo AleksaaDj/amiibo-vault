@@ -46,6 +46,7 @@ import com.softwavegames.amiibovault.model.Games3DS
 import com.softwavegames.amiibovault.model.GamesSwitch
 import com.softwavegames.amiibovault.model.GamesWiiU
 import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
+import com.softwavegames.amiibovault.util.Console
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +77,7 @@ fun CompatibilityScreen(
         },
     )
     val items = remember {
-        listOf("Switch", "3DS", "WiiU")
+        listOf(Console.SWITCH, Console.DS, Console.WII)
     }
 
     var selectedIndex by remember {
@@ -179,7 +180,7 @@ fun SwitchGamesList(consoleGamesList: List<GamesSwitch>, isPortrait: Boolean) {
             }
         }
     } else {
-        NoCompatibleGamesScreen(console = "Nintendo Switch")
+        NoCompatibleGamesScreen(console = Console.SWITCH)
     }
 }
 
@@ -233,7 +234,7 @@ fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean) {
             }
         }
     } else {
-        NoCompatibleGamesScreen(console = "Nintendo 3DS")
+        NoCompatibleGamesScreen(console = Console.DS)
     }
 }
 
@@ -289,7 +290,7 @@ fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean) {
             }
         }
     } else {
-        NoCompatibleGamesScreen(console = "Nintendo Wii U")
+        NoCompatibleGamesScreen(console = Console.WII)
     }
 }
 

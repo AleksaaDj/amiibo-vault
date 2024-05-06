@@ -28,13 +28,13 @@ class CollectionScreenViewModel @Inject constructor(private val repository: Amii
     }
 
     private fun getAmiiboCollection() {
-        repository.selectAmiiboDbMyCollection().onEach {
+        repository.getAmiiboListFromDbMyCollection().onEach {
             _amiiboListCollection.value = it
         }.launchIn(viewModelScope)
     }
 
     private fun getAmiiboWishlist() {
-        repository.selectAmiiboDdWishlist().onEach {
+        repository.getAmiiboListFromDdWishlist().onEach {
             _amiiboListWishlist.value = it
         }.launchIn(viewModelScope)
     }

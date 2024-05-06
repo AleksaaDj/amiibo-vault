@@ -1,6 +1,8 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.search
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -44,6 +48,7 @@ import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
 import com.softwavegames.amiibovault.presenter.compose.common.LatestAmiiboCard
+import com.softwavegames.amiibovault.presenter.compose.common.ScrollToTopButton
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,15 +57,20 @@ fun AmiiboListScreen(
     amiiboList: List<Amiibo>?,
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit,
-    onSearchQueryChange: (String) -> Unit,
+    onSearchQueryChange: (String, Boolean) -> Unit,
     onChangeListClick: () -> Unit,
-    isPortrait: Boolean
+    onScrollToTopClick: (Boolean) -> Unit,
+    isPortrait: Boolean,
+    listState: LazyListState,
+    gridState: LazyGridState,
+    showScrollToTopList: Boolean,
+    showScrollToTopGrid: Boolean
+
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var isList by rememberSaveable { mutableStateOf(true) }
     val sortedList: List<Amiibo>? = amiiboList?.sortedBy { it.name }
-
 
     Row(
         modifier = Modifier
@@ -70,11 +80,12 @@ fun AmiiboListScreen(
     ) {
         SearchBar(
             modifier = Modifier
-                .weight(3f),
+                .weight(3f)
+                .padding(start = if (isPortrait) 10.dp else 90.dp),
             query = searchText,
             onQueryChange = {
                 searchText = it
-                onSearchQueryChange(it)
+                onSearchQueryChange(it, isList)
             },
             onSearch = { isSearchActive = false },
             placeholder = {
@@ -115,12 +126,11 @@ fun AmiiboListScreen(
         }
     }
 
+
     Column(
-        modifier = Modifier
-            .padding(top = 70.dp),
+        modifier = Modifier.padding(top = 70.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         val showProgress = rememberSaveable {
             mutableStateOf(true)
         }
@@ -139,7 +149,9 @@ fun AmiiboListScreen(
         }
 
         HorizontalDivider(
-            modifier = Modifier.height(0.5.dp),
+            modifier = Modifier
+                .height(0.5.dp)
+                .padding(start = if (isPortrait) 0.dp else 80.dp),
             color = Color.LightGray
         )
 
@@ -149,7 +161,6 @@ fun AmiiboListScreen(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-
                 androidx.compose.animation.AnimatedVisibility(visible = showProgress.value) {
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -166,9 +177,10 @@ fun AmiiboListScreen(
                     EmptyScreen()
                 }
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .padding(
-                            start = if (isPortrait) 10.dp else 40.dp,
+                            start = if (isPortrait) 10.dp else 110.dp,
                             end = if (isPortrait) 10.dp else 40.dp
                         ),
                     contentPadding = PaddingValues(vertical = 10.dp),
@@ -183,22 +195,61 @@ fun AmiiboListScreen(
                         }
                     }
                 }
-
+                this@Column.AnimatedVisibility(
+                    visible = showScrollToTopList,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    ScrollToTopButton(onClick = {
+                        onScrollToTopClick(isList)
+                    })
+                }
             }
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(if (isPortrait) 3 else 5),
+            Box(
                 modifier = Modifier
-                    .padding(start = if (isPortrait) 24.dp else 35.dp, end = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                contentPadding = PaddingValues(vertical = 10.dp),
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                if (sortedList != null) {
-                    items(count = sortedList.size) {
-                        AmiiboGridItem(amiibo = sortedList[it]) { amiibo ->
-                            navigateToDetails(amiibo)
+                androidx.compose.animation.AnimatedVisibility(visible = showProgress.value) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(top = 150.dp),
+                        color = Color.Red,
+                    )
+                    LaunchedEffect(this) {
+                        delay(4500)
+                        showProgress.value = false
+                        showErrorScreen.value = true
+                    }
+                }
+                androidx.compose.animation.AnimatedVisibility(visible = showErrorScreen.value) {
+                    EmptyScreen()
+                }
+                LazyVerticalGrid(
+                    state = gridState,
+                    columns = GridCells.Fixed(if (isPortrait) 3 else 5),
+                    modifier = Modifier
+                        .padding(start = if (isPortrait) 24.dp else 100.dp, end = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    contentPadding = PaddingValues(vertical = 20.dp),
+                ) {
+                    if (sortedList != null) {
+                        items(count = sortedList.size) {
+                            AmiiboGridItem(amiibo = sortedList[it]) { amiibo ->
+                                navigateToDetails(amiibo)
+                            }
                         }
                     }
+                }
+                this@Column.AnimatedVisibility(
+                    visible = showScrollToTopGrid,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    ScrollToTopButton(onClick = {
+                        onScrollToTopClick(isList)
+                    })
                 }
             }
         }
@@ -221,3 +272,5 @@ fun EmptyScreen() {
         )
     }
 }
+
+

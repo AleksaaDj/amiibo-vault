@@ -31,16 +31,15 @@ class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRe
         setupFirebase()
     }
     private fun loadAmiibos() {
-        repository.selectAmiiboDbList().onEach { localList ->
+        repository.getAmiiboListFromDbHome().onEach { localList ->
             if (localList.isEmpty()) {
                 try {
-                    val amiiboListResponse = repository.getAmiiboList("")
+                    val amiiboListResponse = repository.getAmiiboList()
                     when (amiiboListResponse.isSuccessful) {
                         true -> {
                             with(amiiboListResponse.body()) {
                                 val amiiboList = this?.amiibo
                                 amiiboList?.let { addAmiiboListToDatabase(amiiboList = it) }
-                                _amiiboList.postValue(amiiboList)
                             }
                         }
                         else -> {
@@ -58,14 +57,14 @@ class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRe
 
     fun searchAmiibo(name: String) {
         var amiiboLocalList: List<Amiibo>
-        repository.searchAmiiboList(name).onEach { localList ->
+        repository.searchAmiiboHome(name).onEach { localList ->
             amiiboLocalList = localList
             _amiiboList.postValue(amiiboLocalList)
         }.launchIn(viewModelScope)
     }
 
     private suspend fun addAmiiboListToDatabase(amiiboList: List<Amiibo>) {
-        repository.upsertAmiiboList(amiiboList)
+        repository.upsertAmiiboDbHomeList(amiiboList)
     }
 
     private fun setupFirebase() {

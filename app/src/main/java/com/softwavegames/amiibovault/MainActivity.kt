@@ -30,6 +30,7 @@ import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
 import com.softwavegames.amiibovault.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -38,7 +39,6 @@ class MainActivity : ComponentActivity() {
     private var pendingIntent: PendingIntent? = null
     private lateinit var navController: NavHostController
     private val viewModel: AmiiboNfcDetailsViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +59,7 @@ class MainActivity : ComponentActivity() {
                 Configuration.ORIENTATION_LANDSCAPE -> {
                     false
                 }
+
                 else -> {
                     true
                 }
@@ -92,6 +93,7 @@ class MainActivity : ComponentActivity() {
 
                             else -> {
                                 bottomBarState.value = false
+                                disableForegroundDispatch()
                             }
                         }
                     }
@@ -113,13 +115,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
             viewModel.amiiboNfc.observe(this) { amiibo ->
-                navController.currentBackStackEntry?.savedStateHandle?.set(
-                    Constants.PARSED_AMIIBO,
-                    amiibo
-                )
-                navController.navigate(
-                    route = AppNavigation.NavigationItem.DetailsScreen.route,
-                )
+                if (amiibo != null) {
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        Constants.PARSED_AMIIBO,
+                        amiibo
+                    )
+                    navController.navigate(
+                        route = AppNavigation.NavigationItem.DetailsScreen.route,
+                    )
+                }
             }
         }
     }
@@ -152,7 +156,6 @@ class MainActivity : ComponentActivity() {
         } catch (e: TagLostException) {
             Log.e("NFC read", e.message.toString())
             Toast.makeText(this, "amiibo contact was lost, try again", Toast.LENGTH_LONG).show()
-
         }
     }
 
@@ -167,7 +170,15 @@ class MainActivity : ComponentActivity() {
      * disable foreground dispatch to allow intent-filter to launch the app
      */
     private fun disableForegroundDispatch() {
-        nfcAdapter?.disableForegroundDispatch(this)
+        try {
+            nfcAdapter?.disableForegroundDispatch(this)
+        } catch (error: Exception) {
+            Log.e(
+                "Foreground_Dispatcher",
+                "Error stopping foreground dispatch",
+                error
+            )
+        }
     }
 
     override fun onResume() {
@@ -175,9 +186,10 @@ class MainActivity : ComponentActivity() {
         enableForegroundDispatch()
     }
 
-    public override fun onPause() {
+    override fun onPause() {
         super.onPause()
         disableForegroundDispatch()
+        viewModel.clearAmiibo()
     }
 }
 

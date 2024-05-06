@@ -11,13 +11,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.colorResource
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
-import com.softwavegames.amiibovault.R
 
 private val DarkColorScheme = darkColorScheme(
     background = LightBlack,
@@ -28,7 +23,8 @@ private val DarkColorScheme = darkColorScheme(
     secondaryContainer = Color.DarkGray,
     onSecondaryContainer = Color.LightGray,
     onPrimary = Color.White,
-    onBackground =Color.White,
+    onBackground = Color.White,
+    surface = Color.DarkGray
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -41,6 +37,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = Color.Gray,
     onPrimary = Black,
     onBackground = Color.Gray,
+    surface = Color.Black
 
 
 

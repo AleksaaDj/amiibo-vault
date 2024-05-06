@@ -19,7 +19,7 @@ class AmiiboFromSeriesListViewModel @Inject constructor(private val repository: 
     var amiiboList: LiveData<List<Amiibo>?> = _amiiboList
 
     fun loadAmiibos(gameSeries: String) {
-        repository.getAmiiboFromSeriesList(gameSeries).onEach {
+        repository.getAmiiboListFromSeries(gameSeries).onEach {
             _amiiboList.value = it
         }.launchIn(viewModelScope)
     }

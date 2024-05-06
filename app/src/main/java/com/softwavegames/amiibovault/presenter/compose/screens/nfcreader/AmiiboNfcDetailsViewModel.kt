@@ -5,6 +5,7 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.MifareUltralight
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,16 +23,22 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
 
     private var myTag: Tag? = null
 
+    private val amiiboPageWithIdTailOffset = 22
+
     private var _amiiboNfc = MutableLiveData<Amiibo?>()
     var amiiboNfc: LiveData<Amiibo?> = _amiiboNfc
 
 
     private fun loadAmiiboConsoleInfo(amiiboTail: String) {
-        repository.getAmiiboNfc(amiiboTail).onEach {
-            if(it.isNotEmpty()) {
+        repository.getAmiiboFromNfc(amiiboTail).onEach {
+            if (it.isNotEmpty()) {
                 _amiiboNfc.value = it[0]
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun clearAmiibo() {
+        _amiiboNfc.value = null
     }
 
     /******************************************************************************
@@ -49,28 +56,25 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
 
             val mifareUltralightTag = MifareUltralight.get(myTag)
             mifareUltralightTag.connect()
-            for (j in 0..40 step 4) {
-                val resp = mifareUltralightTag.readPages(j)
-                parseResponse(j, resp)
+            val pageResponse = mifareUltralightTag.readPages(amiiboPageWithIdTailOffset)
+            try {
+                parsePageResponse(pageResponse)
+            } catch (e: SecurityException) {
+                Log.e("NfcReader", e.message.toString())
             }
         }
+
     }
 
-    private fun parseResponse(j: Int, resp: ByteArray) {
-        var i = 0
-        var amiiboTail = ""
-        while (i < resp.size) {
-            if ((j + i / 4) == 22) {
-                amiiboTail = String.format("%02x", resp[i]) + String.format(
-                    "%02x",
-                    resp[i + 1]
-                ) + String.format(
-                    "%02x",
-                    resp[i + 2]
-                ) + String.format("%02x", resp[i + 3])
-            }
-            i += 4
-        }
+    private fun parsePageResponse(pageResponse: ByteArray) {
+        val amiiboTail: String = String.format("%02x", pageResponse[0]) + String.format(
+            "%02x",
+            pageResponse[1]
+        ) + String.format(
+            "%02x",
+            pageResponse[2]
+        ) + String.format("%02x", pageResponse[3])
+
         loadAmiiboConsoleInfo(amiiboTail = amiiboTail)
     }
 }
