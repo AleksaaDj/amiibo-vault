@@ -242,7 +242,7 @@ fun BottomNavigationBar(
                     listState = listState,
                     gridState = gridState,
                     showScrollToTopList = showScrollToTopButtonList,
-                    showScrollToTopGrid = showScrollToTopButtonGrid
+                    showScrollToTopGrid = showScrollToTopButtonGrid,
                 )
             }
             composable(AppNavigation.NavigationItem.DetailsScreen.route) {

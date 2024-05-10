@@ -2,7 +2,7 @@
     <string name="app_name">amiibo Vault</string>
     <string name="character">Character</string>
     <string name="title_activity_details">DetailsActivity</string>
-    <string name="latest_amiibo">Latest amiibo</string>
+    <string name="featured_amiibo">Featured amiibo</string>
     <string name="collections">collections</string>
     <string name="collection">" collection "</string>
     <string name="wishlist">" wishlist"</string>
@@ -31,4 +31,6 @@
     <string name="error_opening_the_link">Error opening the link</string>
     <string name="my_collection">my collection</string>
     <string name="arrow_up">arrow up</string>
+    <string name="set">Set</string>
+    <string name="serial">Serial</string>
 </resources>

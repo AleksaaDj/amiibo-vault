@@ -64,8 +64,7 @@ fun AmiiboListScreen(
     listState: LazyListState,
     gridState: LazyGridState,
     showScrollToTopList: Boolean,
-    showScrollToTopGrid: Boolean
-
+    showScrollToTopGrid: Boolean,
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }

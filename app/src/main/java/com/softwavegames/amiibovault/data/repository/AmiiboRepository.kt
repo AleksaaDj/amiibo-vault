@@ -37,6 +37,13 @@ class AmiiboRepository(private val amiiboApi: AmiiboApi, private val amiiboDao: 
     fun getAmiiboFromNfc(tail: String) =
         amiiboDao.getAmiiboFromNFC(tail)
 
+    //Amiibo Filter
+    /*fun getAmiiboListFilteredBoth(series: String?, type: String?) =
+        amiiboDao.getAmiiboFilteredBoth(series, type)
+
+    fun getAmiiboListFilteredOne(series: String?, type: String?) =
+        amiiboDao.getAmiiboFilteredOne(series, type)*/
+
     /**
      * My Collection DB
      */

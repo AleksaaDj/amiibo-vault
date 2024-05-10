@@ -28,6 +28,11 @@ interface AmiiboDao {
     @Query("SELECT * FROM Amiibo WHERE tail =:tail ")
     fun getAmiiboFromNFC(tail: String): Flow<List<Amiibo>>
 
+    //Amiibo Filter
+    /*@Query("SELECT * FROM Amiibo WHERE amiiboSeries LIKE '%' || :series || '%' AND type LIKE '%' || :typeAmiibo || '%' ")
+    fun getAmiiboFilteredBoth(series: String?, typeAmiibo:String?): Flow<List<Amiibo>>
+    @Query("SELECT * FROM Amiibo WHERE amiiboSeries LIKE '%' || :series || '%' OR type LIKE '%' || :typeAmiibo || '%' ")
+    fun getAmiiboFilteredOne(series: String?, typeAmiibo:String?): Flow<List<Amiibo>>*/
     /**
      * Collection DB
      */

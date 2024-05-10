@@ -14,10 +14,10 @@ android {
 
     defaultConfig {
         applicationId "com.softwavegames.amiibovault"
-        minSdk 24
+        minSdk 26
         targetSdk 34
-        versionCode 9
-        versionName "1.1.7"
+        versionCode 10
+        versionName "1.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">amiibo ボルト</string>
+    <string name="character">キャラクター</string>
+    <string name="title_activity_details">詳細アクティビティ</string>
+    <string name="featured_amiibo">注目のamiibo</string>
+    <string name="collections">コレクション</string>
+    <string name="collection">コレクション</string>
+    <string name="wishlist">ウィッシュリスト</string>
+    <string name="amiibo_in">amiiboが含まれている</string>
+    <string name="worldwide">世界中の</string>
+    <string name="wishlist_empty">お気に入りリストは空です。amiiboの詳細画面でブックマークアイコンをクリックしてamiiboを追加してください</string>
+    <string name="collection_empty">コレクションは空です。amiiboの詳細画面で「マイコレクションに追加」ボタンをクリックしてamiiboを追加してください。</string>
+    <string name="console_usage">コンソールの使用</string>
+    <string name="no_compatible_games_for">%1$sに対応するゲームはありません</string>
+    <string name="amiibo">amiibo</string>
+    <string name="game_series">ゲームシリーズ</string>
+    <string name="type">タイプ</string>
+    <string name="release_date">発売日</string>
+    <string name="more_from_series">シリーズのその他</string>
+    <string name="compatibility_and_usage">互換性と使用法</string>
+    <string name="add_to_my_collection">マイコレクションに追加</string>
+    <string name="remove_from_collection">コレクションから削除</string>
+    <string name="amiibo_reader">amiiboリーダー</string>
+    <string name="tap_amiibo">設定でNFCの読み取りを有効にし、電話の背面にamiiboをタップしてスキャンします。</string>
+    <string name="search_amiibo">amiiboを検索</string>
+    <string name="logo">ロゴ</string>
+    <string name="title_activity_openning">オープニングアクティビティ</string>
+    <string name="error_getting_compatible_games">互換性のあるゲームの取得エラー</string>
+    <string name="error_getting_amiibo_list">amiiboリスト取得エラー</string>
+    <string name="donate">寄付</string>
+    <string name="error_opening_the_link">リンクを開く際のエラー</string>
+    <string name="my_collection">私のコレクション</string>
+    <string name="arrow_up">矢印上</string>
+    <string name="set">セット</string>
+    <string name="serial">シリアル</string>
+</resources>

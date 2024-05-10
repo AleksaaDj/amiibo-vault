@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.softwavegames.amiibovault.R
@@ -60,7 +59,7 @@ fun NfcScannerScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if(isPortrait) {
+            if (isPortrait) {
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -73,7 +72,6 @@ fun NfcScannerScreen(
                 text = stringResource(R.string.tap_amiibo),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 20.dp)
             )

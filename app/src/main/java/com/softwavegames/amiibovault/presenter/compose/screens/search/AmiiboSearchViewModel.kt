@@ -18,7 +18,8 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
-class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRepository) : ViewModel() {
+class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRepository) :
+    ViewModel() {
 
     private var _amiiboList = MutableLiveData<List<Amiibo>?>()
     var amiiboList: LiveData<List<Amiibo>?> = _amiiboList
@@ -30,6 +31,7 @@ class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRe
         loadAmiibos()
         setupFirebase()
     }
+
     private fun loadAmiibos() {
         repository.getAmiiboListFromDbHome().onEach { localList ->
             if (localList.isEmpty()) {
@@ -62,6 +64,24 @@ class AmiiboSearchViewModel @Inject constructor(private val repository: AmiiboRe
             _amiiboList.postValue(amiiboLocalList)
         }.launchIn(viewModelScope)
     }
+
+    //Filter Amiibo
+    /*fun getAmiiboFiltered(series: String, type: String) {
+        val amiiboSeries = series.ifEmpty { null }
+        val amiiboType = type.ifEmpty { null }
+
+        if (amiiboSeries != null && amiiboType != null) {
+            repository.getAmiiboListFilteredBoth(amiiboSeries, amiiboType).onEach { resultList ->
+                _amiiboList.postValue(resultList)
+            }.launchIn(viewModelScope)
+        } else if (amiiboSeries == null && amiiboType == null) {
+            loadAmiibos()
+        } else {
+            repository.getAmiiboListFilteredOne(amiiboSeries, amiiboType).onEach { resultList ->
+                _amiiboList.postValue(resultList)
+            }.launchIn(viewModelScope)
+        }
+    }*/
 
     private suspend fun addAmiiboListToDatabase(amiiboList: List<Amiibo>) {
         repository.upsertAmiiboDbHomeList(amiiboList)

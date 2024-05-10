@@ -10,13 +10,13 @@ class AmiiboTypeConverter {
 
     @TypeConverter
     fun releaseToString(release: Release): String {
-        return "${""}${""}${release.jp}${""}"
+        return "${release.au},${release.eu},${release.jp},${release.na}"
     }
 
     @TypeConverter
     fun stringToRelease(release: String): Release {
         return release.split(",").let { releaseArray ->
-            Release(releaseArray[0], releaseArray[0], releaseArray[0], releaseArray[0])
+            Release(releaseArray[0], releaseArray[1], releaseArray[2], releaseArray[3])
         }
     }
 }

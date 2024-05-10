@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">amiibo 볼트</string>
+    <string name="character">캐릭터</string>
+    <string name="title_activity_details">DetailsActivity</string>
+    <string name="featured_amiibo">특집 amiibo</string>
+    <string name="collections">컬렉션들</string>
+    <string name="collection">" 컬렉션 "</string>
+    <string name="wishlist">" 위시리스트"</string>
+    <string name="amiibo_in">" amiibo in"</string>
+    <string name="worldwide">" 전세계적으로"</string>
+    <string name="wishlist_empty">위시리스트가 비어 있습니다, 아미보 세부 화면의 즐겨찾기 아이콘을 클릭하여 아미보를 추가하세요</string>
+    <string name="collection_empty">컬렉션이 비어 있습니다, 아미보 세부 화면에서 \'내 컬렉션에 추가하기\' 버튼을 클릭하여 아미보를 추가하세요.</string>
+    <string name="console_usage">콘솔 사용</string>
+    <string name="no_compatible_games_for">%1$s에 호환되는 게임 없음</string>
+    <string name="amiibo">amiibo</string>
+    <string name="game_series">게임 시리즈</string>
+    <string name="type">타입</string>
+    <string name="release_date">출시 날짜</string>
+    <string name="more_from_series">시리즈에서 더 보기</string>
+    <string name="compatibility_and_usage">호환성 및 사용법</string>
+    <string name="add_to_my_collection">" 내 컬렉션에 추가하기"</string>
+    <string name="remove_from_collection">컬렉션에서 제거하기</string>
+    <string name="amiibo_reader">amiibo 리더기</string>
+    <string name="tap_amiibo">설정에서 NFC 읽기를 활성화하고 전화기 뒷면에 amiibo를 탭하여 스캔하십시오.</string>
+    <string name="search_amiibo">amiibo 검색</string>
+    <string name="logo">로고</string>
+    <string name="title_activity_openning">OpenningActivity</string>
+    <string name="error_getting_compatible_games">호환 가능한 게임을 가져오는 중 오류 발생</string>
+    <string name="error_getting_amiibo_list">amiibo 목록을 가져오는 중 오류 발생</string>
+    <string name="donate">기부하기</string>
+    <string name="error_opening_the_link">링크를 여는 중 오류 발생</string>
+    <string name="my_collection">내 컬렉션</string>
+    <string name="arrow_up">화살표 위</string>
+    <string name="set">세트</string>
+    <string name="serial">시리즈</string>
+</resources>
