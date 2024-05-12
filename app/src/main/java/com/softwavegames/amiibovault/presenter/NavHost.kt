@@ -428,8 +428,8 @@ private suspend fun scrollToTop(
     gridState: LazyGridState
 ) {
     if (isList) {
-        listState.animateScrollToItem(0)
+        listState.scrollToItem(0)
     } else {
-        gridState.animateScrollToItem(0)
+        gridState.scrollToItem(0)
     }
 }

@@ -1,8 +1,5 @@
 package com.softwavegames.amiibovault.presenter.compose.common
 
-import android.graphics.Bitmap
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,19 +10,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -33,62 +23,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
-import com.softwavegames.amiibovault.util.Utils
-import com.softwavegames.amiibovault.util.getAverageColor
 
 @Composable
 fun LatestAmiiboCard(
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit
 ) {
-    val bitmap = remember {
-        MutableLiveData<Bitmap>()
-    }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    LaunchedEffect(key1 = true) {
-        Utils().urlToBitmap(
-            scope = scope,
-            imageURL = amiiboLatest?.image.toString(),
-            context = context,
-            onSuccess = {
-                bitmap.postValue(it)
-            },
-            onError = {
-                Log.e("latest_amiibo", it.message.toString())
-            }
-        )
-    }
-    bitmap.observeAsState().value?.let { generatedBitmap ->
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp)
-        ) {
-            if (amiiboLatest != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    AmiiboLatestDetails(
-                        amiiboLatest = amiiboLatest,
-                        navigateToDetails,
-                        generatedBitmap
-                    )
-                }
-                Image(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .align(Alignment.CenterEnd)
-                        .fillMaxWidth(),
-                    bitmap = generatedBitmap.asImageBitmap(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Inside
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp)
+    ) {
+        if (amiiboLatest != null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                AmiiboLatestDetails(
+                    amiiboLatest = amiiboLatest,
+                    navigateToDetails,
                 )
             }
+            AsyncImage(
+                modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.CenterEnd)
+                    .fillMaxWidth(),
+                model = ImageRequest.Builder(context).data(amiiboLatest.image).build(),
+                contentDescription = null,
+                contentScale = ContentScale.Inside
+            )
         }
     }
 }
@@ -97,12 +66,12 @@ fun LatestAmiiboCard(
 private fun AmiiboLatestDetails(
     amiiboLatest: Amiibo,
     navigateToDetails: (Amiibo) -> Unit,
-    bitmap: Bitmap
 ) {
-    // Crop image to focus on central part of the amiibo for average color
-    val croppedBitmap = Bitmap.createBitmap(bitmap, 0, 100, bitmap.width - 100, bitmap.height - 100)
 
-    Card(
+    val amiiboAverageColor =
+        if (amiiboLatest.color == 0) MaterialTheme.colorScheme.tertiary else Color(amiiboLatest.color)
+
+    GlowingCard(
         modifier = Modifier
             .wrapContentHeight()
             .offset(y = 40.dp)
@@ -110,15 +79,9 @@ private fun AmiiboLatestDetails(
             .clickable {
                 navigateToDetails(amiiboLatest)
             },
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 20.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = getAverageColor(
-                imageBitmap = croppedBitmap.asImageBitmap()
-            ),
-        ),
-        shape = RoundedCornerShape(10.dp)
+        glowingColor = amiiboAverageColor,
+        containerColor = amiiboAverageColor,
+        cornersRadius = 10.dp
     ) {
 
         Column(

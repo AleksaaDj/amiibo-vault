@@ -34,8 +34,15 @@ class AmiiboRepository(private val amiiboApi: AmiiboApi, private val amiiboDao: 
     fun getAmiiboListFromSeries(gameSeries: String) =
         amiiboDao.getAmiiboListFromSeries(gameSeries)
 
-    fun getAmiiboFromNfc(tail: String) =
+    fun getAmiiboSpecific(tail: String) =
         amiiboDao.getAmiiboFromNFC(tail)
+
+    fun getCurrentFeaturedAmiibo() =
+        amiiboDao.getCurrentFeaturedAmiibo()
+    fun removeCurrentFeaturedAmiibo(tail: String) =
+        amiiboDao.removeFeaturedAmiibo(tail)
+    fun updateFeaturedAmiibo(featured: Boolean, color: Int, tail: String) =
+        amiiboDao.updateFeaturedAmiibo(featured, color, tail)
 
     //Amiibo Filter
     /*fun getAmiiboListFilteredBoth(series: String?, type: String?) =

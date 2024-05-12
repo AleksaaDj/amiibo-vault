@@ -17,6 +17,8 @@ data class Amiibo(
     val release: Release? = null,
     @PrimaryKey val tail: String = "",
     val type: String = "",
+    val featured: Boolean = false,
+    val color: Int = 0
 ): Parcelable
 
 @Parcelize

@@ -1,5 +1,6 @@
 package com.softwavegames.amiibovault.presenter.compose.common
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +19,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,10 +35,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.core.graphics.drawable.toBitmap
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.size.Size
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.util.AverageColor.getAverageColor
 
 @Composable
 fun AmiiboListItem(
@@ -38,6 +50,22 @@ fun AmiiboListItem(
     amiibo: Amiibo,
     onClick: (Amiibo) -> Unit
 ) {
+    val imageState = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(amiibo.image)
+            .size(Size.ORIGINAL)
+            .build()
+    ).state
+
+    val defaultColor = MaterialTheme.colorScheme.background
+    var dominantColor by remember {
+        mutableStateOf(defaultColor)
+    }
+    if (imageState is AsyncImagePainter.State.Success) {
+        dominantColor = getAverageColor(
+            imageBitmap = imageState.result.drawable.toBitmap().asImageBitmap()
+        )
+    }
 
     Card(
         modifier = modifier
@@ -48,10 +76,10 @@ fun AmiiboListItem(
             defaultElevation = 6.dp
         ),
         shape = RoundedCornerShape(
-            topStart = 5.dp,
-            bottomStart = 5.dp,
-            bottomEnd = 5.dp,
-            topEnd = 5.dp
+            topStart = 7.dp,
+            bottomStart = 7.dp,
+            bottomEnd = 7.dp,
+            topEnd = 7.dp
         ),
     ) {
         Column(
@@ -61,25 +89,31 @@ fun AmiiboListItem(
             Card(
                 modifier = modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.tertiary)
-                    .clickable { onClick(amiibo) },
+                    .clickable { onClick(amiibo) }
+                    .background(dominantColor),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 20.dp
                 ),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
-                shape = RoundedCornerShape(topStart = 5.dp, bottomStart = 5.dp, bottomEnd = 300.dp),
+                shape = RoundedCornerShape(
+                    bottomEnd = 300.dp
+                ),
             ) {
-                ListItemDetails(modifier = modifier, amiibo = amiibo)
+                ListItemDetails(modifier = modifier, amiibo = amiibo, imageState.painter, dominantColor)
             }
         }
     }
 }
 
 @Composable
-private fun ListItemDetails(modifier: Modifier, amiibo: Amiibo) {
-    val context = LocalContext.current
+private fun ListItemDetails(
+    modifier: Modifier,
+    amiibo: Amiibo,
+    imagePainter: Painter?,
+    dominantColor: Color
+) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
@@ -87,22 +121,21 @@ private fun ListItemDetails(modifier: Modifier, amiibo: Amiibo) {
     ) {
         Box(
             modifier = Modifier
-                .size(90.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .size(85.dp)
+                .background(dominantColor)
         ) {
-            AsyncImage(
+            Image(
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(85.dp)
                     .padding(5.dp),
-                model = ImageRequest.Builder(context).data(amiibo.image).build(),
+                painter = imagePainter ?: painterResource(id = R.drawable.ic_image_placeholder),
                 contentDescription = null,
                 contentScale = ContentScale.Inside,
-                error = painterResource(R.drawable.ic_image_placeholder)
             )
         }
         Column(
             modifier = Modifier
-                .padding(horizontal = 6.dp),
+                .padding(horizontal = 5.dp),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(

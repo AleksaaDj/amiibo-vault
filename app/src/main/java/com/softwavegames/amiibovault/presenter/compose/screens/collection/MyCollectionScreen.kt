@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,14 +41,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import com.softwavegames.amiibovault.util.Constants
 import com.softwavegames.amiibovault.R
-import com.softwavegames.amiibovault.util.Utils
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
+import com.softwavegames.amiibovault.presenter.compose.common.GlowingCard
 import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
+import com.softwavegames.amiibovault.util.Constants
+import com.softwavegames.amiibovault.util.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +63,7 @@ fun MyCollectionScreen(
 
     TopAppBar(
         modifier = Modifier
-            .padding(start = if(isPortrait) 0.dp else 80.dp),
+            .padding(start = if (isPortrait) 0.dp else 80.dp),
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = Color.Red,
@@ -228,39 +226,38 @@ fun DbStatisticInfo(
         if (selectedTab == 0) amiiboListCollection?.size?.toFloat() else amiiboListWishlist?.size?.toFloat()
     val amiiboWorldwide = Constants.AMIIBO_WORLDWIDE_SIZE
     val percent = (current?.times(100.0f) ?: 0f) / amiiboWorldwide
-    Card(
+
+    GlowingCard(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiary,
-        ),
-        shape = RoundedCornerShape(10.dp),
+        containerColor = MaterialTheme.colorScheme.tertiary,
+        glowingColor = MaterialTheme.colorScheme.tertiary,
+        cornersRadius = 10.dp
     ) {
-        val text =
-            if (selectedTab == 0) stringResource(R.string.collection) else stringResource(
-                R.string.wishlist
+        Column {
+            val text =
+                if (selectedTab == 0) stringResource(R.string.collection) else stringResource(
+                    R.string.wishlist
+                )
+            Text(
+                modifier = Modifier
+                    .padding(start = 40.dp, top = 20.dp, bottom = 5.dp),
+                text = amiiboCounter.toString() + stringResource(R.string.amiibo_in) + text,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                fontSize = 24.sp
             )
-        Text(
-            modifier = Modifier
-                .padding(start = 40.dp, top = 20.dp, bottom = 5.dp),
-            text = amiiboCounter.toString() + stringResource(R.string.amiibo_in) + text,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            fontSize = 24.sp
-        )
 
-        AnimatedLinearProgressIndicator(indicatorProgress = percent / 100)
+            AnimatedLinearProgressIndicator(indicatorProgress = percent / 100)
 
-        Text(
-            modifier = Modifier
-                .padding(start = 40.dp, bottom = 20.dp),
-            text = amiiboWorldwide.toInt().toString() + stringResource(R.string.worldwide),
-            fontSize = 13.sp,
-            color = Color.Black
-        )
+            Text(
+                modifier = Modifier
+                    .padding(start = 40.dp, bottom = 20.dp),
+                text = amiiboWorldwide.toInt().toString() + stringResource(R.string.worldwide),
+                fontSize = 13.sp,
+                color = Color.Black
+            )
+        }
     }
 }
 
@@ -291,7 +288,10 @@ fun EmptyCollection(listType: String, isPortrait: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = if(isPortrait) 0.dp else 90.dp, top = if(isPortrait)160.dp else 60.dp)
+            .padding(
+                start = if (isPortrait) 0.dp else 90.dp,
+                top = if (isPortrait) 160.dp else 60.dp
+            )
     ) {
         val isWishlist = listType == Constants.CollectionLists.WISHLIST_LIST.name
         if (isWishlist) {
@@ -312,7 +312,11 @@ fun EmptyCollection(listType: String, isPortrait: Boolean) {
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 10.dp, start = if(isPortrait)20.dp else 70.dp, end = if(isPortrait)20.dp else 70.dp)
+            modifier = Modifier.padding(
+                top = 10.dp,
+                start = if (isPortrait) 20.dp else 70.dp,
+                end = if (isPortrait) 20.dp else 70.dp
+            )
         )
     }
 }

@@ -1,11 +1,11 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.org.jetbrains.kotlin.kapt)
     alias(libs.plugins.hilt.gradle.plugin)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.plugin)
     alias(libs.plugins.firebase.crashlytics.plugin)
+    alias(libs.plugins.com.google.devtools.ksp)
 }
 
 android {
@@ -43,12 +43,15 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.12'
+        kotlinCompilerExtensionVersion '1.5.13'
     }
-    packaging {
+    packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+    }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
     }
 }
 
@@ -63,6 +66,7 @@ dependencies {
     implementation libs.androidx.ui.tooling.preview
     implementation libs.androidx.material3
     implementation libs.androidx.runtime.livedata
+    implementation libs.lottie.compose
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -72,15 +76,14 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    implementation libs.androidx.material
 
     // Room
     implementation(libs.androidx.room.ktx)
     implementation libs.androidx.appcompat
-    implementation libs.material
+    implementation libs.androidx.material3
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.paging)
 
     //Kotlinx Serialization
@@ -89,8 +92,8 @@ dependencies {
 
     // Dagger - Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-    kapt(libs.androidx.hilt.compiler)
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Retrofit

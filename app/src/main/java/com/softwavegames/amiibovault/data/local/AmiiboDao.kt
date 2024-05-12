@@ -19,14 +19,20 @@ interface AmiiboDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAmiiboHomeList(amiibo: List<Amiibo>)
-    @Query("SELECT * FROM Amiibo")
+    @Query("SELECT * FROM Amiibo ORDER BY name ASC")
     fun getAmiiboListFromHome(): Flow<List<Amiibo>>
-    @Query("SELECT * FROM Amiibo WHERE name LIKE '%' || :name || '%'")
+    @Query("SELECT * FROM Amiibo WHERE name LIKE '%' || :name || '%' ORDER BY name ASC")
     fun searchAmiiboHome(name: String): Flow<List<Amiibo>>
     @Query("SELECT * FROM Amiibo WHERE gameSeries =:gameSeries ")
     fun getAmiiboListFromSeries(gameSeries: String): Flow<List<Amiibo>>
     @Query("SELECT * FROM Amiibo WHERE tail =:tail ")
     fun getAmiiboFromNFC(tail: String): Flow<List<Amiibo>>
+    @Query("SELECT * FROM Amiibo WHERE featured = 1")
+    fun getCurrentFeaturedAmiibo(): Flow<List<Amiibo>>
+    @Query("UPDATE Amiibo SET featured = :featured, color = :color WHERE tail =:tail")
+    fun updateFeaturedAmiibo(featured: Boolean, color: Int, tail: String)
+    @Query("UPDATE Amiibo SET featured = 0 WHERE tail =:tail")
+    fun removeFeaturedAmiibo(tail: String)
 
     //Amiibo Filter
     /*@Query("SELECT * FROM Amiibo WHERE amiiboSeries LIKE '%' || :series || '%' AND type LIKE '%' || :typeAmiibo || '%' ")

@@ -6,7 +6,7 @@ import com.softwavegames.amiibovault.model.Release
 
 
 @ProvidedTypeConverter
-class AmiiboTypeConverter {
+class ReleaseTypeConverter {
 
     @TypeConverter
     fun releaseToString(release: Release): String {
@@ -19,4 +19,5 @@ class AmiiboTypeConverter {
             Release(releaseArray[0], releaseArray[1], releaseArray[2], releaseArray[3])
         }
     }
+
 }

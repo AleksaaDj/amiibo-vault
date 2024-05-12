@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.softwavegames.amiibovault.data.local.AmiiboDao
 import com.softwavegames.amiibovault.data.local.AmiiboDatabase
-import com.softwavegames.amiibovault.data.local.AmiiboTypeConverter
+import com.softwavegames.amiibovault.data.local.ReleaseTypeConverter
 import com.softwavegames.amiibovault.data.remote.AmiiboApi
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.util.Constants.BASE_URL
@@ -47,7 +47,7 @@ object AppModule {
             context = application,
             klass = AmiiboDatabase::class.java,
             name = DB_NAME
-        ).addTypeConverter(AmiiboTypeConverter())
+        ).addTypeConverter(ReleaseTypeConverter())
             .fallbackToDestructiveMigration().build()
     }
 

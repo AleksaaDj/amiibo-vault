@@ -154,13 +154,14 @@ fun DetailsScreen(
     } else {
         Column(
             modifier = Modifier
-                .padding(top = 80.dp)
+                .padding(top = 50.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             AsyncImage(
                 modifier = Modifier
+                    .padding(top = 30.dp)
                     .size(220.dp)
                     .fillMaxWidth(),
                 model = ImageRequest.Builder(context).data(amiibo.image).build(),

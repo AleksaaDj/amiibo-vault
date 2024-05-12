@@ -29,8 +29,8 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
     var amiiboNfc: LiveData<Amiibo?> = _amiiboNfc
 
 
-    private fun loadAmiiboConsoleInfo(amiiboTail: String) {
-        repository.getAmiiboFromNfc(amiiboTail).onEach {
+    private fun loadAmiiboFromNfc(amiiboTail: String) {
+        repository.getAmiiboSpecific(amiiboTail).onEach {
             if (it.isNotEmpty()) {
                 _amiiboNfc.value = it[0]
             }
@@ -75,6 +75,6 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
             pageResponse[2]
         ) + String.format("%02x", pageResponse[3])
 
-        loadAmiiboConsoleInfo(amiiboTail = amiiboTail)
+        loadAmiiboFromNfc(amiiboTail = amiiboTail)
     }
 }

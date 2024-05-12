@@ -69,7 +69,7 @@ fun AmiiboListScreen(
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var isList by rememberSaveable { mutableStateOf(true) }
-    val sortedList: List<Amiibo>? = amiiboList?.sortedBy { it.name }
+    var showLatestAmiibo by rememberSaveable { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -138,13 +138,19 @@ fun AmiiboListScreen(
         }
 
         if (isPortrait) {
-            AnimatedVisibility(visible = amiiboLatest != null) {
+            AnimatedVisibility(visible = showLatestAmiibo) {
                 LatestAmiiboCard(
                     amiiboLatest = amiiboLatest,
                     navigateToDetails = navigateToDetails
                 )
             }
-            Spacer(modifier = Modifier.height(5.dp))
+            if(amiiboLatest != null) {
+                LaunchedEffect(true) {
+                    delay(1000)
+                    showLatestAmiibo = true
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
         }
 
         HorizontalDivider(
@@ -173,7 +179,7 @@ fun AmiiboListScreen(
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(visible = showErrorScreen.value) {
-                    EmptyScreen()
+                    EmptyScreen(stringResource(id = R.string.error_getting_amiibo_list))
                 }
                 LazyColumn(
                     state = listState,
@@ -184,13 +190,15 @@ fun AmiiboListScreen(
                         ),
                     contentPadding = PaddingValues(vertical = 10.dp),
                 ) {
-                    if (sortedList != null) {
-                        items(count = sortedList.size) {
-                            AmiiboListItem(amiibo = sortedList[it], onClick = { amiibo ->
-                                navigateToDetails(amiibo)
-                            })
-                            showProgress.value = false
-                            showErrorScreen.value = false
+                    if (amiiboList != null) {
+                        if (amiiboList.isNotEmpty()) {
+                            items(count = amiiboList.size) {
+                                AmiiboListItem(amiibo = amiiboList[it], onClick = { amiibo ->
+                                    navigateToDetails(amiibo)
+                                })
+                                showProgress.value = false
+                                showErrorScreen.value = false
+                            }
                         }
                     }
                 }
@@ -223,7 +231,7 @@ fun AmiiboListScreen(
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(visible = showErrorScreen.value) {
-                    EmptyScreen()
+                    EmptyScreen(stringResource(id = R.string.error_getting_amiibo_list))
                 }
                 LazyVerticalGrid(
                     state = gridState,
@@ -233,9 +241,9 @@ fun AmiiboListScreen(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     contentPadding = PaddingValues(vertical = 20.dp),
                 ) {
-                    if (sortedList != null) {
-                        items(count = sortedList.size) {
-                            AmiiboGridItem(amiibo = sortedList[it]) { amiibo ->
+                    if (amiiboList != null) {
+                        items(count = amiiboList.size) {
+                            AmiiboGridItem(amiibo = amiiboList[it]) { amiibo ->
                                 navigateToDetails(amiibo)
                             }
                         }
@@ -252,11 +260,16 @@ fun AmiiboListScreen(
                 }
             }
         }
+        if (amiiboList != null) {
+            androidx.compose.animation.AnimatedVisibility(visible = amiiboList.isEmpty()) {
+                EmptyScreen(stringResource(id = R.string.no_amiibo_found))
+            }
+        }
     }
 }
 
 @Composable
-fun EmptyScreen() {
+fun EmptyScreen(textToDisplay: String) {
     Box(
         contentAlignment = Alignment.Center,
     ) {
@@ -264,7 +277,7 @@ fun EmptyScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(50.dp),
-            text = stringResource(R.string.error_getting_amiibo_list),
+            text = textToDisplay,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,

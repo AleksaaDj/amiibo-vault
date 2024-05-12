@@ -24,13 +24,12 @@
     <string name="tap_amiibo">設定でNFCの読み取りを有効にし、電話の背面にamiiboをタップしてスキャンします。</string>
     <string name="search_amiibo">amiiboを検索</string>
     <string name="logo">ロゴ</string>
-    <string name="title_activity_openning">オープニングアクティビティ</string>
     <string name="error_getting_compatible_games">互換性のあるゲームの取得エラー</string>
     <string name="error_getting_amiibo_list">amiiboリスト取得エラー</string>
     <string name="donate">寄付</string>
     <string name="error_opening_the_link">リンクを開く際のエラー</string>
     <string name="my_collection">私のコレクション</string>
-    <string name="arrow_up">矢印上</string>
     <string name="set">セット</string>
     <string name="serial">シリアル</string>
+    <string name="no_amiibo_found">amiiboが見つかりません。d</string>
 </resources>

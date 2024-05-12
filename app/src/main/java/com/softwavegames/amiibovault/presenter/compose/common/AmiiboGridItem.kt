@@ -35,7 +35,7 @@ fun AmiiboGridItem(
                 .clickable {
                     onAmiiboClick(amiibo)
                 },
-            model = ImageRequest.Builder(context).data(amiibo.image).build(),
+            model = ImageRequest.Builder(context).data(amiibo.image).crossfade(true).build(),
             contentDescription = null,
             contentScale = ContentScale.Inside,
             error = painterResource(R.drawable.ic_image_placeholder)

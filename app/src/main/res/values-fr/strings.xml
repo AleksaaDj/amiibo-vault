@@ -25,13 +25,12 @@
     <string name="tap_amiibo">Activez la lecture NFC dans les paramètres et appuyez sur amiibo à l\'arrière du téléphone pour scanner.</string>
     <string name="search_amiibo">Rechercher amiibo</string>
     <string name="logo">logo</string>
-    <string name="title_activity_openning">OpenningActivity</string>
     <string name="error_getting_compatible_games">Erreur lors de la récupération des jeux compatibles</string>
     <string name="error_getting_amiibo_list">Erreur lors de la récupération de la liste des amiibo</string>
     <string name="donate">donner</string>
     <string name="error_opening_the_link">Erreur lors de l\'ouverture du lien</string>
     <string name="my_collection">ma collection</string>
-    <string name="arrow_up">flèche vers le haut</string>
     <string name="set">Set</string>
     <string name="serial">Serial</string>
+    <string name="no_amiibo_found">Aucun amiibo trouvé</string>
 </resources>

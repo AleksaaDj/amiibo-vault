@@ -24,13 +24,12 @@
     <string name="tap_amiibo">Enable NFC reading in Settings and Tap amiibo to back of the phone to scan.</string>
     <string name="search_amiibo">Search amiibo</string>
     <string name="logo">logo</string>
-    <string name="title_activity_openning">OpenningActivity</string>
     <string name="error_getting_compatible_games">Error getting compatible games</string>
     <string name="error_getting_amiibo_list">Error getting amiibo list</string>
     <string name="donate">donate</string>
     <string name="error_opening_the_link">Error opening the link</string>
     <string name="my_collection">my collection</string>
-    <string name="arrow_up">arrow up</string>
     <string name="set">Set</string>
     <string name="serial">Serial</string>
+    <string name="no_amiibo_found">No amiibo found</string>
 </resources>

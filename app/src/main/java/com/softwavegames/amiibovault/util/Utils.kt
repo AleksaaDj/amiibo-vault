@@ -1,19 +1,8 @@
 package com.softwavegames.amiibovault.util
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import coil.ImageLoader
-import coil.request.ErrorResult
-import coil.request.ImageRequest
-import coil.request.SuccessResult
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -109,32 +98,4 @@ class Utils {
         return year
     }
 
-    fun urlToBitmap(
-        scope: CoroutineScope,
-        imageURL: String,
-        context: Context,
-        onSuccess: (bitmap: Bitmap) -> Unit,
-        onError: (error: Throwable) -> Unit
-    ) {
-        var bitmap: Bitmap? = null
-        val loadBitmap = scope.launch(Dispatchers.IO) {
-            val loader = ImageLoader(context)
-            val request = ImageRequest.Builder(context)
-                .data(imageURL)
-                .build()
-            val result = loader.execute(request)
-            if (result is SuccessResult) {
-                bitmap = (result.drawable as BitmapDrawable).bitmap
-            } else if (result is ErrorResult) {
-                cancel(result.throwable.localizedMessage ?: "ErrorResult", result.throwable)
-            }
-        }
-        loadBitmap.invokeOnCompletion { throwable ->
-            bitmap?.let {
-                onSuccess(it)
-            } ?: throwable?.let {
-                onError(it)
-            } ?: onError(Throwable("Undefined Error"))
-        }
-    }
 }
