@@ -9,10 +9,14 @@ import androidx.core.graphics.ColorUtils
 
 
 object AverageColor {
+
     fun getAverageColor(imageBitmap: ImageBitmap): Color {
         val averageColor: Color
-        val compatibleBitmap = imageBitmap.asAndroidBitmap()
-            .copy(Bitmap.Config.ARGB_8888, false)
+        // Create resized Bitmap
+        val compatibleBitmap = Bitmap.createScaledBitmap(
+            imageBitmap.asAndroidBitmap()
+                .copy(Bitmap.Config.ARGB_8888, false), 50, 50, false
+        )
 
         // Retrieve the pixels from the compatible Bitmap
         val pixels = IntArray(compatibleBitmap.width * compatibleBitmap.height)
@@ -45,7 +49,6 @@ object AverageColor {
         // Set the average color as the result
         averageColor = Color(averageRed, averageGreen, averageBlue)
 
-
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(averageColor.toArgb(), hsl)
 
@@ -57,7 +60,6 @@ object AverageColor {
                 hsl[2] + 0.2f
             )
         )
-
         return Color(lighterColor)
     }
 }

@@ -3,16 +3,17 @@ package com.softwavegames.amiibovault.presenter.compose.screens.search
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -47,7 +48,7 @@ import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
-import com.softwavegames.amiibovault.presenter.compose.common.LatestAmiiboCard
+import com.softwavegames.amiibovault.presenter.compose.common.FeaturedAmiiboCard
 import com.softwavegames.amiibovault.presenter.compose.common.ScrollToTopButton
 import kotlinx.coroutines.delay
 
@@ -139,12 +140,12 @@ fun AmiiboListScreen(
 
         if (isPortrait) {
             AnimatedVisibility(visible = showLatestAmiibo) {
-                LatestAmiiboCard(
+                FeaturedAmiiboCard(
                     amiiboLatest = amiiboLatest,
                     navigateToDetails = navigateToDetails
                 )
             }
-            if(amiiboLatest != null) {
+            if (amiiboLatest != null) {
                 LaunchedEffect(true) {
                     delay(1000)
                     showLatestAmiibo = true
@@ -179,7 +180,7 @@ fun AmiiboListScreen(
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(visible = showErrorScreen.value) {
-                    EmptyScreen(stringResource(id = R.string.error_getting_amiibo_list))
+                    EmptyScreen(stringResource(id = R.string.error_getting_amiibo_list), isPortrait)
                 }
                 LazyColumn(
                     state = listState,
@@ -231,7 +232,7 @@ fun AmiiboListScreen(
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(visible = showErrorScreen.value) {
-                    EmptyScreen(stringResource(id = R.string.error_getting_amiibo_list))
+                    EmptyScreen(stringResource(id = R.string.error_getting_amiibo_list), isPortrait)
                 }
                 LazyVerticalGrid(
                     state = gridState,
@@ -262,21 +263,27 @@ fun AmiiboListScreen(
         }
         if (amiiboList != null) {
             androidx.compose.animation.AnimatedVisibility(visible = amiiboList.isEmpty()) {
-                EmptyScreen(stringResource(id = R.string.no_amiibo_found))
+                EmptyScreen(stringResource(id = R.string.no_amiibo_found), isPortrait)
             }
         }
     }
 }
 
 @Composable
-fun EmptyScreen(textToDisplay: String) {
-    Box(
-        contentAlignment = Alignment.Center,
+fun EmptyScreen(textToDisplay: String, isPortrait: Boolean) {
+    Column(
+        modifier = Modifier
+            .padding(if (isPortrait) 70.dp else 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            modifier = Modifier
+                .size(180.dp),
+            painter = painterResource(id = R.drawable.no_results), contentDescription = null
+        )
         Text(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(50.dp),
+                .fillMaxWidth(),
             text = textToDisplay,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimary,

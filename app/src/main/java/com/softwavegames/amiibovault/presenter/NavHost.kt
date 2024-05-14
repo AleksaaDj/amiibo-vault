@@ -62,6 +62,7 @@ import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboList
 import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboSearchViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboFromSeriesListViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboGridScreen
+import com.softwavegames.amiibovault.presenter.compose.screens.support.SupportScreen
 import com.softwavegames.amiibovault.util.Constants
 import kotlinx.coroutines.launch
 
@@ -338,7 +339,8 @@ fun BottomNavigationBar(
                                 soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
                                 navController.navigateUp()
                             },
-                            isPortrait = isPortrait
+                            isPortrait = isPortrait,
+                            amiiboName = it.name
                         )
                     }
             }
@@ -355,7 +357,10 @@ fun BottomNavigationBar(
                         soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
                         navigateToDetails(navController = navController, amiibo = amiibo)
                     },
-                    isPortrait = isPortrait
+                    isPortrait = isPortrait,
+                    onSupportClick = {
+                        navigateToSupportScreen(navController)
+                    }
                 )
             }
             composable(AppNavigation.BottomNavScreens.NfcScanner.route) {
@@ -365,6 +370,14 @@ fun BottomNavigationBar(
                         navController.navigateUp()
                     },
                     isPortrait = isPortrait
+                )
+            }
+            composable(AppNavigation.NavigationItem.SupportScreen.route) {
+                SupportScreen(
+                    onBackClick = {
+                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                        navController.navigateUp()
+                    }
                 )
             }
         }
@@ -419,6 +432,12 @@ private fun navigateToCompatibility(navController: NavController, amiibo: Amiibo
 private fun navigateToNfcScanner(navController: NavController) {
     navController.navigate(
         route = AppNavigation.BottomNavScreens.NfcScanner.route
+    )
+}
+
+private fun navigateToSupportScreen(navController: NavController) {
+    navController.navigate(
+        route = AppNavigation.NavigationItem.SupportScreen.route
     )
 }
 

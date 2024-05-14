@@ -1,18 +1,25 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.compatibility
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,7 +62,8 @@ import kotlinx.coroutines.delay
 fun CompatibilityScreen(
     amiiboGames: AmiiboGames?,
     onBackClick: () -> Unit,
-    isPortrait: Boolean
+    isPortrait: Boolean,
+    amiiboName: String
 ) {
 
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
@@ -65,7 +74,7 @@ fun CompatibilityScreen(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = Color.Red,
         ),
-        title = { Text(text = stringResource(R.string.console_usage)) },
+        title = { Text(text = amiiboName) },
         navigationIcon = {
             IconButton(onClick = { onBackClick() }) {
                 Icon(
@@ -167,8 +176,8 @@ fun SwitchGamesList(consoleGamesList: List<GamesSwitch>, isPortrait: Boolean) {
                         start = if (isPortrait) 0.dp else 50.dp,
                         end = if (isPortrait) 0.dp else 50.dp
                     ),
-                verticalArrangement = Arrangement.run { spacedBy(4.dp) },
-                contentPadding = PaddingValues(10.dp),
+                verticalArrangement = Arrangement.run { spacedBy(10.dp) },
+                contentPadding = PaddingValues(15.dp),
 
                 ) {
                 items(count = consoleGamesList.size) {
@@ -221,8 +230,8 @@ fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean) {
                         start = if (isPortrait) 0.dp else 50.dp,
                         end = if (isPortrait) 0.dp else 50.dp
                     ),
-                verticalArrangement = Arrangement.run { spacedBy(4.dp) },
-                contentPadding = PaddingValues(10.dp),
+                verticalArrangement = Arrangement.run { spacedBy(10.dp) },
+                contentPadding = PaddingValues(15.dp),
 
                 ) {
                 items(count = consoleGamesList.size) {
@@ -277,8 +286,8 @@ fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean) {
                         start = if (isPortrait) 0.dp else 50.dp,
                         end = if (isPortrait) 0.dp else 50.dp
                     ),
-                verticalArrangement = Arrangement.run { spacedBy(4.dp) },
-                contentPadding = PaddingValues(10.dp),
+                verticalArrangement = Arrangement.run { spacedBy(10.dp) },
+                contentPadding = PaddingValues(15.dp),
 
                 ) {
                 items(count = consoleGamesList.size) {
@@ -297,35 +306,86 @@ fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean) {
 
 @Composable
 fun ConsoleGameItem(title: String, usage: String) {
+    var expandedState by remember { mutableStateOf(false) }
+    val rotationState by animateFloatAsState(
+        targetValue = if (expandedState) 180f else 0f, label = ""
+    )
 
-    Column(
+    Card(
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            ),
+
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
+        onClick = {
+            expandedState = !expandedState
+        }
     ) {
-        Text(
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary,
-            text = title
-        )
-        Text(
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
-            text = usage
-        )
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier
+                        .weight(6f),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    text = title
+                )
+                IconButton(
+                    modifier = Modifier
+                        .weight(1f)
+                        .rotate(rotationState),
+                    onClick = {
+                        expandedState = !expandedState
+                    }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                    )
+                }
+            }
+            if (expandedState) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    text = usage
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun NoCompatibleGamesScreen(console: String) {
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
+        modifier = Modifier
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            modifier = Modifier
+                .size(150.dp),
+            painter = painterResource(id = R.drawable.no_results), contentDescription = null
+        )
         Text(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(50.dp),
+                .fillMaxWidth(),
             text = stringResource(R.string.no_compatible_games_for, console),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimary,
@@ -336,13 +396,19 @@ fun NoCompatibleGamesScreen(console: String) {
 
 @Composable
 fun EmptyScreen() {
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
+        modifier = Modifier
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            modifier = Modifier
+                .size(180.dp),
+            painter = painterResource(id = R.drawable.no_results), contentDescription = null
+        )
         Text(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(50.dp),
+                .fillMaxWidth(),
             text = stringResource(R.string.error_getting_compatible_games),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimary,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,10 +31,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
@@ -50,6 +55,9 @@ fun AmiiboListItem(
     amiibo: Amiibo,
     onClick: (Amiibo) -> Unit
 ) {
+    val density = LocalDensity.current
+    var height by remember { mutableIntStateOf(0) }
+    val heightDp = remember(height) { with(density) { height.toDp() } }
     val imageState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(amiibo.image)
@@ -89,6 +97,9 @@ fun AmiiboListItem(
             Card(
                 modifier = modifier
                     .fillMaxWidth()
+                    .onSizeChanged {
+                        height = it.height
+                    }
                     .clickable { onClick(amiibo) }
                     .background(dominantColor),
                 elevation = CardDefaults.cardElevation(
@@ -101,7 +112,13 @@ fun AmiiboListItem(
                     bottomEnd = 300.dp
                 ),
             ) {
-                ListItemDetails(modifier = modifier, amiibo = amiibo, imageState.painter, dominantColor)
+                ListItemDetails(
+                    modifier = modifier,
+                    amiibo = amiibo,
+                    imageState.painter,
+                    dominantColor,
+                    heightDp
+                )
             }
         }
     }
@@ -112,7 +129,8 @@ private fun ListItemDetails(
     modifier: Modifier,
     amiibo: Amiibo,
     imagePainter: Painter?,
-    dominantColor: Color
+    dominantColor: Color,
+    height: Dp
 ) {
     Row(
         modifier = modifier
@@ -121,9 +139,10 @@ private fun ListItemDetails(
     ) {
         Box(
             modifier = Modifier
-                .size(85.dp)
-                .background(dominantColor)
-        ) {
+                .height(height)
+                .background(dominantColor),
+            contentAlignment = Alignment.Center,
+            ) {
             Image(
                 modifier = Modifier
                     .size(85.dp)
@@ -154,7 +173,6 @@ private fun ListItemDetails(
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
-
 
             amiibo.release?.jp?.let {
                 Text(

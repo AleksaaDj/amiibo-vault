@@ -30,7 +30,7 @@ interface AmiiboDao {
     @Query("SELECT * FROM Amiibo WHERE featured = 1")
     fun getCurrentFeaturedAmiibo(): Flow<List<Amiibo>>
     @Query("UPDATE Amiibo SET featured = :featured, color = :color WHERE tail =:tail")
-    fun updateFeaturedAmiibo(featured: Boolean, color: Int, tail: String)
+    fun setFeaturedAmiibo(featured: Boolean, color: Int, tail: String)
     @Query("UPDATE Amiibo SET featured = 0 WHERE tail =:tail")
     fun removeFeaturedAmiibo(tail: String)
 

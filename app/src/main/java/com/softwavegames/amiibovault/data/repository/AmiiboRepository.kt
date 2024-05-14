@@ -41,8 +41,8 @@ class AmiiboRepository(private val amiiboApi: AmiiboApi, private val amiiboDao: 
         amiiboDao.getCurrentFeaturedAmiibo()
     fun removeCurrentFeaturedAmiibo(tail: String) =
         amiiboDao.removeFeaturedAmiibo(tail)
-    fun updateFeaturedAmiibo(featured: Boolean, color: Int, tail: String) =
-        amiiboDao.updateFeaturedAmiibo(featured, color, tail)
+    fun setFeaturedAmiibo(featured: Boolean, color: Int, tail: String) =
+        amiiboDao.setFeaturedAmiibo(featured, color, tail)
 
     //Amiibo Filter
     /*fun getAmiiboListFilteredBoth(series: String?, type: String?) =

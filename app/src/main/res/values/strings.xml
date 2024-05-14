@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">amiibo Vault</string>
     <string name="character">Character</string>
-    <string name="title_activity_details">DetailsActivity</string>
     <string name="featured_amiibo">Featured amiibo</string>
     <string name="collections">collections</string>
     <string name="collection">" collection "</string>
@@ -10,12 +9,10 @@
     <string name="worldwide">" worldwide"</string>
     <string name="wishlist_empty">Your Wishlist is empty, add amiibo by clicking on bookmark icon on amiibo details screen</string>
     <string name="collection_empty">Your Collection is empty, add amiibo by clicking \'add to my collection\' button on amiibo details screen.</string>
-    <string name="console_usage">console usage</string>
     <string name="no_compatible_games_for">No compatible games for %1$s</string>
     <string name="amiibo">amiibo</string>
     <string name="game_series">Game Series</string>
     <string name="type">Type</string>
-    <string name="release_date">Release Date</string>
     <string name="more_from_series">more from series</string>
     <string name="compatibility_and_usage">compatibility and usage</string>
     <string name="add_to_my_collection">"  add to my collection"</string>
@@ -23,7 +20,6 @@
     <string name="amiibo_reader">amiibo reader</string>
     <string name="tap_amiibo">Enable NFC reading in Settings and Tap amiibo to back of the phone to scan.</string>
     <string name="search_amiibo">Search amiibo</string>
-    <string name="logo">logo</string>
     <string name="error_getting_compatible_games">Error getting compatible games</string>
     <string name="error_getting_amiibo_list">Error getting amiibo list</string>
     <string name="donate">donate</string>
@@ -32,4 +28,7 @@
     <string name="set">Set</string>
     <string name="serial">Serial</string>
     <string name="no_amiibo_found">No amiibo found</string>
+    <string name="support_title">Support Amiibo Vault development</string>
+    <string name="support_text">Amiibo Vault, being a nonprofit app without ads, relies on your generous support for its continued development. If you enjoy using Amiibo Vault and wish to contribute to its future enhancements, kindly consider making a small donation to our team by purchasing us a coffee. You can do this by simply clicking the button below. \n\nMoreover, your rating of Amiibo Vault on the Play Store would also serve as a valuable contribution, providing us with vital feedback to adapt and improve our offerings.  \n\nYour invaluable support ensures we can continue to make Amiibo Vault even more enjoyable for all the Amiibo enthusiasts out there. Thank you very much.</string>
+    <string name="rate_amiibo_vault">Rate amiibo Vault</string>
 </resources>

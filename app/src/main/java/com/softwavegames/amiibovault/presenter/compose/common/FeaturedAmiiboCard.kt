@@ -29,7 +29,7 @@ import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 
 @Composable
-fun LatestAmiiboCard(
+fun FeaturedAmiiboCard(
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit
 ) {
@@ -44,7 +44,7 @@ fun LatestAmiiboCard(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                AmiiboLatestDetails(
+                AmiiboFeaturedDetails(
                     amiiboLatest = amiiboLatest,
                     navigateToDetails,
                 )
@@ -63,7 +63,7 @@ fun LatestAmiiboCard(
 }
 
 @Composable
-private fun AmiiboLatestDetails(
+private fun AmiiboFeaturedDetails(
     amiiboLatest: Amiibo,
     navigateToDetails: (Amiibo) -> Unit,
 ) {

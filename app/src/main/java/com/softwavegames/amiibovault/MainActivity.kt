@@ -56,10 +56,12 @@ class MainActivity : ComponentActivity() {
                 Configuration.ORIENTATION_LANDSCAPE -> {
                     false
                 }
+
                 else -> {
                     true
                 }
             }
+
             AmiiboMvvmComposeTheme {
                 LogoAnim {
                     isAnimationFinished.value = true

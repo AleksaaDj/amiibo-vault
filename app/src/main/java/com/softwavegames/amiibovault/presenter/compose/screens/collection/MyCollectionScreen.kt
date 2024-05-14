@@ -1,8 +1,5 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.collection
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -40,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
@@ -57,7 +53,8 @@ fun MyCollectionScreen(
     amiiboListCollection: List<AmiiboCollection>?,
     amiiboListWishlist: List<AmiiboWishlist>?,
     navigateToDetails: (Amiibo) -> Unit,
-    isPortrait: Boolean
+    isPortrait: Boolean,
+    onSupportClick: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -70,19 +67,10 @@ fun MyCollectionScreen(
         ),
         title = { Text(text = stringResource(R.string.collections)) },
         actions = {
-            val context = LocalContext.current
             IconButton(modifier = Modifier
                 .padding(end = 5.dp),
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Constants.DONATE_URL.toUri())
-                    try {
-                        context.startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.error_opening_the_link), Toast.LENGTH_LONG
-                        ).show()
-                    }
+                    onSupportClick()
                 }) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_kofi),

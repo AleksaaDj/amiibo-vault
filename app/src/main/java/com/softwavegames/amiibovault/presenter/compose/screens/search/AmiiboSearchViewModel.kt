@@ -38,7 +38,6 @@ class AmiiboSearchViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-
     private var _amiiboList = MutableLiveData<List<Amiibo>?>()
     var amiiboList: LiveData<List<Amiibo>?> = _amiiboList
 
@@ -128,7 +127,7 @@ class AmiiboSearchViewModel @Inject constructor(
                         }
                     }.launchIn(viewModelScope)
                 }
-                repository.updateFeaturedAmiibo(
+                repository.setFeaturedAmiibo(
                     featured = true,
                     color = color.toArgb(),
                     tail = newAmiibo.tail
