@@ -63,7 +63,9 @@ fun CompatibilityScreen(
     amiiboGames: AmiiboGames?,
     onBackClick: () -> Unit,
     isPortrait: Boolean,
-    amiiboName: String
+    amiiboName: String,
+    onCardClick: () -> Unit,
+    onSelectionChange: () -> Unit
 ) {
 
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
@@ -103,6 +105,7 @@ fun CompatibilityScreen(
             selectedIndex = selectedIndex,
             items = items,
             onSelectionChange = {
+                onSelectionChange()
                 selectedIndex = it
                 selectedTab = selectedIndex
             }
@@ -111,11 +114,13 @@ fun CompatibilityScreen(
             when (selectedTab) {
                 0 -> SwitchGamesList(
                     consoleGamesList = amiiboGames.gamesSwitch,
-                    isPortrait = isPortrait
+                    isPortrait = isPortrait,
+                    onCardClick = onCardClick
                 )
-
-                1 -> DsGamesList(consoleGamesList = amiiboGames.games3DS, isPortrait = isPortrait)
-                2 -> WiiGamesList(consoleGamesList = amiiboGames.gamesWiiU, isPortrait = isPortrait)
+                1 -> DsGamesList(consoleGamesList = amiiboGames.games3DS, isPortrait = isPortrait,
+                    onCardClick = onCardClick)
+                2 -> WiiGamesList(consoleGamesList = amiiboGames.gamesWiiU, isPortrait = isPortrait,
+                    onCardClick = onCardClick)
             }
         } else {
             AnimatedVisibility(visible = !showErrorScreen) {
@@ -138,7 +143,11 @@ fun CompatibilityScreen(
 
 
 @Composable
-fun SwitchGamesList(consoleGamesList: List<GamesSwitch>, isPortrait: Boolean) {
+fun SwitchGamesList(
+    consoleGamesList: List<GamesSwitch>,
+    isPortrait: Boolean,
+    onCardClick: () -> Unit
+) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
@@ -183,7 +192,8 @@ fun SwitchGamesList(consoleGamesList: List<GamesSwitch>, isPortrait: Boolean) {
                 items(count = consoleGamesList.size) {
                     ConsoleGameItem(
                         title = consoleGamesList[it].gameName,
-                        usage = consoleGamesList[it].amiiboUsage[0].Usage
+                        usage = consoleGamesList[it].amiiboUsage[0].Usage,
+                        onCardClick = onCardClick
                     )
                 }
             }
@@ -194,7 +204,7 @@ fun SwitchGamesList(consoleGamesList: List<GamesSwitch>, isPortrait: Boolean) {
 }
 
 @Composable
-fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean) {
+fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean, onCardClick: () -> Unit) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
@@ -237,7 +247,8 @@ fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean) {
                 items(count = consoleGamesList.size) {
                     ConsoleGameItem(
                         title = consoleGamesList[it].gameName,
-                        usage = consoleGamesList[it].amiiboUsage[0].Usage
+                        usage = consoleGamesList[it].amiiboUsage[0].Usage,
+                        onCardClick = onCardClick
                     )
                 }
             }
@@ -248,7 +259,7 @@ fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean) {
 }
 
 @Composable
-fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean) {
+fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean, onCardClick: () -> Unit) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
@@ -293,7 +304,8 @@ fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean) {
                 items(count = consoleGamesList.size) {
                     ConsoleGameItem(
                         title = consoleGamesList[it].gameName,
-                        usage = consoleGamesList[it].amiiboUsage[0].Usage
+                        usage = consoleGamesList[it].amiiboUsage[0].Usage,
+                        onCardClick = onCardClick
                     )
                 }
             }
@@ -305,7 +317,7 @@ fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean) {
 
 
 @Composable
-fun ConsoleGameItem(title: String, usage: String) {
+fun ConsoleGameItem(title: String, usage: String, onCardClick: () -> Unit) {
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f, label = ""
@@ -326,6 +338,7 @@ fun ConsoleGameItem(title: String, usage: String) {
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         ),
         onClick = {
+            onCardClick()
             expandedState = !expandedState
         }
     ) {
@@ -350,6 +363,7 @@ fun ConsoleGameItem(title: String, usage: String) {
                         .weight(1f)
                         .rotate(rotationState),
                     onClick = {
+                        onCardClick()
                         expandedState = !expandedState
                     }) {
                     Icon(

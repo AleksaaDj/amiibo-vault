@@ -54,7 +54,8 @@ fun MyCollectionScreen(
     amiiboListWishlist: List<AmiiboWishlist>?,
     navigateToDetails: (Amiibo) -> Unit,
     isPortrait: Boolean,
-    onSupportClick: () -> Unit
+    onSupportClick: () -> Unit,
+    onSelectionChange: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -109,6 +110,7 @@ fun MyCollectionScreen(
                 selectedIndex = selectedIndex,
                 items = items,
                 onSelectionChange = {
+                    onSelectionChange()
                     selectedIndex = it
                     selectedTab = selectedIndex
                 }

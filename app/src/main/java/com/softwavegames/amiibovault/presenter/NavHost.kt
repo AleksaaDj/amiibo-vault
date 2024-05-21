@@ -120,6 +120,7 @@ fun BottomNavigationBar(
                                         )
                                     },
                                     onClick = {
+                                        playSound(soundPool, iconSound)
                                         navigationSelectedItem.value = index
                                         navController.navigate(navigationItem.route) {
                                             popUpTo(navController.graph.findStartDestination().id) {
@@ -144,7 +145,7 @@ fun BottomNavigationBar(
                 ) {
                     FloatingActionButton(
                         onClick = {
-                            soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                            playSound(soundPool, buttonSound)
                             navigateToNfcScanner(navController)
                         },
                         shape = CircleShape,
@@ -188,6 +189,7 @@ fun BottomNavigationBar(
                                 )
                             },
                             onClick = {
+                                playSound(soundPool, iconSound)
                                 navigationSelectedItem.value = index
                                 navController.navigate(navigationItem.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
@@ -216,7 +218,7 @@ fun BottomNavigationBar(
                     amiiboList = viewModel.amiiboList.observeAsState().value,
                     amiiboLatest = viewModel.amiiboLatest.observeAsState().value,
                     navigateToDetails = { amiibo ->
-                        soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                        playSound(soundPool, buttonSound)
                         navigateToDetails(
                             navController = navController,
                             amiibo = amiibo,
@@ -231,10 +233,10 @@ fun BottomNavigationBar(
                         }
                     },
                     onChangeListClick = {
-                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                        playSound(soundPool, iconSound)
                     },
                     onScrollToTopClick = { isList ->
-                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                        playSound(soundPool, iconSound)
                         coroutineScope.launch {
                             scrollToTop(isList, listState, gridState)
                         }
@@ -257,41 +259,41 @@ fun BottomNavigationBar(
                         DetailsScreen(
                             amiibo = it,
                             onBackClick = {
-                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, iconSound)
                                 navController.navigateUp()
                             },
                             navigateToMore = { amiibo ->
-                                soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, buttonSound)
                                 navigateToMore(navController = navController, amiibo = amiibo)
                             },
                             navigateToCompatibility = { amiibo ->
-                                soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, buttonSound)
                                 navigateToCompatibility(
                                     navController = navController,
                                     amiibo = amiibo
                                 )
                             },
                             saveToMyCollection = { amiibo ->
-                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, iconSound)
                                 viewModel.viewModelScope.launch {
                                     viewModel.upsertAmiiboToMyCollection(amiibo)
                                 }
                             },
                             removeFromMyCollection = { amiibo ->
-                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, iconSound)
                                 viewModel.viewModelScope.launch {
                                     viewModel.deleteAmiiboFromMyCollection(amiibo)
                                 }
                             },
                             isAmiiboSavedMyCollection = viewModel.amiiboSavedMyCollection.observeAsState(),
                             saveToWishlist = { amiibo ->
-                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, iconSound)
                                 viewModel.viewModelScope.launch {
                                     viewModel.upsertAmiiboToWishList(amiibo)
                                 }
                             },
                             removeFromWishlist = { amiibo ->
-                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, iconSound)
                                 viewModel.viewModelScope.launch {
                                     viewModel.deleteAmiiboFromWishList(amiibo)
                                 }
@@ -311,14 +313,14 @@ fun BottomNavigationBar(
                         AmiiboGridScreen(
                             amiiboList = viewModel.amiiboList.observeAsState().value,
                             navigateToDetails = { amiibo ->
-                                soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, buttonSound)
                                 navigateToDetails(
                                     navController = navController,
                                     amiibo = amiibo
                                 )
                             },
                             onBackClick = {
-                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, iconSound)
                                 navController.navigateUp()
                             },
                             isPortrait = isPortrait
@@ -336,11 +338,17 @@ fun BottomNavigationBar(
                         CompatibilityScreen(
                             amiiboGames = viewModel.amiiboConsolesList.observeAsState().value,
                             onBackClick = {
-                                soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                                playSound(soundPool, iconSound)
                                 navController.navigateUp()
                             },
                             isPortrait = isPortrait,
-                            amiiboName = it.name
+                            amiiboName = it.name,
+                            onCardClick = {
+                                playSound(soundPool, iconSound)
+                            },
+                            onSelectionChange = {
+                                playSound(soundPool, iconSound)
+                            }
                         )
                     }
             }
@@ -354,19 +362,23 @@ fun BottomNavigationBar(
                     amiiboListCollection = viewModel.amiiboListCollection.observeAsState().value,
                     amiiboListWishlist = viewModel.amiiboListWishlist.observeAsState().value,
                     navigateToDetails = { amiibo ->
-                        soundPool.play(buttonSound, 1F, 1F, 1, 0, 1F)
+                        playSound(soundPool, buttonSound)
                         navigateToDetails(navController = navController, amiibo = amiibo)
                     },
                     isPortrait = isPortrait,
                     onSupportClick = {
+                        playSound(soundPool, iconSound)
                         navigateToSupportScreen(navController)
+                    },
+                    onSelectionChange = {
+                        playSound(soundPool, iconSound)
                     }
                 )
             }
             composable(AppNavigation.BottomNavScreens.NfcScanner.route) {
                 NfcScannerScreen(
                     onBackClick = {
-                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                        playSound(soundPool, iconSound)
                         navController.navigateUp()
                     },
                     isPortrait = isPortrait
@@ -375,7 +387,7 @@ fun BottomNavigationBar(
             composable(AppNavigation.NavigationItem.SupportScreen.route) {
                 SupportScreen(
                     onBackClick = {
-                        soundPool.play(iconSound, 1F, 1F, 1, 0, 1F)
+                        playSound(soundPool, iconSound)
                         navController.navigateUp()
                     }
                 )
@@ -439,6 +451,10 @@ private fun navigateToSupportScreen(navController: NavController) {
     navController.navigate(
         route = AppNavigation.NavigationItem.SupportScreen.route
     )
+}
+
+private fun playSound(soundPool: SoundPool, sound: Int){
+    soundPool.play(sound, 1F, 1F, 1, 0, 1F)
 }
 
 private suspend fun scrollToTop(

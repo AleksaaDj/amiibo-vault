@@ -30,5 +30,6 @@
     <string name="no_amiibo_found">No amiibo found</string>
     <string name="support_title">Support Amiibo Vault development</string>
     <string name="support_text">Amiibo Vault, being a nonprofit app without ads, relies on your generous support for its continued development. If you enjoy using Amiibo Vault and wish to contribute to its future enhancements, kindly consider making a small donation to our team by purchasing us a coffee. You can do this by simply clicking the button below. \n\nMoreover, your rating of Amiibo Vault on the Play Store would also serve as a valuable contribution, providing us with vital feedback to adapt and improve our offerings.  \n\nYour invaluable support ensures we can continue to make Amiibo Vault even more enjoyable for all the Amiibo enthusiasts out there. Thank you very much.</string>
-    <string name="rate_amiibo_vault">Rate amiibo Vault</string>
+    <string name="rate_amiibo_vault">Rate Amiibo Vault</string>
+    <string name="support">support</string>
 </resources>

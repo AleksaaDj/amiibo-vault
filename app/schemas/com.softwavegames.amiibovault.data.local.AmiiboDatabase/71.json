@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 68,
-    "identityHash": "553001b05d38166b26e7a9e9a9e3feed",
+    "version": 71,
+    "identityHash": "70b4b45c64deccad25d1da96ad3c1b26",
     "entities": [
       {
         "tableName": "Amiibo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`amiiboSeries` TEXT NOT NULL, `character` TEXT NOT NULL, `gameSeries` TEXT NOT NULL, `head` TEXT NOT NULL, `image` TEXT NOT NULL, `name` TEXT NOT NULL, `release` TEXT, `tail` TEXT NOT NULL, `type` TEXT NOT NULL, `featured` INTEGER NOT NULL, `color` INTEGER NOT NULL, `tag` BLOB, PRIMARY KEY(`tail`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`amiiboSeries` TEXT NOT NULL, `character` TEXT NOT NULL, `gameSeries` TEXT NOT NULL, `head` TEXT NOT NULL, `image` TEXT NOT NULL, `name` TEXT NOT NULL, `release` TEXT, `tail` TEXT NOT NULL, `type` TEXT NOT NULL, `featured` INTEGER NOT NULL, `color` INTEGER NOT NULL, PRIMARY KEY(`tail`))",
         "fields": [
           {
             "fieldPath": "amiiboSeries",
@@ -73,12 +73,6 @@
             "columnName": "color",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "tag",
-            "columnName": "tag",
-            "affinity": "BLOB",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -230,7 +224,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '553001b05d38166b26e7a9e9a9e3feed')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '70b4b45c64deccad25d1da96ad3c1b26')"
     ]
   }
 }

@@ -7,7 +7,7 @@ import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
 
-@Database(entities = [Amiibo::class, AmiiboWishlist::class, AmiiboCollection::class], version = 68)
+@Database(entities = [Amiibo::class, AmiiboWishlist::class, AmiiboCollection::class], version = 71)
 @TypeConverters(ReleaseTypeConverter::class)
 abstract class AmiiboDatabase : RoomDatabase() {
 

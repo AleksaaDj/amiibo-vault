@@ -262,7 +262,7 @@ fun AmiiboListScreen(
             }
         }
         if (amiiboList != null) {
-            androidx.compose.animation.AnimatedVisibility(visible = amiiboList.isEmpty()) {
+            androidx.compose.animation.AnimatedVisibility(visible = amiiboList.isEmpty() && !showErrorScreen.value) {
                 EmptyScreen(stringResource(id = R.string.no_amiibo_found), isPortrait)
             }
         }

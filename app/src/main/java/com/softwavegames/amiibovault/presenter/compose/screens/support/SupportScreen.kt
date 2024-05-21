@@ -62,7 +62,7 @@ fun SupportScreen(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = Color.Red,
         ),
-        title = { Text(text = "Support") },
+        title = { Text(text = stringResource(R.string.support)) },
         navigationIcon = {
             IconButton(onClick = { onBackClick() }) {
                 Icon(

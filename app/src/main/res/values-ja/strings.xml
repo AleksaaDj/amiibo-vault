@@ -31,4 +31,5 @@
     <string name="support_title">Amiibo Vault開発を支援する</string>
     <string name="support_text">Amiibo Vaultは、広告なしの非営利アプリであるため、皆様の寛大なサポートを必要としています。Amiibo Vaultの使用を楽しんでいる方で、その将来の改善に貢献したい方は、私たちのチームに小額の寄付をしてコーヒーをご購入いただくことをご検討ください。寄付は下のボタンをクリックするだけで行うことができます。\n\nまた、Play StoreでのAmiibo Vaultの評価も、私たちが提供するサービスを改善し、適応させるための貴重なフィードバックとなります。\n\n皆様からの貴重なサポートにより、私たちはAmiibo VaultをすべてのAmiiboの愛好家の皆様にとってさらに楽しめるアプリにしていくことができます。どうもありがとうございます。</string>
     <string name="rate_amiibo_vault">Amiibo Vaultを評価する</string>
+    <string name="support">サポート</string>
 </resources>
