@@ -1,12 +1,11 @@
 [versions]
-agp = "8.4.0"
+agp = "8.4.1"
 coilCompose = "2.6.0"
 converterGson = "2.9.0"
 firebaseBomVersion = "33.0.0"
 hiltAndroid = "2.51.1"
 hiltNavigationCompose = "1.2.0"
-kotlin = "1.9.23"
-kotlinPlugin = "1.9.23"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -23,10 +22,10 @@ retrofit = "2.11.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 reviewKtx = "2.0.1"
 room = "2.6.1"
-devtools-ksp = "1.9.22-1.0.16"
+devtools-ksp = "2.0.0-1.0.21"
 runtimeLivedata = "1.6.7"
 firebaseVersion = "4.4.1"
-crashlyticsVersion = "2.9.9"
+crashlyticsVersion = "3.0.1"
 firebaseDatabaseKtxVersion = "21.0.0"
 appcompatVersion = "1.6.1"
 activityVersion = "1.9.0"
@@ -79,9 +78,10 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtools-ksp" }
 hilt-gradle-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize",  version.ref = "kotlinPlugin"  }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize",  version.ref = "kotlin"  }
 firebase-plugin = { id = "com.google.gms.google-services",  version.ref = "firebaseVersion"  }
 firebase-crashlytics-plugin = { id = "com.google.firebase.crashlytics",  version.ref = "crashlyticsVersion"  }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 
 

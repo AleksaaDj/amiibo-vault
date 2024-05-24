@@ -53,14 +53,15 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
             } else {
                 intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
             }
-
             val mifareUltralightTag = MifareUltralight.get(myTag)
-            mifareUltralightTag.connect()
-            val pageResponse = mifareUltralightTag.readPages(amiiboPageWithIdTailOffset)
-            try {
-                parsePageResponse(pageResponse)
-            } catch (e: SecurityException) {
-                Log.e("NfcReader", e.message.toString())
+            if (mifareUltralightTag != null) {
+                mifareUltralightTag.connect()
+                val pageResponse = mifareUltralightTag.readPages(amiiboPageWithIdTailOffset)
+                try {
+                    parsePageResponse(pageResponse)
+                } catch (e: SecurityException) {
+                    Log.e("NfcReader", e.message.toString())
+                }
             }
         }
 
