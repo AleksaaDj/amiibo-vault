@@ -33,8 +33,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -210,6 +213,11 @@ fun BottomNavigationBar(
         ) {
             composable(AppNavigation.BottomNavScreens.AmiiboList.route) {
                 val viewModel: AmiiboSearchViewModel = hiltViewModel()
+                val isList = rememberSaveable { mutableStateOf(true) }
+                val isFilterTypeSelected = rememberSaveable { mutableStateOf(false) }
+                val filterType = rememberSaveable { mutableStateOf("") }
+                val isFilterSetSelected = rememberSaveable { mutableStateOf(false) }
+                val filterSet = rememberSaveable { mutableStateOf("") }
                 navController.currentBackStackEntry?.savedStateHandle?.set(
                     Constants.PARSED_AMIIBO,
                     null
@@ -224,21 +232,32 @@ fun BottomNavigationBar(
                             amiibo = amiibo,
                         )
                     },
-                    onSearchQueryChange = { query, isList ->
-                        viewModel.searchAmiibo(query)
+                    onLayoutChange = {
+                        isList.value = it
+                    },
+                    onSearchQueryChange = { query ->
+                        if (isFilterTypeSelected.value && filterType.value.isNotEmpty() || isFilterSetSelected.value && filterSet.value.isNotEmpty()) {
+                            viewModel.searchAmiiboFiltered(
+                                query,
+                                filterType.value,
+                                filterSet.value
+                            )
+                        } else {
+                            viewModel.searchAmiibo(query)
+                        }
                         if (query.isNotEmpty()) {
                             coroutineScope.launch {
-                                scrollToTop(isList, listState, gridState)
+                                scrollToTop(isList.value, listState, gridState)
                             }
                         }
                     },
                     onChangeListClick = {
                         playSound(soundPool, iconSound)
                     },
-                    onScrollToTopClick = { isList ->
+                    onScrollToTopClick = {
                         playSound(soundPool, iconSound)
                         coroutineScope.launch {
-                            scrollToTop(isList, listState, gridState)
+                            scrollToTop(isList.value, listState, gridState)
                         }
                     },
                     isPortrait = isPortrait,
@@ -246,6 +265,30 @@ fun BottomNavigationBar(
                     gridState = gridState,
                     showScrollToTopList = showScrollToTopButtonList,
                     showScrollToTopGrid = showScrollToTopButtonGrid,
+                    onFilterTypeSelected = { typeFilter ->
+                        playSound(soundPool, iconSound)
+                        viewModel.searchAmiiboFiltered("", typeFilter, filterSet.value)
+                        filterType.value = typeFilter
+                        isFilterTypeSelected.value = true
+                    },
+                    onFilterTypeRemoved = {
+                        playSound(soundPool, iconSound)
+                        isFilterTypeSelected.value = false
+                        filterType.value = ""
+                        viewModel.searchAmiiboFiltered("", filterType.value, filterSet.value)
+                    },
+                    onFilterSetSelected = { setFilter ->
+                        playSound(soundPool, iconSound)
+                        viewModel.searchAmiiboFiltered("", filterType.value, setFilter)
+                        filterSet.value = setFilter
+                        isFilterSetSelected.value = true
+                    },
+                    onFilterSetRemoved = {
+                        playSound(soundPool, iconSound)
+                        isFilterSetSelected.value = false
+                        filterSet.value = ""
+                        viewModel.searchAmiiboFiltered("", filterType.value, filterSet.value)
+                    }
                 )
             }
             composable(AppNavigation.NavigationItem.DetailsScreen.route) {
@@ -304,28 +347,32 @@ fun BottomNavigationBar(
                     }
             }
             composable(AppNavigation.NavigationItem.AmiiboSeriesScreen.route) {
+                val viewModel: AmiiboFromSeriesListViewModel = hiltViewModel()
+                var series by rememberSaveable {
+                    mutableStateOf("")
+                }
                 navController.previousBackStackEntry?.savedStateHandle?.get<String?>(Constants.SERIES)
                     ?.let {
-                        val viewModel: AmiiboFromSeriesListViewModel = hiltViewModel()
-                        LaunchedEffect(true) {
-                            viewModel.loadAmiibos(it)
-                        }
-                        AmiiboGridScreen(
-                            amiiboList = viewModel.amiiboList.observeAsState().value,
-                            navigateToDetails = { amiibo ->
-                                playSound(soundPool, buttonSound)
-                                navigateToDetails(
-                                    navController = navController,
-                                    amiibo = amiibo
-                                )
-                            },
-                            onBackClick = {
-                                playSound(soundPool, iconSound)
-                                navController.navigateUp()
-                            },
-                            isPortrait = isPortrait
-                        )
+                        series = it
                     }
+                if (series.isNotEmpty()) {
+                    viewModel.loadAmiibos(series)
+                    AmiiboGridScreen(
+                        amiiboList = viewModel.amiiboList.observeAsState().value,
+                        navigateToDetails = { amiibo ->
+                            playSound(soundPool, buttonSound)
+                            navigateToDetails(
+                                navController = navController,
+                                amiibo = amiibo
+                            )
+                        },
+                        onBackClick = {
+                            playSound(soundPool, iconSound)
+                            navController.navigateUp()
+                        },
+                        isPortrait = isPortrait
+                    )
+                }
             }
 
             composable(AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route) {
@@ -354,10 +401,6 @@ fun BottomNavigationBar(
             }
             composable(AppNavigation.BottomNavScreens.AmiiboMyCollection.route) {
                 val viewModel: CollectionScreenViewModel = hiltViewModel()
-                navController.currentBackStackEntry?.savedStateHandle?.set(
-                    Constants.PARSED_AMIIBO,
-                    null
-                )
                 MyCollectionScreen(
                     amiiboListCollection = viewModel.amiiboListCollection.observeAsState().value,
                     amiiboListWishlist = viewModel.amiiboListWishlist.observeAsState().value,
@@ -453,7 +496,7 @@ private fun navigateToSupportScreen(navController: NavController) {
     )
 }
 
-private fun playSound(soundPool: SoundPool, sound: Int){
+private fun playSound(soundPool: SoundPool, sound: Int) {
     soundPool.play(sound, 1F, 1F, 1, 0, 1F)
 }
 

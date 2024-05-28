@@ -16,9 +16,12 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.util.AmiiboFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,9 +40,7 @@ fun BottomSheetType(onDismiss: () -> Unit, onItemClick: (String) -> Unit, onRemo
 
 @Composable
 fun TypeList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
-    val countries = listOf(
-        "Figure", "Card", "Yarn", "Band"
-    )
+    val types = AmiiboFilters.types
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Text(
@@ -49,7 +50,7 @@ fun TypeList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: 
                     onRemoveClicked()
                     onDismiss()
                 },
-            text = "Remove Filter",
+            text = stringResource(R.string.remove_filter),
             color = Color.Red,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center
@@ -58,7 +59,7 @@ fun TypeList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: 
     LazyColumn(
         contentPadding = PaddingValues(vertical = 30.dp),
     ) {
-        items(countries) {
+        items(types) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -83,7 +84,7 @@ fun TypeList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetSeries(onDismiss: () -> Unit, onItemClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
+fun BottomSheetSet(onDismiss: () -> Unit, onItemClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
     val modalBottomSheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
@@ -92,15 +93,13 @@ fun BottomSheetSeries(onDismiss: () -> Unit, onItemClick: (String) -> Unit, onRe
         sheetState = modalBottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() }
     ) {
-        SeriesList(onDismiss, onItemClick, onRemoveClicked)
+        SetList(onDismiss, onItemClick, onRemoveClicked)
     }
 }
 
 @Composable
-fun SeriesList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
-    val countries = listOf(
-        "Xenoblade Chronicles 3", "Super Smash Bros."
-    )
+fun SetList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
+    val sets = AmiiboFilters.sets
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Text(
@@ -110,7 +109,7 @@ fun SeriesList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked
                     onRemoveClicked()
                     onDismiss()
                 },
-            text = "Remove Filter",
+            text = stringResource(R.string.remove_filter),
             color = Color.Red,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center
@@ -119,7 +118,7 @@ fun SeriesList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked
     LazyColumn(
         contentPadding = PaddingValues(vertical = 30.dp),
     ) {
-        items(countries) {
+        items(sets) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

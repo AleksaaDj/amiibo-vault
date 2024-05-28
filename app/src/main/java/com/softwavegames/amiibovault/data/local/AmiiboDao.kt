@@ -34,11 +34,6 @@ interface AmiiboDao {
     @Query("UPDATE Amiibo SET featured = 0 WHERE tail =:tail")
     fun removeFeaturedAmiibo(tail: String)
 
-    //Amiibo Filter
-    /*@Query("SELECT * FROM Amiibo WHERE amiiboSeries LIKE '%' || :series || '%' AND type LIKE '%' || :typeAmiibo || '%' ")
-    fun getAmiiboFilteredBoth(series: String?, typeAmiibo:String?): Flow<List<Amiibo>>
-    @Query("SELECT * FROM Amiibo WHERE amiiboSeries LIKE '%' || :series || '%' OR type LIKE '%' || :typeAmiibo || '%' ")
-    fun getAmiiboFilteredOne(series: String?, typeAmiibo:String?): Flow<List<Amiibo>>*/
     /**
      * Collection DB
      */

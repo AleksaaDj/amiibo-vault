@@ -44,13 +44,6 @@ class AmiiboRepository(private val amiiboApi: AmiiboApi, private val amiiboDao: 
     fun setFeaturedAmiibo(featured: Boolean, color: Int, tail: String) =
         amiiboDao.setFeaturedAmiibo(featured, color, tail)
 
-    //Amiibo Filter
-    /*fun getAmiiboListFilteredBoth(series: String?, type: String?) =
-        amiiboDao.getAmiiboFilteredBoth(series, type)
-
-    fun getAmiiboListFilteredOne(series: String?, type: String?) =
-        amiiboDao.getAmiiboFilteredOne(series, type)*/
-
     /**
      * My Collection DB
      */

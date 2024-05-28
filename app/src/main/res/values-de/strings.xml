@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">amiibo Vault</string>
+    <string name="character">Charakter</string>
+    <string name="featured_amiibo">Vorgestelltes amiibo</string>
+    <string name="collections">Sammlungen</string>
+    <string name="collection">" Sammlung "</string>
+    <string name="wishlist">" Wunschliste"</string>
+    <string name="amiibo_in">" amiibo in"</string>
+    <string name="worldwide">" weltweit"</string>
+    <string name="wishlist_empty">Ihre Wunschliste ist leer, fügen Sie amiibo hinzu, indem Sie auf das Lesezeichensymbol im amiibo-Detailbildschirm klicken</string>
+    <string name="collection_empty">Ihre Sammlung ist leer, fügen Sie amiibo hinzu, indem Sie auf den Button „Zu meiner Sammlung hinzufügen“ im amiibo-Detailbildschirm klicken.</string>
+    <string name="no_compatible_games_for">Keine kompatiblen Spiele für %1$s</string>
+    <string name="amiibo">amiibo</string>
+    <string name="game_series">Spielserie</string>
+    <string name="type">Typ</string>
+    <string name="more_from_series">mehr aus der Serie</string>
+    <string name="compatibility_and_usage">Kompatibilität und Verwendung</string>
+    <string name="add_to_my_collection">" zur Sammlung hinzufügen"</string>
+    <string name="remove_from_collection">aus der Sammlung entfernen</string>
+    <string name="amiibo_reader">amiibo Leser</string>
+    <string name="tap_amiibo">Aktivieren Sie das NFC-Lesen in den Einstellungen und tippen Sie amiibo auf die Rückseite des Telefons, um es zu scannen.</string>
+    <string name="search_amiibo">Suchen amiibo</string>
+    <string name="error_getting_compatible_games">Fehler beim Abrufen kompatibler Spiele</string>
+    <string name="error_getting_amiibo_list">Fehler beim Abrufen der amiibo-Liste</string>
+    <string name="donate">spenden</string>
+    <string name="error_opening_the_link">Fehler beim Öffnen des Links</string>
+    <string name="my_collection">meine Sammlung</string>
+    <string name="set">Set</string>
+    <string name="serial">Seriennummer</string>
+    <string name="no_amiibo_found">Keine amiibo gefunden</string>
+    <string name="support_title">Unterstützen Sie die Entwicklung von Amiibo Vault</string>
+    <string name="support_text">Amiibo Vault, als eine Non-Profit-App ohne Werbung, ist auf Ihre großzügige Unterstützung für die kontinuierliche Entwicklung angewiesen. Wenn Sie Amiibo Vault gerne nutzen und zu zukünftigen Verbesserungen beitragen möchten, denken Sie bitte darüber nach, unserem Team eine kleine Spende in Form eines Kaffees zukommen zu lassen. Sie können dies einfach tun, indem Sie auf den unten stehenden Button klicken. \n\nDarüber hinaus würde auch Ihre Bewertung von Amiibo Vault im Play Store eine wertvolle Unterstützung darstellen, da wir dadurch wichtiges Feedback erhalten, um unser Angebot anzupassen und zu verbessern. \n\nIhre wertvolle Unterstützung stellt sicher, dass wir Amiibo Vault weiterhin für alle Amiibo-Enthusiasten noch angenehmer gestalten können. Vielen Dank.</string>
+    <string name="rate_amiibo_vault">Bewerten Sie Amiibo Vault</string>
+    <string name="support">Unterstützen</string>
+    <string name="remove_filter">Filter entfernen</string>
+</resources>

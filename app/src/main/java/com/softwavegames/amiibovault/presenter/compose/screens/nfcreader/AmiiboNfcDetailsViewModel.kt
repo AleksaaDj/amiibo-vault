@@ -3,7 +3,6 @@ package com.softwavegames.amiibovault.presenter.compose.screens.nfcreader
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.nfc.Tag
-import android.nfc.tech.MifareUltralight
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -12,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.util.NTAG215
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -53,18 +53,21 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
             } else {
                 intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
             }
-            val mifareUltralightTag = MifareUltralight.get(myTag)
-            if (mifareUltralightTag != null) {
-                mifareUltralightTag.connect()
-                val pageResponse = mifareUltralightTag.readPages(amiiboPageWithIdTailOffset)
-                try {
-                    parsePageResponse(pageResponse)
-                } catch (e: SecurityException) {
-                    Log.e("NfcReader", e.message.toString())
+            var mifare: NTAG215? = null
+            try {
+                mifare = NTAG215[myTag]
+                mifare?.let { ntag ->
+                    val pageResponse = ntag.readPages(amiiboPageWithIdTailOffset)
+                    if (pageResponse != null) {
+                        parsePageResponse(pageResponse)
+                    }
                 }
+            } catch (e: Exception) {
+                Log.e("TagReader", e.message.toString())
+            } finally {
+                closeTagSilently(mifare)
             }
         }
-
     }
 
     private fun parsePageResponse(pageResponse: ByteArray) {
@@ -77,5 +80,11 @@ class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: Amii
         ) + String.format("%02x", pageResponse[3])
 
         loadAmiiboFromNfc(amiiboTail = amiiboTail)
+    }
+
+    private fun closeTagSilently(mifare: NTAG215?) {
+        try {
+            mifare?.close()
+        } catch (ignored: Exception) { }
     }
 }

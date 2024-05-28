@@ -20,87 +20,87 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.ui.theme.Black
-import com.softwavegames.amiibovault.ui.theme.SemiLightGray
 
 @Composable
 fun ChipGroup(
-    onFilterSelected: (String, String) -> Unit,
-    isFiltersSelected: Boolean,
+    onFilterSetSelected: (String) -> Unit,
+    onFilterSetRemoved: () -> Unit,
+    onFilterTypeSelected: (String) -> Unit,
+    onFilterTypeRemoved: () -> Unit,
+    isPortrait: Boolean
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 10.dp, top = 10.dp, bottom = 2.dp),
+            .padding(start = if (isPortrait) 15.dp else 95.dp, bottom = 7.dp),
         horizontalArrangement = Arrangement.Start,
     ) {
-        var seriesFilter by rememberSaveable { mutableStateOf("") }
-        var typeFilter by rememberSaveable { mutableStateOf("") }
 
-        ChipSeries {
-            seriesFilter = it
-            onFilterSelected(seriesFilter, typeFilter)
-        }
         ChipType(
-            onItemSelected = { typeFilter = it },
-            isFiltersSelected = isFiltersSelected
+            onItemSelected = { onFilterTypeSelected(it)},
+            onFilterRemoved = onFilterTypeRemoved
+        )
+        
+        ChipSet(
+            onItemSelected = onFilterSetSelected,
+            onFilterRemoved = onFilterSetRemoved
         )
     }
 }
 
 @Composable
-private fun ChipType(onItemSelected: (String) -> Unit, isFiltersSelected: Boolean) {
+private fun ChipType(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Unit) {
 
     var showSheet by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(false) }
     var selectedItemLabel by rememberSaveable { mutableStateOf("") }
 
-    if(!isFiltersSelected) {
-        selected = false
-    }
     if (showSheet) {
         BottomSheetType(
             onDismiss = { showSheet = false },
             onItemClick = { selectedItem ->
                 selected = true
                 selectedItemLabel = selectedItem
-                onItemSelected(selectedItemLabel)
+                onItemSelected(selectedItem)
             },
             onRemoveClicked = {
+                onFilterRemoved()
                 selected = false
                 selectedItemLabel = ""
-                onItemSelected(selectedItemLabel)
             }
         )
     }
     Box(modifier = Modifier
-        .padding(end = 3.dp)
+        .padding(end = 8.dp)
         .clickable {
             showSheet = true
         }) {
         Surface(
             shape = MaterialTheme.shapes.medium,
-            color = if (selected) Black else SemiLightGray
+            color = if (selected) Black else MaterialTheme.colorScheme.secondaryContainer
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = if (selected) selectedItemLabel else "Type",
+                    text = if (selected) selectedItemLabel else stringResource(id = R.string.type),
                     modifier = Modifier.padding(
                         start = 7.dp,
                         top = 5.dp,
                         bottom = 5.dp
                     ),
-                    color = if (selected) Color.White else Color.Black,
+                    color = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
                 )
                 Icon(
                     Icons.Filled.ArrowDropDown,
                     null,
-                    tint = if (selected) Color.White else Color.Black
+                    tint = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -108,14 +108,14 @@ private fun ChipType(onItemSelected: (String) -> Unit, isFiltersSelected: Boolea
 }
 
 @Composable
-private fun ChipSeries(onItemSelected: (String) -> Unit) {
+private fun ChipSet(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Unit) {
     var showSheet by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(false) }
     var selectedItemLabel by rememberSaveable { mutableStateOf("") }
 
 
     if (showSheet) {
-        BottomSheetSeries(
+        BottomSheetSet(
             onDismiss = { showSheet = false },
             onItemClick = { selectedItem ->
                 selected = true
@@ -123,9 +123,9 @@ private fun ChipSeries(onItemSelected: (String) -> Unit) {
                 onItemSelected(selectedItemLabel)
             },
             onRemoveClicked = {
+                onFilterRemoved()
                 selected = false
                 selectedItemLabel = ""
-                onItemSelected(selectedItemLabel)
             }
         )
     }
@@ -136,24 +136,24 @@ private fun ChipSeries(onItemSelected: (String) -> Unit) {
         }) {
         Surface(
             shape = MaterialTheme.shapes.medium,
-            color = if (selected) Black else SemiLightGray
+            color = if (selected) Black else MaterialTheme.colorScheme.secondaryContainer
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = if (selected) selectedItemLabel else "Series",
+                    text = if (selected) selectedItemLabel else stringResource(id = R.string.set),
                     modifier = Modifier.padding(
                         start = 7.dp,
                         top = 5.dp,
                         bottom = 5.dp
                     ),
-                    color = if (selected) Color.White else Color.Black,
+                    color = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
                 )
                 Icon(
                     Icons.Filled.ArrowDropDown,
                     null,
-                    tint = if (selected) Color.White else Color.Black
+                    tint = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

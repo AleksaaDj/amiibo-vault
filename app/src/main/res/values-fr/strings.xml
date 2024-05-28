@@ -33,4 +33,5 @@
     <string name="support_text">Amiibo Vault, en tant qu\'application à but non lucratif sans publicité, dépend de votre généreux soutien pour son développement continu. Si vous appréciez l\'utilisation de Amiibo Vault et souhaitez contribuer à ses futures améliorations, veuillez envisager de faire un petit don à notre équipe en nous achetant un café. Vous pouvez le faire en cliquant simplement sur le bouton ci-dessous. \n\nEn outre, votre évaluation de Amiibo Vault sur le Play Store servirait également de précieuse contribution, nous fournissant des commentaires essentiels pour adapter et améliorer nos offres. \n\nVotre soutien inestimable nous assure que nous pouvons continuer à rendre Amiibo Vault encore plus agréable pour tous les amateurs de Amiibo. Merci beaucoup.</string>
     <string name="rate_amiibo_vault">Évaluez Amiibo Vault</string>
     <string name="support">support</string>
+    <string name="remove_filter">Supprimer le filtre</string>
 </resources>

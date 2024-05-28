@@ -48,6 +48,7 @@ import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
+import com.softwavegames.amiibovault.presenter.compose.common.ChipGroup
 import com.softwavegames.amiibovault.presenter.compose.common.FeaturedAmiiboCard
 import com.softwavegames.amiibovault.presenter.compose.common.ScrollToTopButton
 import kotlinx.coroutines.delay
@@ -58,14 +59,19 @@ fun AmiiboListScreen(
     amiiboList: List<Amiibo>?,
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit,
-    onSearchQueryChange: (String, Boolean) -> Unit,
+    onSearchQueryChange: (String) -> Unit,
     onChangeListClick: () -> Unit,
-    onScrollToTopClick: (Boolean) -> Unit,
+    onScrollToTopClick: () -> Unit,
     isPortrait: Boolean,
     listState: LazyListState,
     gridState: LazyGridState,
     showScrollToTopList: Boolean,
     showScrollToTopGrid: Boolean,
+    onFilterTypeSelected: (String) -> Unit,
+    onFilterTypeRemoved: () -> Unit,
+    onFilterSetSelected: (String) -> Unit,
+    onFilterSetRemoved: () -> Unit,
+    onLayoutChange: (Boolean) -> Unit,
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -85,7 +91,7 @@ fun AmiiboListScreen(
             query = searchText,
             onQueryChange = {
                 searchText = it
-                onSearchQueryChange(it, isList)
+                onSearchQueryChange(it)
             },
             onSearch = { isSearchActive = false },
             placeholder = {
@@ -115,6 +121,7 @@ fun AmiiboListScreen(
             onClick = {
                 onChangeListClick()
                 isList = !isList
+                onLayoutChange(isList)
             }
         ) {
             Icon(
@@ -154,13 +161,31 @@ fun AmiiboListScreen(
             Spacer(modifier = Modifier.height(10.dp))
         }
 
+        ChipGroup(
+            onFilterTypeSelected = {
+                onFilterTypeSelected(it)
+                searchText = ""
+            },
+            onFilterTypeRemoved = {
+                searchText = ""
+                onFilterTypeRemoved()
+            },
+            onFilterSetSelected = {
+                searchText = ""
+                onFilterSetSelected(it)
+            },
+            onFilterSetRemoved = {
+                searchText = ""
+                onFilterSetRemoved()
+            },
+            isPortrait = isPortrait
+        )
         HorizontalDivider(
             modifier = Modifier
                 .height(0.5.dp)
                 .padding(start = if (isPortrait) 0.dp else 80.dp),
             color = Color.LightGray
         )
-
         if (isList) {
             Box(
                 modifier = Modifier
@@ -189,7 +214,7 @@ fun AmiiboListScreen(
                             start = if (isPortrait) 10.dp else 110.dp,
                             end = if (isPortrait) 10.dp else 40.dp
                         ),
-                    contentPadding = PaddingValues(vertical = 10.dp),
+                    contentPadding = PaddingValues(vertical = 8.dp),
                 ) {
                     if (amiiboList != null) {
                         if (amiiboList.isNotEmpty()) {
@@ -209,7 +234,7 @@ fun AmiiboListScreen(
                     exit = fadeOut(),
                 ) {
                     ScrollToTopButton(onClick = {
-                        onScrollToTopClick(isList)
+                        onScrollToTopClick()
                     })
                 }
             }
@@ -256,7 +281,7 @@ fun AmiiboListScreen(
                     exit = fadeOut(),
                 ) {
                     ScrollToTopButton(onClick = {
-                        onScrollToTopClick(isList)
+                        onScrollToTopClick()
                     })
                 }
             }

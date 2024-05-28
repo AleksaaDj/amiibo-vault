@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import javax.inject.Inject
 
+
 @HiltViewModel
 class AmiiboSearchViewModel @Inject constructor(
     private val repository: AmiiboRepository,
@@ -61,6 +62,7 @@ class AmiiboSearchViewModel @Inject constructor(
                                 amiiboList?.let { addAmiiboListToDatabase(amiiboList = it) }
                             }
                         }
+
                         else -> {
                             Log.e("ErrorAmiiboList", amiiboListResponse.message())
                         }
@@ -79,6 +81,30 @@ class AmiiboSearchViewModel @Inject constructor(
         repository.searchAmiiboHome(name).onEach { localList ->
             amiiboLocalList = localList
             _amiiboList.postValue(amiiboLocalList)
+        }.launchIn(viewModelScope)
+    }
+
+    fun searchAmiiboFiltered(name: String, type: String, series: String) {
+        var amiiboLocalList: List<Amiibo>
+        var amiiboFilteredList: List<Amiibo>
+        repository.searchAmiiboHome(name).onEach { localList ->
+            amiiboLocalList = localList
+            amiiboFilteredList = if (type.isNotEmpty() && series.isNotEmpty()) {
+                amiiboLocalList.filter {
+                    it.type.contains(type) && it.amiiboSeries.contains(series)
+                }
+            } else if (type.isNotEmpty() && series.isEmpty()) {
+                amiiboLocalList.filter {
+                    it.type.contains(type)
+                }
+            } else if (type.isEmpty() && series.isNotEmpty()) {
+                amiiboLocalList.filter {
+                    it.amiiboSeries.contains(series)
+                }
+            } else {
+                amiiboLocalList
+            }
+            _amiiboList.postValue(amiiboFilteredList)
         }.launchIn(viewModelScope)
     }
 
@@ -169,6 +195,7 @@ class AmiiboSearchViewModel @Inject constructor(
         }
     }
 }
+
 //Filter Amiibo
 /*fun getAmiiboFiltered(series: String, type: String) {
     val amiiboSeries = series.ifEmpty { null }

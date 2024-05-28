@@ -117,9 +117,11 @@ class MainActivity : ComponentActivity() {
                         Constants.PARSED_AMIIBO,
                         amiibo
                     )
-                    navController.navigate(
-                        route = AppNavigation.NavigationItem.DetailsScreen.route,
-                    )
+                    if (navController.currentDestination?.route == AppNavigation.BottomNavScreens.NfcScanner.route) {
+                        navController.navigate(
+                            route = AppNavigation.NavigationItem.DetailsScreen.route,
+                        )
+                    }
                 }
             }
         }
@@ -153,6 +155,8 @@ class MainActivity : ComponentActivity() {
         } catch (e: TagLostException) {
             Log.e("NFC read", e.message.toString())
             Toast.makeText(this, "amiibo contact was lost, try again", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error reading amiibo", Toast.LENGTH_LONG).show()
         }
     }
 
