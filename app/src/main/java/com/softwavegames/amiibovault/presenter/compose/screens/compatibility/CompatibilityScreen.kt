@@ -130,7 +130,7 @@ fun CompatibilityScreen(
                     color = Color.Red,
                 )
                 LaunchedEffect(this) {
-                    delay(2500)
+                    delay(4500)
                     showErrorScreen = true
                 }
             }
