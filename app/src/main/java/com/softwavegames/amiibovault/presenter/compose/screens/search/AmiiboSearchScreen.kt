@@ -46,6 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.model.AmiiboCollection
+import com.softwavegames.amiibovault.model.AmiiboWishlist
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
 import com.softwavegames.amiibovault.presenter.compose.common.ChipGroup
@@ -56,6 +58,8 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmiiboListScreen(
+    amiiboCollection: List<AmiiboCollection>?,
+    amiiboWishList: List<AmiiboWishlist>?,
     amiiboList: List<Amiibo>?,
     amiiboLatest: Amiibo?,
     navigateToDetails: (Amiibo) -> Unit,
@@ -72,10 +76,14 @@ fun AmiiboListScreen(
     onFilterSetSelected: (String) -> Unit,
     onFilterSetRemoved: () -> Unit,
     onLayoutChange: (Boolean) -> Unit,
+    saveToWishlist: (Amiibo) -> Unit,
+    removeFromWishlist: (Amiibo) -> Unit,
+    onSoundVolumeChanged: (Boolean) -> Unit
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var isList by rememberSaveable { mutableStateOf(true) }
+    var isSoundOn by rememberSaveable { mutableStateOf(true) }
     var showLatestAmiibo by rememberSaveable { mutableStateOf(false) }
 
     Row(
@@ -119,14 +127,13 @@ fun AmiiboListScreen(
         IconButton(modifier = Modifier
             .padding(end = 10.dp, top = 5.dp),
             onClick = {
-                onChangeListClick()
-                isList = !isList
-                onLayoutChange(isList)
+                isSoundOn = !isSoundOn
+                onSoundVolumeChanged(isSoundOn)
             }
         ) {
             Icon(
-                painter = if (isList) painterResource(id = R.drawable.ic_grid) else painterResource(
-                    id = R.drawable.ic_list
+                painter = if (isSoundOn) painterResource(id = R.drawable.ic_volume_on) else painterResource(
+                    id = R.drawable.ic_volume_off
                 ), contentDescription = null,
                 tint = Color.Red
             )
@@ -135,7 +142,7 @@ fun AmiiboListScreen(
 
 
     Column(
-        modifier = Modifier.padding(top = 70.dp),
+        modifier = Modifier.padding(top = 65.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val showProgress = rememberSaveable {
@@ -158,28 +165,51 @@ fun AmiiboListScreen(
                     showLatestAmiibo = true
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(3.dp))
         }
 
-        ChipGroup(
-            onFilterTypeSelected = {
-                onFilterTypeSelected(it)
-                searchText = ""
-            },
-            onFilterTypeRemoved = {
-                searchText = ""
-                onFilterTypeRemoved()
-            },
-            onFilterSetSelected = {
-                searchText = ""
-                onFilterSetSelected(it)
-            },
-            onFilterSetRemoved = {
-                searchText = ""
-                onFilterSetRemoved()
-            },
-            isPortrait = isPortrait
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            ChipGroup(
+                onFilterTypeSelected = {
+                    onFilterTypeSelected(it)
+                    searchText = ""
+                },
+                onFilterTypeRemoved = {
+                    searchText = ""
+                    onFilterTypeRemoved()
+                },
+                onFilterSetSelected = {
+                    searchText = ""
+                    onFilterSetSelected(it)
+                },
+                onFilterSetRemoved = {
+                    searchText = ""
+                    onFilterSetRemoved()
+                },
+                isPortrait = isPortrait
+            )
+
+            IconButton(modifier = Modifier
+                .padding(end = 10.dp),
+                onClick = {
+                    onChangeListClick()
+                    isList = !isList
+                    onLayoutChange(isList)
+                }
+            ) {
+                Icon(
+                    painter = if (isList) painterResource(id = R.drawable.ic_grid) else painterResource(
+                        id = R.drawable.ic_list
+                    ), contentDescription = null,
+                    tint = Color.Red
+                )
+            }
+        }
+
         HorizontalDivider(
             modifier = Modifier
                 .height(0.5.dp)
@@ -218,10 +248,22 @@ fun AmiiboListScreen(
                 ) {
                     if (amiiboList != null) {
                         if (amiiboList.isNotEmpty()) {
-                            items(count = amiiboList.size) {
-                                AmiiboListItem(amiibo = amiiboList[it], onClick = { amiibo ->
-                                    navigateToDetails(amiibo)
-                                })
+                            items(count = amiiboList.size) { amiiboItem ->
+                                val foundInCollection =
+                                    amiiboCollection?.firstOrNull { it.tail == amiiboList[amiiboItem].tail } != null
+                                val foundInWishlist =
+                                    amiiboWishList?.firstOrNull { it.tail == amiiboList[amiiboItem].tail } != null
+
+                                AmiiboListItem(
+                                    amiibo = amiiboList[amiiboItem],
+                                    onClick = { amiibo ->
+                                        navigateToDetails(amiibo)
+                                    },
+                                    showInCollection = foundInCollection,
+                                    showInWishlist = foundInWishlist,
+                                    saveToWishlist = saveToWishlist,
+                                    removeFromWishlist = removeFromWishlist
+                                )
                                 showProgress.value = false
                                 showErrorScreen.value = false
                             }
@@ -268,10 +310,15 @@ fun AmiiboListScreen(
                     contentPadding = PaddingValues(vertical = 20.dp),
                 ) {
                     if (amiiboList != null) {
-                        items(count = amiiboList.size) {
-                            AmiiboGridItem(amiibo = amiiboList[it]) { amiibo ->
-                                navigateToDetails(amiibo)
-                            }
+                        items(count = amiiboList.size) { amiiboItem ->
+                            val foundInCollection =
+                                amiiboCollection?.firstOrNull { it.tail == amiiboList[amiiboItem].tail } != null
+                            AmiiboGridItem(
+                                amiibo = amiiboList[amiiboItem],
+                                showInCollection = foundInCollection,
+                                onAmiiboClick = {
+                                    navigateToDetails(it)
+                                })
                         }
                     }
                 }

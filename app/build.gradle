@@ -17,8 +17,8 @@ android {
         applicationId "com.softwavegames.amiibovault"
         minSdk 26
         targetSdk 34
-        versionCode 18
-        versionName "2.1.2"
+        versionCode 21
+        versionName "3.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

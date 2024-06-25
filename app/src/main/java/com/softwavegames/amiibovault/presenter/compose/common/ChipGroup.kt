@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -37,8 +36,7 @@ fun ChipGroup(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = if (isPortrait) 15.dp else 95.dp, bottom = 7.dp),
+            .padding(start = if (isPortrait) 15.dp else 95.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.Start,
     ) {
 

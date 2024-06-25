@@ -70,10 +70,11 @@ fun MyCollectionScreen(
         ),
         title = { Text(text = stringResource(R.string.collections)) },
         actions = {
-            Row(modifier = Modifier
-                .clickable {
-                    onSupportClick()
-                },
+            Row(
+                modifier = Modifier
+                    .clickable {
+                        onSupportClick()
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = stringResource(id = R.string.support))
@@ -160,9 +161,12 @@ fun MyCollection(
         ) {
             items(count = amiiboList.size) {
                 val amiiboConverted = Utils().convertAmiiboCollectionToAmiibo(amiiboList[it])
-                AmiiboGridItem(amiibo = amiiboConverted) { amiibo ->
-                    navigateToDetails(amiibo)
-                }
+                AmiiboGridItem(
+                    amiibo = amiiboConverted,
+                    showInCollection = true,
+                    onAmiiboClick = { amiibo ->
+                        navigateToDetails(amiibo)
+                    })
             }
         }
     } else {
@@ -189,9 +193,12 @@ fun Wishlist(
         ) {
             items(count = amiiboList.size) {
                 val amiiboConverted = Utils().convertAmiiboWishlistToAmiibo(amiiboList[it])
-                AmiiboGridItem(amiibo = amiiboConverted) { amiibo ->
-                    navigateToDetails(amiibo)
-                }
+                AmiiboGridItem(
+                    amiibo = amiiboConverted,
+                    showInCollection = true,
+                    onAmiiboClick = { amiibo ->
+                        navigateToDetails(amiibo)
+                    })
             }
         }
     } else {

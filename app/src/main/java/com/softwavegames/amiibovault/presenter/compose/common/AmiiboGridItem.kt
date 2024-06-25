@@ -9,6 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,7 +26,8 @@ import com.softwavegames.amiibovault.model.Amiibo
 fun AmiiboGridItem(
     amiibo: Amiibo,
     onAmiiboClick: (Amiibo) -> Unit,
-) {
+    showInCollection: Boolean,
+    ) {
     val context = LocalContext.current
 
     Column {
@@ -38,7 +41,10 @@ fun AmiiboGridItem(
             model = ImageRequest.Builder(context).data(amiibo.image).crossfade(true).build(),
             contentDescription = null,
             contentScale = ContentScale.Inside,
-            error = painterResource(R.drawable.ic_image_placeholder)
+            error = painterResource(R.drawable.ic_image_placeholder),
+            colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                if (!showInCollection) setToSaturation(0.1f)
+            })
         )
 
         Text(

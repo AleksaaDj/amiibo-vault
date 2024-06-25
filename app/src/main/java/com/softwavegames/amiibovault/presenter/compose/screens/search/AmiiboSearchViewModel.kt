@@ -19,8 +19,11 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.model.AmiiboCollection
+import com.softwavegames.amiibovault.model.AmiiboWishlist
 import com.softwavegames.amiibovault.util.AverageColor
 import com.softwavegames.amiibovault.util.Constants
+import com.softwavegames.amiibovault.util.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -45,8 +48,16 @@ class AmiiboSearchViewModel @Inject constructor(
     private var _amiiboLatest = MutableLiveData<Amiibo?>()
     var amiiboLatest: LiveData<Amiibo?> = _amiiboLatest
 
+    private var _amiiboListCollection = MutableLiveData<List<AmiiboCollection>?>()
+    var amiiboListCollection: LiveData<List<AmiiboCollection>?> = _amiiboListCollection
+
+    private var _amiiboListWishlist = MutableLiveData<List<AmiiboWishlist>?>()
+    var amiiboListWishlist: LiveData<List<AmiiboWishlist>?> = _amiiboListWishlist
+
     init {
         loadAmiibos()
+        getAmiiboCollection()
+        getAmiiboWishlist()
         getFeaturedAmiiboFromFirebase()
     }
 
@@ -166,6 +177,28 @@ class AmiiboSearchViewModel @Inject constructor(
                 Log.e("latest_amiibo", it.message.toString())
             }
         )
+    }
+
+    private fun getAmiiboCollection() {
+        repository.getAmiiboListFromDbMyCollection().onEach {
+            _amiiboListCollection.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getAmiiboWishlist() {
+        repository.getAmiiboListFromDdWishlist().onEach {
+            _amiiboListWishlist.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    suspend fun upsertAmiiboToWishList(amiibo: Amiibo) {
+        val amiiboWishlist = Utils().convertAmiiboToAmiiboWishlist(amiibo)
+        repository.upsertAmiiboDbWishlist(amiibo = amiiboWishlist)
+    }
+
+    suspend fun deleteAmiiboFromWishList(amiibo: Amiibo) {
+        val amiiboWishlist = Utils().convertAmiiboToAmiiboWishlist(amiibo)
+        repository.deleteAmiiboFromDbWishlist(amiibo = amiiboWishlist)
     }
 
     private fun urlToBitmap(

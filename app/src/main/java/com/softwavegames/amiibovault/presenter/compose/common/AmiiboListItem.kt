@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -53,7 +57,11 @@ import com.softwavegames.amiibovault.util.AverageColor.getAverageColor
 fun AmiiboListItem(
     modifier: Modifier = Modifier,
     amiibo: Amiibo,
-    onClick: (Amiibo) -> Unit
+    onClick: (Amiibo) -> Unit,
+    showInCollection: Boolean,
+    showInWishlist: Boolean,
+    saveToWishlist: (Amiibo) -> Unit,
+    removeFromWishlist: (Amiibo) -> Unit,
 ) {
     val density = LocalDensity.current
     var height by remember { mutableIntStateOf(0) }
@@ -117,7 +125,11 @@ fun AmiiboListItem(
                     amiibo = amiibo,
                     imageState.painter,
                     dominantColor,
-                    heightDp
+                    heightDp,
+                    showInCollection,
+                    showInWishlist,
+                    saveToWishlist,
+                    removeFromWishlist
                 )
             }
         }
@@ -130,58 +142,86 @@ private fun ListItemDetails(
     amiibo: Amiibo,
     imagePainter: Painter?,
     dominantColor: Color,
-    height: Dp
+    height: Dp,
+    showInCollection: Boolean,
+    showInWishlist: Boolean,
+    saveToWishlist: (Amiibo) -> Unit,
+    removeFromWishlist: (Amiibo) -> Unit,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .height(height)
-                .background(dominantColor),
-            contentAlignment = Alignment.Center,
-            ) {
-            Image(
-                modifier = Modifier
-                    .size(85.dp)
-                    .padding(5.dp),
-                painter = imagePainter ?: painterResource(id = R.drawable.ic_image_placeholder),
-                contentDescription = null,
-                contentScale = ContentScale.Inside,
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 5.dp),
-            verticalArrangement = Arrangement.SpaceEvenly
+    Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = modifier.padding(top = 5.dp),
-                text = amiibo.name,
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Box(
+                modifier = Modifier
+                    .height(height)
+                    .background(dominantColor),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(85.dp)
+                        .padding(5.dp),
+                    painter = imagePainter ?: painterResource(id = R.drawable.ic_image_placeholder),
+                    contentDescription = null,
+                    contentScale = ContentScale.Inside,
+                    colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                        if (!showInCollection) setToSaturation(0.1f)
+                    })
 
-            Text(
-                modifier = modifier.padding(bottom = 8.dp),
-                text = amiibo.gameSeries,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-
-            amiibo.release?.jp?.let {
-                Text(
-                    text = it,
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
-            Spacer(modifier = Modifier.width(5.dp))
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp),
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    modifier = modifier.padding(top = 5.dp),
+                    text = amiibo.name,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                Text(
+                    modifier = modifier.padding(bottom = 8.dp),
+                    text = amiibo.gameSeries,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+
+                amiibo.release?.jp?.let {
+                    Text(
+                        text = it,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                }
+                Spacer(modifier = Modifier.width(5.dp))
+            }
+        }
+        IconButton(
+            modifier = Modifier
+                .align(Alignment.TopEnd),
+            onClick = {
+            if (showInWishlist) {
+                removeFromWishlist(amiibo)
+            } else {
+                saveToWishlist(amiibo)
+            }
+        }) {
+            Icon(
+                painter = if (showInWishlist) painterResource(id = R.drawable.ic_bookmark) else painterResource(
+                    id = R.drawable.ic_bookmark_outlined
+                ),
+                contentDescription = null,
+                tint = dominantColor,
+            )
         }
     }
 }

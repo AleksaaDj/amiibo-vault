@@ -81,9 +81,12 @@ fun AmiiboGridScreen(
         ) {
             if (amiiboList != null) {
                 items(count = amiiboList.size) {
-                    AmiiboGridItem(amiibo = amiiboList[it]) { amiibo ->
-                        navigateToDetails(amiibo)
-                    }
+                    AmiiboGridItem(
+                        amiibo = amiiboList[it],
+                        showInCollection = true,
+                        onAmiiboClick = { amiibo ->
+                            navigateToDetails(amiibo)
+                        })
                     showProgress.value = false
                 }
             }
