@@ -93,7 +93,7 @@ fun MyCollectionScreen(
     )
     Column(
         modifier = Modifier
-            .padding(top = if (isPortrait) 70.dp else 50.dp)
+            .padding(top = if (isPortrait) 110.dp else 90.dp)
     ) {
         if (isPortrait) {
             DbStatisticInfo(selectedTab, amiiboListCollection, amiiboListWishlist)

@@ -3,6 +3,7 @@ package com.softwavegames.amiibovault.presenter
 import android.content.Context
 import android.media.SoundPool
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -100,6 +101,7 @@ fun BottomNavigationBar(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0.dp),
         bottomBar = {
             if (bottomBarState.value) {
                 if (isPortrait) {

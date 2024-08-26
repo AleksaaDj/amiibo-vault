@@ -55,7 +55,7 @@ fun NfcScannerScreen(
 
     Surface(
         modifier = Modifier
-            .padding(top = 80.dp),
+            .padding(top = 100.dp),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(

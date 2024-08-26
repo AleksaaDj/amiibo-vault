@@ -107,15 +107,15 @@ fun DetailsScreen(
     if (!isPortrait) {
         Row(
             modifier = Modifier
-                .padding(top = 50.dp)
+                .padding(top = 90.dp)
                 .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
 
             AsyncImage(
                 modifier = Modifier
-                    .size(190.dp)
-                    .padding(start = 75.dp)
+                    .size(260.dp)
+                    .padding(start = 75.dp, bottom = 40.dp)
                     .weight(1f),
                 model = ImageRequest.Builder(context).data(amiibo.image).build(),
                 contentDescription = null,
@@ -154,7 +154,7 @@ fun DetailsScreen(
     } else {
         Column(
             modifier = Modifier
-                .padding(top = 50.dp)
+                .padding(top = 90.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

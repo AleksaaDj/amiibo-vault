@@ -86,63 +86,9 @@ fun AmiiboListScreen(
     var isSoundOn by rememberSaveable { mutableStateOf(true) }
     var showLatestAmiibo by rememberSaveable { mutableStateOf(false) }
 
-    Row(
-        modifier = Modifier
-            .height(70.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
-    ) {
-        SearchBar(
-            modifier = Modifier
-                .weight(3f)
-                .padding(start = if (isPortrait) 10.dp else 90.dp),
-            query = searchText,
-            onQueryChange = {
-                searchText = it
-                onSearchQueryChange(it)
-            },
-            onSearch = { isSearchActive = false },
-            placeholder = {
-                Text(text = stringResource(R.string.search_amiibo))
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    tint = Color.Red,
-                    contentDescription = null
-                )
-            },
-            trailingIcon = {},
-            content = {},
-            active = isSearchActive,
-            onActiveChange = {
-                isSearchActive = it
-            },
-            tonalElevation = 0.dp,
-            colors = SearchBarDefaults.colors(
-                dividerColor = Color.Red,
-                containerColor = MaterialTheme.colorScheme.background
-            )
-        )
-        IconButton(modifier = Modifier
-            .padding(end = 10.dp, top = 5.dp),
-            onClick = {
-                isSoundOn = !isSoundOn
-                onSoundVolumeChanged(isSoundOn)
-            }
-        ) {
-            Icon(
-                painter = if (isSoundOn) painterResource(id = R.drawable.ic_volume_on) else painterResource(
-                    id = R.drawable.ic_volume_off
-                ), contentDescription = null,
-                tint = Color.Red
-            )
-        }
-    }
 
 
     Column(
-        modifier = Modifier.padding(top = 65.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val showProgress = rememberSaveable {
@@ -152,6 +98,60 @@ fun AmiiboListScreen(
             mutableStateOf(false)
         }
 
+        Row(
+            modifier = Modifier
+                .height(120.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+        ) {
+            SearchBar(
+                modifier = Modifier
+                    .weight(3f)
+                    .padding(start = if (isPortrait) 0.dp else 90.dp),
+                query = searchText,
+                onQueryChange = {
+                    searchText = it
+                    onSearchQueryChange(it)
+                },
+                onSearch = { isSearchActive = false },
+                placeholder = {
+                    Text(text = stringResource(R.string.search_amiibo))
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        tint = Color.Red,
+                        contentDescription = null
+                    )
+                },
+                trailingIcon = {
+                    IconButton(modifier = Modifier
+                        .padding(end = 5.dp),
+                        onClick = {
+                            isSoundOn = !isSoundOn
+                            onSoundVolumeChanged(isSoundOn)
+                        }
+                    ) {
+                        Icon(
+                            painter = if (isSoundOn) painterResource(id = R.drawable.ic_volume_on) else painterResource(
+                                id = R.drawable.ic_volume_off
+                            ), contentDescription = null,
+                            tint = Color.Red
+                        )
+                    }
+                },
+                content = {},
+                active = isSearchActive,
+                onActiveChange = {
+                    isSearchActive = it
+                },
+                tonalElevation = 0.dp,
+                colors = SearchBarDefaults.colors(
+                    dividerColor = Color.Red,
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        }
         if (isPortrait) {
             AnimatedVisibility(visible = showLatestAmiibo) {
                 FeaturedAmiiboCard(

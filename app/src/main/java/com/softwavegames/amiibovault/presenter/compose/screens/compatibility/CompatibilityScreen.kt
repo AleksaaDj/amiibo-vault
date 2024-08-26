@@ -101,7 +101,7 @@ fun CompatibilityScreen(
     ) {
         TextSwitch(
             modifier = Modifier
-                .padding(top = 70.dp, start = 10.dp, end = 10.dp),
+                .padding(top = if(isPortrait) 100.dp else 90.dp, start = 10.dp, end = 10.dp),
             selectedIndex = selectedIndex,
             items = items,
             onSelectionChange = {

@@ -76,7 +76,7 @@ fun SupportScreen(
 
     Column(
         modifier = Modifier
-            .padding(top = 80.dp, start = 20.dp, end = 20.dp)
+            .padding(top = 105.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
