@@ -64,27 +64,40 @@ class AmiiboSearchViewModel @Inject constructor(
     private fun loadAmiibos() {
         repository.getAmiiboListFromDbHome().onEach { localList ->
             if (localList.isEmpty()) {
-                try {
-                    val amiiboListResponse = repository.getAmiiboList()
-                    when (amiiboListResponse.isSuccessful) {
-                        true -> {
-                            with(amiiboListResponse.body()) {
-                                val amiiboList = this?.amiibo
-                                amiiboList?.let { addAmiiboListToDatabase(amiiboList = it) }
-                            }
-                        }
-
-                        else -> {
-                            Log.e("ErrorAmiiboList", amiiboListResponse.message())
-                        }
-                    }
-                } catch (e: UnknownHostException) {
-                    Log.e("ErrorAmiiboList", "No Internet connection")
-                }
+                val amiiboList = getRemoteAmiiboList()
+                addAmiiboListToDatabase(amiiboList = amiiboList)
             } else {
-                _amiiboList.postValue(localList)
+                val amiiboList = getRemoteAmiiboList()
+                if (amiiboList.size > localList.size) {
+                    addAmiiboListToDatabase(amiiboList = amiiboList)
+                } else {
+                    _amiiboList.postValue(localList)
+                }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private suspend fun getRemoteAmiiboList(): List<Amiibo> {
+        var amiiboListRemote = emptyList<Amiibo>()
+        try {
+            val amiiboListResponse = repository.getAmiiboList()
+            when (amiiboListResponse.isSuccessful) {
+                true -> {
+                    with(amiiboListResponse.body()) {
+                        if (this?.amiibo != null) {
+                            amiiboListRemote = this.amiibo
+                        }
+                    }
+                }
+
+                else -> {
+                    Log.e("ErrorAmiiboList", amiiboListResponse.message())
+                }
+            }
+        } catch (e: UnknownHostException) {
+            Log.e("ErrorAmiiboList", "No Internet connection")
+        }
+        return amiiboListRemote
     }
 
     fun searchAmiibo(name: String) {
