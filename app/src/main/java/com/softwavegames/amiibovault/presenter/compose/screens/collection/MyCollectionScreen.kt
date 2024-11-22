@@ -46,8 +46,8 @@ import com.softwavegames.amiibovault.model.AmiiboWishlist
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.GlowingCard
 import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
-import com.softwavegames.amiibovault.util.Constants
-import com.softwavegames.amiibovault.util.Utils
+import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

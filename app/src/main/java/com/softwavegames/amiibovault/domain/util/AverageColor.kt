@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.util
+package com.softwavegames.amiibovault.domain.util
 
 import android.graphics.Bitmap
 import androidx.compose.ui.graphics.Color

@@ -11,14 +11,14 @@ plugins {
 
 android {
     namespace 'com.softwavegames.amiibovault'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.softwavegames.amiibovault"
         minSdk 26
         targetSdk 35
-        versionCode 25
-        versionName "3.2.3"
+        versionCode 43
+        versionName "3.5.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,6 +70,10 @@ dependencies {
     implementation libs.androidx.material3
     implementation libs.androidx.runtime.livedata
     implementation libs.review.ktx
+    implementation(libs.play.services.ads)
+    implementation (libs.billing)
+
+
 
     //Lottie
     implementation libs.lottie.compose

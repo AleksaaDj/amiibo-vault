@@ -29,8 +29,13 @@
     <string name="serial">Serial</string>
     <string name="no_amiibo_found">No amiibo found</string>
     <string name="support_title">Support Amiibo Vault development</string>
-    <string name="support_text">Amiibo Vault, being a nonprofit app without ads, relies on your generous support for its continued development. If you enjoy using Amiibo Vault and wish to contribute to its future enhancements, kindly consider making a small donation to our team by purchasing us a coffee. You can do this by simply clicking the button below. \n\nMoreover, your rating of Amiibo Vault on the Play Store would also serve as a valuable contribution, providing us with vital feedback to adapt and improve our offerings.  \n\nYour invaluable support ensures we can continue to make Amiibo Vault even more enjoyable for all the Amiibo enthusiasts out there. Thank you very much.</string>
+    <string name="support_text">Amiibo Vault relies on your generous support for its continued development. If you enjoy using Amiibo Vault and wish to contribute to its future enhancements, kindly consider making a small donation to our team by purchasing us a coffee. You can do this by simply clicking the button below. \n\nMoreover, your rating of Amiibo Vault on the Play Store would also serve as a valuable contribution, providing us with vital feedback to adapt and improve our offerings.  \n\nYou can also eliminate ads entirely and enjoy Amiibo Vault without interruptions.  \n\nYour invaluable support ensures we can continue to make Amiibo Vault even more enjoyable for all the Amiibo enthusiasts out there. Thank you very much.</string>
     <string name="rate_amiibo_vault">Rate Amiibo Vault</string>
     <string name="support">Support</string>
     <string name="remove_filter">Remove Filter</string>
+    <string name="remove_ads">Remove Ads</string>
+    <string name="remove_ads_purchased">Thank you for your purchase! Ads have been removed.</string>
+    <string name="tired_of_ads">Tired of Ads?</string>
+    <string name="dialog_remove_ads_text">You can remove ads completely and enjoy Amiibo Vault without disruptions with Google In-App purchases. Thank you for support!</string>
+    <string name="dismiss_dialog">Dismiss</string>
 </resources>

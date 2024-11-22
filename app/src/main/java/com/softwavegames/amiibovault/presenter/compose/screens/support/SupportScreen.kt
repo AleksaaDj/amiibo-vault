@@ -38,12 +38,14 @@ import androidx.core.net.toUri
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.softwavegames.amiibovault.R
-import com.softwavegames.amiibovault.util.Constants
+import com.softwavegames.amiibovault.domain.util.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SupportScreen(
     onBackClick: () -> Unit,
+    onPurchaseClicked: () -> Unit,
+    buyEnabled: Boolean,
 ) {
     val context = LocalContext.current
     val reviewManager = remember {
@@ -100,6 +102,21 @@ fun SupportScreen(
                 containerColor = Color.Black,
                 contentColor = Color.White
             ),
+            enabled = buyEnabled,
+            onClick = {
+                onPurchaseClicked()
+            },
+        )
+        {
+            Text(text = stringResource(R.string.remove_ads))
+        }
+        Button(
+            modifier = Modifier,
+            shape = MaterialTheme.shapes.small,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            ),
             onClick = {
                 reviewInfo?.let { reviewManager.launchReviewFlow(context as Activity, it) }
             },
@@ -124,7 +141,7 @@ fun SupportScreen(
             painter = painterResource(id = R.drawable.kofi_button_dark),
             contentDescription = null,
         )
-
+        Spacer(modifier = Modifier.height(40.dp))
 
     }
 

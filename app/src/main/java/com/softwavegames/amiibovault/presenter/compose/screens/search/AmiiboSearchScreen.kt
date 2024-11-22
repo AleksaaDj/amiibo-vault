@@ -32,6 +32,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
 import com.softwavegames.amiibovault.presenter.compose.common.ChipGroup
 import com.softwavegames.amiibovault.presenter.compose.common.FeaturedAmiiboCard
+import com.softwavegames.amiibovault.presenter.compose.common.RemoveAdsDialog
 import com.softwavegames.amiibovault.presenter.compose.common.ScrollToTopButton
 import kotlinx.coroutines.delay
 
@@ -78,14 +80,16 @@ fun AmiiboListScreen(
     onLayoutChange: (Boolean) -> Unit,
     saveToWishlist: (Amiibo) -> Unit,
     removeFromWishlist: (Amiibo) -> Unit,
-    onSoundVolumeChanged: (Boolean) -> Unit
+    onSoundVolumeChanged: (Boolean) -> Unit,
+    openRemoveAdsDialog: MutableState<Boolean>,
+    onRemoveAdsClicked: () -> Unit,
+    onDialogDismissed: () -> Unit
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var isList by rememberSaveable { mutableStateOf(true) }
     var isSoundOn by rememberSaveable { mutableStateOf(true) }
     var showLatestAmiibo by rememberSaveable { mutableStateOf(false) }
-
 
 
     Column(
@@ -151,6 +155,16 @@ fun AmiiboListScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
+        }
+        when {
+            openRemoveAdsDialog.value -> {
+                RemoveAdsDialog(
+                    onDismissRequest = { onDialogDismissed() },
+                    onConfirmation = {
+                        onRemoveAdsClicked()
+                    },
+                )
+            }
         }
         if (isPortrait) {
             AnimatedVisibility(visible = showLatestAmiibo) {

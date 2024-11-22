@@ -30,8 +30,13 @@
     <string name="serial">Serial</string>
     <string name="no_amiibo_found">Aucun amiibo trouvé</string>
     <string name="support_title">Soutenir le développement de Amiibo Vault</string>
-    <string name="support_text">Amiibo Vault, en tant qu\'application à but non lucratif sans publicité, dépend de votre généreux soutien pour son développement continu. Si vous appréciez l\'utilisation de Amiibo Vault et souhaitez contribuer à ses futures améliorations, veuillez envisager de faire un petit don à notre équipe en nous achetant un café. Vous pouvez le faire en cliquant simplement sur le bouton ci-dessous. \n\nEn outre, votre évaluation de Amiibo Vault sur le Play Store servirait également de précieuse contribution, nous fournissant des commentaires essentiels pour adapter et améliorer nos offres. \n\nVotre soutien inestimable nous assure que nous pouvons continuer à rendre Amiibo Vault encore plus agréable pour tous les amateurs de Amiibo. Merci beaucoup.</string>
+    <string name="support_text">Amiibo Vault dépend de votre généreux soutien pour son développement continu. Si vous appréciez l\'utilisation de Amiibo Vault et souhaitez contribuer à ses futures améliorations, veuillez envisager de faire un petit don à notre équipe en nous achetant un café. Vous pouvez le faire en cliquant simplement sur le bouton ci-dessous. \n\nEn outre, votre évaluation de Amiibo Vault sur le Play Store servirait également de précieuse contribution, nous fournissant des commentaires essentiels pour adapter et améliorer nos offres. \n\nVous pouvez également supprimer complètement les publicités et profiter d\'Amiibo Vault sans interruptions.  \n\nVotre soutien inestimable nous assure que nous pouvons continuer à rendre Amiibo Vault encore plus agréable pour tous les amateurs de Amiibo. Merci beaucoup.</string>
     <string name="rate_amiibo_vault">Évaluez Amiibo Vault</string>
     <string name="support">support</string>
     <string name="remove_filter">Supprimer le filtre</string>
+    <string name="remove_ads">Supprimer</string>
+    <string name="remove_ads_purchased">Merci pour votre achat ! Les publicités ont été supprimées.</string>
+    <string name="tired_of_ads">Fatigué des publicités ?</string>
+    <string name="dialog_remove_ads_text">Vous pouvez supprimer complètement les publicités et profiter de Amiibo Vault sans interruptions grâce aux achats intégrés sur Google. Merci pour votre soutien !</string>
+    <string name="dismiss_dialog">Fermer</string>
 </resources>

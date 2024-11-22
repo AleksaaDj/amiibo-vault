@@ -51,7 +51,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
-import com.softwavegames.amiibovault.util.AverageColor.getAverageColor
+import com.softwavegames.amiibovault.domain.util.AverageColor.getAverageColor
 
 @Composable
 fun AmiiboListItem(

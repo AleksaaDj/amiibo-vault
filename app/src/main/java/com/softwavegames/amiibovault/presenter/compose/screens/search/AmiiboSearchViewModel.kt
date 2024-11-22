@@ -21,9 +21,9 @@ import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
-import com.softwavegames.amiibovault.util.AverageColor
-import com.softwavegames.amiibovault.util.Constants
-import com.softwavegames.amiibovault.util.Utils
+import com.softwavegames.amiibovault.domain.util.AverageColor
+import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -241,21 +241,3 @@ class AmiiboSearchViewModel @Inject constructor(
         }
     }
 }
-
-//Filter Amiibo
-/*fun getAmiiboFiltered(series: String, type: String) {
-    val amiiboSeries = series.ifEmpty { null }
-    val amiiboType = type.ifEmpty { null }
-
-    if (amiiboSeries != null && amiiboType != null) {
-        repository.getAmiiboListFilteredBoth(amiiboSeries, amiiboType).onEach { resultList ->
-            _amiiboList.postValue(resultList)
-        }.launchIn(viewModelScope)
-    } else if (amiiboSeries == null && amiiboType == null) {
-        loadAmiibos()
-    } else {
-        repository.getAmiiboListFilteredOne(amiiboSeries, amiiboType).onEach { resultList ->
-            _amiiboList.postValue(resultList)
-        }.launchIn(viewModelScope)
-    }
-}*/

@@ -59,7 +59,12 @@ fun AmiiboGridScreen(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = if (isPortrait)100.dp else 90.dp, start = 5.dp, end = 0.dp, bottom = 5.dp),
+            .padding(
+                top = if (isPortrait) 100.dp else 90.dp,
+                start = 5.dp,
+                end = 0.dp,
+                bottom = 5.dp
+            ),
         contentAlignment = Alignment.Center
     ) {
         if (showProgress.value) {

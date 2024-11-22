@@ -38,11 +38,11 @@ fun LogoAnim(onAnimationFinished: () -> Unit) {
         LaunchedEffect(key1 = this) {
             alphaValue.animateTo(
                 1f,
-                animationSpec = tween(1600),
+                animationSpec = tween(1000),
             )
             alphaValue.animateTo(
                 0f,
-                animationSpec = tween(1500),
+                animationSpec = tween(1100),
             )
             onAnimationFinished()
         }

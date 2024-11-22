@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softwavegames.amiibovault.util.Utils
+import com.softwavegames.amiibovault.domain.util.Utils
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
 import dagger.hilt.android.lifecycle.HiltViewModel

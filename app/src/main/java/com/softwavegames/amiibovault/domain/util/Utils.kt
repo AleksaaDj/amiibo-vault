@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.util
+package com.softwavegames.amiibovault.domain.util
 
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection

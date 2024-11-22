@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.util
+package com.softwavegames.amiibovault.domain.nfc
 
 import android.nfc.Tag
 import android.nfc.tech.MifareUltralight

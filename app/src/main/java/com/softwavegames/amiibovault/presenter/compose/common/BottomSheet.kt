@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.softwavegames.amiibovault.R
-import com.softwavegames.amiibovault.util.AmiiboFilters
+import com.softwavegames.amiibovault.domain.util.AmiiboFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

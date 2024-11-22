@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.util
+package com.softwavegames.amiibovault.domain.util
 
 object AmiiboFilters {
     val sets = listOf(

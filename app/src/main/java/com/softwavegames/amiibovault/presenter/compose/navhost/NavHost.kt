@@ -1,7 +1,9 @@
-package com.softwavegames.amiibovault.presenter
+package com.softwavegames.amiibovault.presenter.compose.navhost
 
+import android.app.Activity
 import android.content.Context
 import android.media.SoundPool
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +33,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
@@ -54,6 +59,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.softwavegames.amiibovault.AppNavigation
 import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.domain.ads.showInterstitial
+import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.CollectionScreenViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.MyCollectionScreen
@@ -67,18 +74,44 @@ import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboSear
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboFromSeriesListViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboGridScreen
 import com.softwavegames.amiibovault.presenter.compose.screens.support.SupportScreen
-import com.softwavegames.amiibovault.util.Constants
+import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.NavigationTypeHelper
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun BottomNavigationBar(
     context: Context,
+    activity: Activity,
     navController: NavHostController,
     bottomBarState: MutableState<Boolean>,
     navigationSelectedItem: MutableState<Int>,
-    isPortrait: Boolean
+    isPortrait: Boolean,
+    purchaseHelper: PurchaseHelper,
+    navigationMode: NavigationTypeHelper
 ) {
+
+    val navHostViewModel: NavHostViewModel = hiltViewModel()
+    val statusText by purchaseHelper.statusText.collectAsState("")
+    val buyEnabled by purchaseHelper.buyEnabled.collectAsState(false)
+    val openAlertDialog = remember { mutableStateOf(false) }
+    val openedTimes = rememberSaveable { mutableIntStateOf(navHostViewModel.getAppOpenedTimes()) }
+
+    if (buyEnabled) {
+        navHostViewModel.setAppOpenedTimes(openedTimes.intValue + 1)
+        if (openedTimes.intValue == Constants.OPENED_TIMES_TARGET) {
+            openAlertDialog.value = true
+            navHostViewModel.setAppOpenedTimes(0)
+            openedTimes.intValue = 0
+        }
+    }
+
+    if (statusText == Constants.BILLING_STATUS_PURCHASE_COMPLETE) {
+        Toast.makeText(context, stringResource(R.string.remove_ads_purchased), Toast.LENGTH_LONG)
+            .show()
+    }
+
+    val interstitialClickTimes = rememberSaveable { mutableIntStateOf(1) }
     val isSoundOn = rememberSaveable { mutableStateOf(true) }
     val soundPool = SoundPool.Builder()
         .setMaxStreams(2)
@@ -107,7 +140,13 @@ fun BottomNavigationBar(
                 if (isPortrait) {
                     NavigationBar(
                         modifier = Modifier
-                            .height(70.dp),
+                            .height(
+                                when (navigationMode) {
+                                    NavigationTypeHelper.GESTURE -> 70.dp
+                                    NavigationTypeHelper.TWO_BUTTON -> 80.dp
+                                    NavigationTypeHelper.THREE_BUTTON -> 100.dp
+                                }
+                            ),
                         contentColor = Color.White,
                         containerColor = Color.Black
                     ) {
@@ -235,6 +274,12 @@ fun BottomNavigationBar(
                         navigateToDetails(
                             navController = navController,
                             amiibo = amiibo,
+                            interstitialClickTimes = interstitialClickTimes.intValue,
+                            activity = activity,
+                            addInterstitialClickTime = {
+                                interstitialClickTimes.intValue += 1
+                            },
+                            buyEnabled = buyEnabled
                         )
                     },
                     onLayoutChange = {
@@ -308,6 +353,14 @@ fun BottomNavigationBar(
                     },
                     onSoundVolumeChanged = {
                         isSoundOn.value = it
+                    },
+                    openRemoveAdsDialog = openAlertDialog,
+                    onRemoveAdsClicked = {
+                        purchaseHelper.makePurchase()
+                        openAlertDialog.value = false
+                    },
+                    onDialogDismissed = {
+                        openAlertDialog.value = false
                     }
                 )
             }
@@ -333,7 +386,13 @@ fun BottomNavigationBar(
                                 playSound(soundPool, buttonSound, isSoundOn.value)
                                 navigateToCompatibility(
                                     navController = navController,
-                                    amiibo = amiibo
+                                    amiibo = amiibo,
+                                    interstitialClickTimes = interstitialClickTimes.intValue,
+                                    activity = activity,
+                                    addInterstitialClickTime = {
+                                        interstitialClickTimes.intValue += 1
+                                    },
+                                    buyEnabled = buyEnabled
                                 )
                             },
                             saveToMyCollection = { amiibo ->
@@ -383,7 +442,13 @@ fun BottomNavigationBar(
                             playSound(soundPool, buttonSound, isSoundOn.value)
                             navigateToDetails(
                                 navController = navController,
-                                amiibo = amiibo
+                                amiibo = amiibo,
+                                interstitialClickTimes = interstitialClickTimes.intValue,
+                                activity = activity,
+                                addInterstitialClickTime = {
+                                    interstitialClickTimes.intValue += 1
+                                },
+                                buyEnabled = buyEnabled
                             )
                         },
                         onBackClick = {
@@ -426,7 +491,15 @@ fun BottomNavigationBar(
                     amiiboListWishlist = viewModel.amiiboListWishlist.observeAsState().value,
                     navigateToDetails = { amiibo ->
                         playSound(soundPool, buttonSound, isSoundOn.value)
-                        navigateToDetails(navController = navController, amiibo = amiibo)
+                        navigateToDetails(
+                            navController = navController,
+                            amiibo = amiibo,
+                            activity = activity,
+                            buyEnabled = buyEnabled,
+                            interstitialClickTimes = interstitialClickTimes.intValue,
+                            addInterstitialClickTime = {
+                                interstitialClickTimes.intValue += 1
+                            })
                     },
                     isPortrait = isPortrait,
                     onSupportClick = {
@@ -449,9 +522,14 @@ fun BottomNavigationBar(
             }
             composable(AppNavigation.NavigationItem.SupportScreen.route) {
                 SupportScreen(
+                    buyEnabled = buyEnabled,
                     onBackClick = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         navController.navigateUp()
+                    },
+                    onPurchaseClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        purchaseHelper.makePurchase()
                     }
                 )
             }
@@ -482,12 +560,31 @@ data class BottomNavigationItem(
 }
 
 private fun navigateToDetails(
-    navController: NavController, amiibo: Amiibo
+    navController: NavController,
+    amiibo: Amiibo,
+    interstitialClickTimes: Int,
+    activity: Activity,
+    addInterstitialClickTime: () -> Unit,
+    buyEnabled: Boolean,
 ) {
-    navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, amiibo)
-    navController.navigate(
-        route = AppNavigation.NavigationItem.DetailsScreen.route
-    )
+    if (isShowAd(interstitialClickTimes, buyEnabled)) {
+        showInterstitial(activity = activity) {
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.PARSED_AMIIBO,
+                amiibo
+            )
+            navController.navigate(
+                route = AppNavigation.NavigationItem.DetailsScreen.route
+            )
+            addInterstitialClickTime()
+        }
+    } else {
+        navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, amiibo)
+        navController.navigate(
+            route = AppNavigation.NavigationItem.DetailsScreen.route
+        )
+        addInterstitialClickTime()
+    }
 }
 
 private fun navigateToMore(navController: NavController, amiibo: Amiibo) {
@@ -497,11 +594,30 @@ private fun navigateToMore(navController: NavController, amiibo: Amiibo) {
     )
 }
 
-private fun navigateToCompatibility(navController: NavController, amiibo: Amiibo) {
-    navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, amiibo)
-    navController.navigate(
-        route = AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route
-    )
+private fun navigateToCompatibility(
+    navController: NavController, amiibo: Amiibo, interstitialClickTimes: Int,
+    activity: Activity,
+    addInterstitialClickTime: () -> Unit,
+    buyEnabled: Boolean,
+) {
+    if (isShowAd(interstitialClickTimes, buyEnabled)) {
+        showInterstitial(activity = activity) {
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.PARSED_AMIIBO,
+                amiibo
+            )
+            navController.navigate(
+                route = AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route
+            )
+            addInterstitialClickTime()
+        }
+    } else {
+        navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, amiibo)
+        navController.navigate(
+            route = AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route
+        )
+        addInterstitialClickTime()
+    }
 }
 
 private fun navigateToNfcScanner(navController: NavController) {
@@ -520,6 +636,13 @@ private fun playSound(soundPool: SoundPool, sound: Int, isSoundOn: Boolean) {
     if (isSoundOn) {
         soundPool.play(sound, 1F, 1F, 1, 0, 1F)
     }
+}
+
+private fun isShowAd(
+    interstitialClickTimes: Int,
+    buyEnabled: Boolean,
+): Boolean {
+    return buyEnabled && interstitialClickTimes % 4 == 0
 }
 
 private suspend fun scrollToTop(

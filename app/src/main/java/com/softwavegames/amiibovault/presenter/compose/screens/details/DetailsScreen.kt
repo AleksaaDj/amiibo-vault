@@ -50,7 +50,7 @@ import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.Release
 import com.softwavegames.amiibovault.presenter.compose.common.DotsDivider
-import com.softwavegames.amiibovault.util.Utils
+import com.softwavegames.amiibovault.domain.util.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

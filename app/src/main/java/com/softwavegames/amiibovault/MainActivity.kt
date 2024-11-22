@@ -24,12 +24,20 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.softwavegames.amiibovault.presenter.BottomNavigationBar
+import com.google.android.gms.ads.MobileAds
+import com.softwavegames.amiibovault.domain.ads.loadInterstitial
+import com.softwavegames.amiibovault.domain.ads.removeInterstitial
+import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
+import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.NavigationTypeHelper
 import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
+import com.softwavegames.amiibovault.presenter.compose.navhost.BottomNavigationBar
 import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.AmiiboNfcDetailsViewModel
 import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
-import com.softwavegames.amiibovault.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -51,9 +59,13 @@ class MainActivity : ComponentActivity() {
 
         setNFC()
         setNFCIntentListener()
+        setAdMob()
 
         setContent {
 
+            val purchaseHelper = PurchaseHelper(this)
+            val bottomNavigationMode = rememberSaveable { mutableStateOf(NavigationTypeHelper.GESTURE) }
+            bottomNavigationMode.value = NavigationTypeHelper.getMode(context = baseContext)
             val bottomBarState = rememberSaveable { mutableStateOf(true) }
             val navigationItemSelectedIndex = rememberSaveable { mutableIntStateOf(0) }
             val isAnimationFinished = rememberSaveable { mutableStateOf(false) }
@@ -104,17 +116,19 @@ class MainActivity : ComponentActivity() {
                     navController.addOnDestinationChangedListener(callback)
                     onDispose {
                         navController.removeOnDestinationChangedListener(callback)
-
                     }
                 }
 
                 if (isAnimationFinished.value) {
                     BottomNavigationBar(
                         context = applicationContext,
+                        activity = this@MainActivity,
+                        purchaseHelper = purchaseHelper,
                         navController = navController,
                         bottomBarState = bottomBarState,
                         navigationSelectedItem = navigationItemSelectedIndex,
-                        isPortrait = isPortrait
+                        isPortrait = isPortrait,
+                        navigationMode = bottomNavigationMode.value
                     )
                 }
             }
@@ -153,6 +167,14 @@ class MainActivity : ComponentActivity() {
         writeTagFilters = arrayOf(tagDetected)
     }
 
+    private fun setAdMob() {
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        backgroundScope.launch {
+            // Initialize the Google Mobile Ads SDK on a background thread.
+            MobileAds.initialize(this@MainActivity) {}
+        }
+        loadInterstitial(this)
+    }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -198,6 +220,11 @@ class MainActivity : ComponentActivity() {
         super.onPause()
         disableForegroundDispatch()
         viewModel.clearAmiibo()
+    }
+
+    override fun onDestroy() {
+        removeInterstitial()
+        super.onDestroy()
     }
 }
 

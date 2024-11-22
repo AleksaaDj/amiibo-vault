@@ -54,7 +54,7 @@ import com.softwavegames.amiibovault.model.Games3DS
 import com.softwavegames.amiibovault.model.GamesSwitch
 import com.softwavegames.amiibovault.model.GamesWiiU
 import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
-import com.softwavegames.amiibovault.util.Console
+import com.softwavegames.amiibovault.domain.util.Console
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
