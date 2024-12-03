@@ -35,8 +35,12 @@
     <string name="support">support</string>
     <string name="remove_filter">Supprimer le filtre</string>
     <string name="remove_ads">Supprimer</string>
-    <string name="remove_ads_purchased">Merci pour votre achat ! Les publicités ont été supprimées.</string>
+    <string name="product_purchased">Merci pour votre soutien ! Profitez bien du Amiibo Vault.</string>
     <string name="tired_of_ads">Fatigué des publicités ?</string>
     <string name="dialog_remove_ads_text">Vous pouvez supprimer complètement les publicités et profiter de Amiibo Vault sans interruptions grâce aux achats intégrés sur Google. Merci pour votre soutien !</string>
     <string name="dismiss_dialog">Fermer</string>
+    <string name="enable_scanning_message">Pour profiter du scannage d\'amiibo, veuillez envisager un achat intégré. Merci de nous aider à nous améliorer !</string>
+    <string name="enable_scanning_btn">Activer le scannage</string>
+    <string name="rate_dialog_title">Nous apprécions vos commentaires !</string>
+    <string name="rate_dialog_description">Appréciez-vous l\'application ? Vos commentaires nous aident à nous améliorer. Prenez un moment pour évaluer Amiibo Vault et partager vos pensées !</string>
 </resources>

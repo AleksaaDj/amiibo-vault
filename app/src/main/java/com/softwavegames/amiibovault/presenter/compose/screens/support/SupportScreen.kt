@@ -1,6 +1,5 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.support
 
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.widget.Toast
@@ -22,10 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -35,8 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import com.google.android.play.core.review.ReviewInfo
-import com.google.android.play.core.review.ReviewManagerFactory
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.domain.util.Constants
 
@@ -46,19 +39,10 @@ fun SupportScreen(
     onBackClick: () -> Unit,
     onPurchaseClicked: () -> Unit,
     buyEnabled: Boolean,
+    onRateReviewClicked: () -> Unit
 ) {
     val context = LocalContext.current
-    val reviewManager = remember {
-        ReviewManagerFactory.create(context)
-    }
-    var reviewInfo: ReviewInfo? by remember {
-        mutableStateOf(null)
-    }
-    reviewManager.requestReviewFlow().addOnCompleteListener {
-        if (it.isSuccessful) {
-            reviewInfo = it.result
-        }
-    }
+
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -118,7 +102,7 @@ fun SupportScreen(
                 contentColor = Color.White
             ),
             onClick = {
-                reviewInfo?.let { reviewManager.launchReviewFlow(context as Activity, it) }
+                onRateReviewClicked()
             },
         )
         {
@@ -142,7 +126,5 @@ fun SupportScreen(
             contentDescription = null,
         )
         Spacer(modifier = Modifier.height(40.dp))
-
     }
-
 }

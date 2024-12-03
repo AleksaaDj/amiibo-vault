@@ -35,8 +35,12 @@
     <string name="support">지원</string>
     <string name="remove_filter">필터 제거</string>
     <string name="remove_ads">광고 제거</string>
-    <string name="remove_ads_purchased">구매해 주셔서 감사합니다! 광고가 제거되었습니다.</string>
+    <string name="product_purchased">지원해 주셔서 감사합니다! Amiibo Vault를 즐기세요.</string>
     <string name="tired_of_ads">광고에 지치셨나요?</string>
     <string name="dialog_remove_ads_text">Google 인앱 구매로 광고를 완전히 제거하고 방해 없이 Amiibo Vault를 즐기실 수 있습니다. 지원해 주셔서 감사합니다!</string>
     <string name="dismiss_dialog">닫기</string>
+    <string name="enable_scanning_message">아미보 스캔을 즐기려면 인앱 구매를 고려해 주세요. 우리가 더 나아질 수 있도록 도와 주셔서 감사합니다!</string>
+    <string name="enable_scanning_btn">스캔 활성화</string>
+    <string name="rate_dialog_title">고객님의 피드백을 소중히 여깁니다!</string>
+    <string name="rate_dialog_description">앱이 마음에 드시나요? 고객님의 피드백은 저희가 개선하는 데 큰 도움이 됩니다. 잠시 시간을 내어 Amiibo Vault를 평가하고 의견을 공유해 주세요!</string>
 </resources>

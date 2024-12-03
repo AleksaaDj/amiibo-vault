@@ -34,8 +34,12 @@
     <string name="support">Support</string>
     <string name="remove_filter">Remove Filter</string>
     <string name="remove_ads">Remove Ads</string>
-    <string name="remove_ads_purchased">Thank you for your purchase! Ads have been removed.</string>
+    <string name="product_purchased">Thank you for your support! Please enjoy Amiibo Vault</string>
     <string name="tired_of_ads">Tired of Ads?</string>
     <string name="dialog_remove_ads_text">You can remove ads completely and enjoy Amiibo Vault without disruptions with Google In-App purchases. Thank you for support!</string>
     <string name="dismiss_dialog">Dismiss</string>
+    <string name="enable_scanning_message">To enjoy amiibo scanning, please consider an in-app purchase. Thanks for helping us improve!</string>
+    <string name="enable_scanning_btn">enable scanning</string>
+    <string name="rate_dialog_title">We Value Your Feedback!</string>
+    <string name="rate_dialog_description">Are you enjoying the app? Your feedback helps us improve. Please take a moment to rate Amiibo Vault and share your thoughts!</string>
 </resources>

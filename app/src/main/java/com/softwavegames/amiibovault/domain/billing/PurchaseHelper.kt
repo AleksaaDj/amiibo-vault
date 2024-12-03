@@ -24,17 +24,18 @@ import javax.inject.Singleton
 @Singleton
 class PurchaseHelper(private val activity: Activity) {
     private lateinit var billingClient: BillingClient
-    private lateinit var productDetails: ProductDetails
+    private lateinit var productNoAdsDetails: ProductDetails
+    private lateinit var productScanDetails: ProductDetails
     private lateinit var purchase: Purchase
 
-    private val productID = Constants.BILLING_PRODUCT_ID
+    private val productNoAdsID = Constants.BILLING_PRODUCT_NO_ADS_ID
+    private val productScanID = Constants.BILLING_PRODUCT_SCAN_ID
 
-    private val _productName = MutableStateFlow("Searching...")
-    // For later use
-    //val productName = _productName.asStateFlow()
+    private val _buyEnabledNoAds = MutableStateFlow(true)
+    val buyEnabledNoAds = _buyEnabledNoAds.asStateFlow()
 
-    private val _buyEnabled = MutableStateFlow(true)
-    val buyEnabled = _buyEnabled.asStateFlow()
+    private val _buyEnabledScan = MutableStateFlow(true)
+    val buyEnabledScan = _buyEnabledScan.asStateFlow()
 
     private val _statusText = MutableStateFlow(Constants.BILLING_STATUS_INITIALIZING)
     val statusText = _statusText.asStateFlow()
@@ -76,7 +77,7 @@ class PurchaseHelper(private val activity: Activity) {
                     BillingClient.BillingResponseCode.OK
                 ) {
                     _statusText.value = Constants.BILLING_STATUS_CLIENT_CONNECTED
-                    queryProduct(productID)
+                    queryProduct()
                 } else {
                     _statusText.value = Constants.BILLING_STATUS_CLIENT_FAILED
                 }
@@ -88,12 +89,18 @@ class PurchaseHelper(private val activity: Activity) {
         })
     }
 
-    fun queryProduct(productId: String) {
+    fun queryProduct() {
         val queryProductDetailsParams = QueryProductDetailsParams.newBuilder()
             .setProductList(
                 ImmutableList.of(
                     QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(productId)
+                        .setProductId(productNoAdsID)
+                        .setProductType(
+                            BillingClient.ProductType.INAPP
+                        )
+                        .build(),
+                    QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(productScanID)
                         .setProductType(
                             BillingClient.ProductType.INAPP
                         )
@@ -106,11 +113,22 @@ class PurchaseHelper(private val activity: Activity) {
             queryProductDetailsParams
         ) { _, productDetailsList ->
             if (productDetailsList.isNotEmpty()) {
-                productDetails = productDetailsList[0]
-                _productName.value = "Product: " + productDetails.name
+                for (productDetails in productDetailsList) {
+                    when (productDetails.productId) {
+                        Constants.BILLING_PRODUCT_NO_ADS_ID -> {
+                            productNoAdsDetails = productDetails
+                        }
+
+                        Constants.BILLING_PRODUCT_SCAN_ID -> {
+                            productScanDetails = productDetails
+                        }
+                    }
+                }
+
             } else {
                 _statusText.value = Constants.BILLING_STATUS_NO_PRODUCTS
-                _buyEnabled.value = false
+                _buyEnabledNoAds.value = false
+                _buyEnabledScan.value = false
             }
         }
         billingClient.queryPurchasesAsync(
@@ -118,7 +136,14 @@ class PurchaseHelper(private val activity: Activity) {
                 .build()
         ) { billingResult, purchaseList ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                _buyEnabled.value = purchaseList.isEmpty()
+                for (product in purchaseList) {
+                    if (product.products[0].toString() == Constants.BILLING_PRODUCT_NO_ADS_ID) {
+                        _buyEnabledNoAds.value = false
+                    }
+                    if (product.products[0].toString() == Constants.BILLING_PRODUCT_SCAN_ID) {
+                        _buyEnabledScan.value = false
+                    }
+                }
             }
         }
     }
@@ -131,30 +156,48 @@ class PurchaseHelper(private val activity: Activity) {
                     .setPurchaseToken(purchase.purchaseToken)
                 CoroutineScope(Dispatchers.IO).launch {
                     billingClient.acknowledgePurchase(acknowledgePurchaseParams.build()) {
-                        _buyEnabled.value = false
+                        when (purchase.products[0]) {
+                            Constants.BILLING_PRODUCT_NO_ADS_ID -> {
+                                _buyEnabledNoAds.value = false
+                            }
+                            Constants.BILLING_PRODUCT_SCAN_ID -> {
+                                _buyEnabledScan.value = false
+                            }
+                        }
                         _statusText.value = Constants.BILLING_STATUS_PURCHASE_COMPLETE
                     }
-
                 }
             }
         }
     }
 
-    fun makePurchase() {
-        if (::productDetails.isInitialized) {
-            val billingFlowParams = BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(
-                    ImmutableList.of(
-                        BillingFlowParams.ProductDetailsParams.newBuilder()
-                            .setProductDetails(productDetails)
-                            .build()
-                    )
-                )
-                .build()
-
-            billingClient.launchBillingFlow(activity, billingFlowParams)
+    fun makeNoAdsPurchase() {
+        if (::productNoAdsDetails.isInitialized) {
+            openBillingFlow(productNoAdsDetails)
         } else {
             _statusText.value = Constants.BILLING_STATUS_PRODUCT_DETAILS_UNKNOWN
         }
+    }
+
+    fun makeScanPurchase() {
+        if (::productScanDetails.isInitialized) {
+            openBillingFlow(productScanDetails)
+        } else {
+            _statusText.value = Constants.BILLING_STATUS_PRODUCT_DETAILS_UNKNOWN
+        }
+    }
+
+    private fun openBillingFlow(productDetails: ProductDetails) {
+        val billingFlowParams = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(
+                ImmutableList.of(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(productDetails)
+                        .build()
+                )
+            )
+            .build()
+
+        billingClient.launchBillingFlow(activity, billingFlowParams)
     }
 }

@@ -4,9 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,12 +32,16 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.domain.ads.LargeBannerAd
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NfcScannerScreen(
     onBackClick: () -> Unit,
-    isPortrait: Boolean
+    isPortrait: Boolean,
+    showBannerAd: Boolean,
+    onPurchaseScanClicked: () -> Unit,
+    buyEnabledScan: Boolean,
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -61,9 +68,10 @@ fun NfcScannerScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = if (isPortrait) 50.dp else 20.dp, start = 20.dp, end = 20.dp),
+                .fillMaxHeight()
+                .padding(top = 20.dp, start = 20.dp, end = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             if (isPortrait) {
                 val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.nfc_anim))
@@ -81,17 +89,57 @@ fun NfcScannerScreen(
                             .size(70.dp)
                             .align(Alignment.Center),
                         painter = painterResource(id = R.drawable.ic_nfc_logo),
-                        contentDescription = null)
+                        contentDescription = null
+                    )
                 }
             }
-            Text(
-                text = stringResource(R.string.tap_amiibo),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 10.dp)
-            )
-        }
+            if (buyEnabledScan) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = stringResource(R.string.enable_scanning_message),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 10.dp)
+                    )
+                    Button(
+                        modifier = Modifier,
+                        shape = MaterialTheme.shapes.small,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black,
+                            contentColor = Color.White
+                        ),
+                        onClick = {
+                            onPurchaseScanClicked()
+                        },
+                    )
+                    {
+                        Text(text = stringResource(R.string.enable_scanning_btn))
+                    }
+                }
 
+            } else {
+                Text(
+                    text = stringResource(R.string.tap_amiibo),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+            }
+        }
+        if (showBannerAd) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(bottom = 50.dp),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                LargeBannerAd(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+        }
     }
 }

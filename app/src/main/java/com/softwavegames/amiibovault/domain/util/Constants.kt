@@ -15,10 +15,14 @@ object Constants {
 
     const val AMIIBO_WORLDWIDE_SIZE = 849f
 
-    const val BILLING_PRODUCT_ID = "no_ads"
+    const val BILLING_PRODUCT_NO_ADS_ID = "no_ads"
+    const val BILLING_PRODUCT_SCAN_ID = "amiibo_scan"
 
     const val SHARED_PREFERENCES_NAME = "amiibo_preferences"
-    const val SHARED_PREFERENCES_OPENED_TIMES = "app_opened_times"
+    const val SHARED_PREFERENCES_OPENED_ADS_TIMES = "app_opened_times"
+    const val SHARED_PREFERENCES_OPENED_RATE_TIMES = "app_opened_rate_times"
+    const val SHARED_PREFERENCES_RATE_CLICKED = "rate_clicked"
+
 
     const val BILLING_STATUS_INITIALIZING = "Initializing..."
     const val BILLING_STATUS_CLIENT_CONNECTED = "Billing Client Connected"
@@ -30,7 +34,8 @@ object Constants {
     const val BILLING_STATUS_PURCHASE_ERROR = "Purchase Error"
     const val BILLING_STATUS_PURCHASE_COMPLETE = "Purchase Completed"
 
-    const val OPENED_TIMES_TARGET = 3
+    const val OPENED_TIMES_TARGET_ADS_DIALOG = 3
+    const val OPENED_TIMES_TARGET_RATE_DIALOG = 7
 
 
     enum class CollectionLists {

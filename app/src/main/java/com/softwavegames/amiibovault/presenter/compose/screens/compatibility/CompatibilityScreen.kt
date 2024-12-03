@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.domain.ads.FullWidthBannerAd
 import com.softwavegames.amiibovault.model.AmiiboGames
 import com.softwavegames.amiibovault.model.Games3DS
 import com.softwavegames.amiibovault.model.GamesSwitch
@@ -65,7 +67,8 @@ fun CompatibilityScreen(
     isPortrait: Boolean,
     amiiboName: String,
     onCardClick: () -> Unit,
-    onSelectionChange: () -> Unit
+    onSelectionChange: () -> Unit,
+    showBannerAd: Boolean
 ) {
 
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
@@ -101,7 +104,7 @@ fun CompatibilityScreen(
     ) {
         TextSwitch(
             modifier = Modifier
-                .padding(top = if(isPortrait) 100.dp else 90.dp, start = 10.dp, end = 10.dp),
+                .padding(top = if (isPortrait) 100.dp else 90.dp, start = 10.dp, end = 10.dp),
             selectedIndex = selectedIndex,
             items = items,
             onSelectionChange = {
@@ -115,12 +118,21 @@ fun CompatibilityScreen(
                 0 -> SwitchGamesList(
                     consoleGamesList = amiiboGames.gamesSwitch,
                     isPortrait = isPortrait,
-                    onCardClick = onCardClick
+                    onCardClick = onCardClick,
+                    showBannerAd = showBannerAd
                 )
-                1 -> DsGamesList(consoleGamesList = amiiboGames.games3DS, isPortrait = isPortrait,
-                    onCardClick = onCardClick)
-                2 -> WiiGamesList(consoleGamesList = amiiboGames.gamesWiiU, isPortrait = isPortrait,
-                    onCardClick = onCardClick)
+
+                1 -> DsGamesList(
+                    consoleGamesList = amiiboGames.games3DS, isPortrait = isPortrait,
+                    onCardClick = onCardClick,
+                    showBannerAd = showBannerAd
+                )
+
+                2 -> WiiGamesList(
+                    consoleGamesList = amiiboGames.gamesWiiU, isPortrait = isPortrait,
+                    onCardClick = onCardClick,
+                    showBannerAd = showBannerAd
+                )
             }
         } else {
             AnimatedVisibility(visible = !showErrorScreen) {
@@ -146,7 +158,8 @@ fun CompatibilityScreen(
 fun SwitchGamesList(
     consoleGamesList: List<GamesSwitch>,
     isPortrait: Boolean,
-    onCardClick: () -> Unit
+    onCardClick: () -> Unit,
+    showBannerAd: Boolean
 ) {
     val state = remember {
         MutableTransitionState(false).apply {
@@ -178,6 +191,9 @@ fun SwitchGamesList(
         }
     }
     if (consoleGamesList.isNotEmpty()) {
+        if(showBannerAd) {
+            BannerAd()
+        }
         AnimatedVisibility(visibleState = state) {
             LazyColumn(
                 modifier = Modifier
@@ -204,7 +220,7 @@ fun SwitchGamesList(
 }
 
 @Composable
-fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean, onCardClick: () -> Unit) {
+fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean, onCardClick: () -> Unit, showBannerAd: Boolean) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
@@ -233,6 +249,9 @@ fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean, onCardCli
         }
     }
     if (consoleGamesList.isNotEmpty()) {
+        if(showBannerAd) {
+            BannerAd()
+        }
         AnimatedVisibility(visibleState = state) {
             LazyColumn(
                 modifier = Modifier
@@ -259,7 +278,7 @@ fun DsGamesList(consoleGamesList: List<Games3DS>, isPortrait: Boolean, onCardCli
 }
 
 @Composable
-fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean, onCardClick: () -> Unit) {
+fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean, onCardClick: () -> Unit, showBannerAd: Boolean) {
     val state = remember {
         MutableTransitionState(false).apply {
             targetState = true
@@ -290,6 +309,9 @@ fun WiiGamesList(consoleGamesList: List<GamesWiiU>, isPortrait: Boolean, onCardC
         }
     }
     if (consoleGamesList.isNotEmpty()) {
+        if(showBannerAd) {
+            BannerAd()
+        }
         AnimatedVisibility(visibleState = state) {
             LazyColumn(
                 modifier = Modifier
@@ -428,6 +450,18 @@ fun EmptyScreen() {
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Composable
+fun BannerAd() {
+    Card(
+        modifier = Modifier.height(60.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent,
+        ),
+    ) {
+        FullWidthBannerAd(modifier = Modifier.fillMaxWidth())
     }
 }
 

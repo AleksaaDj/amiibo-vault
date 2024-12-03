@@ -15,6 +15,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,6 @@ import com.softwavegames.amiibovault.domain.ads.loadInterstitial
 import com.softwavegames.amiibovault.domain.ads.removeInterstitial
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
-import com.softwavegames.amiibovault.domain.util.NavigationTypeHelper
 import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
 import com.softwavegames.amiibovault.presenter.compose.navhost.BottomNavigationBar
 import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.AmiiboNfcDetailsViewModel
@@ -64,8 +64,7 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val purchaseHelper = PurchaseHelper(this)
-            val bottomNavigationMode = rememberSaveable { mutableStateOf(NavigationTypeHelper.GESTURE) }
-            bottomNavigationMode.value = NavigationTypeHelper.getMode(context = baseContext)
+            val buyEnabledScan by purchaseHelper.buyEnabledScan.collectAsState(false)
             val bottomBarState = rememberSaveable { mutableStateOf(true) }
             val navigationItemSelectedIndex = rememberSaveable { mutableIntStateOf(0) }
             val isAnimationFinished = rememberSaveable { mutableStateOf(false) }
@@ -103,8 +102,8 @@ class MainActivity : ComponentActivity() {
                             }
 
                             AppNavigation.BottomNavScreens.NfcScanner.route -> {
-                                enableForegroundDispatch()
                                 bottomBarState.value = false
+                                enableForegroundDispatch()
                             }
 
                             else -> {
@@ -127,21 +126,24 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         bottomBarState = bottomBarState,
                         navigationSelectedItem = navigationItemSelectedIndex,
-                        isPortrait = isPortrait,
-                        navigationMode = bottomNavigationMode.value
+                        isPortrait = isPortrait
                     )
                 }
             }
             viewModel.amiiboNfc.observe(this) { amiibo ->
                 if (amiibo != null) {
-                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                        Constants.PARSED_AMIIBO,
-                        amiibo
-                    )
-                    if (navController.currentDestination?.route == AppNavigation.BottomNavScreens.NfcScanner.route) {
-                        navController.navigate(
-                            route = AppNavigation.NavigationItem.DetailsScreen.route,
+                    if (buyEnabledScan) {
+                        purchaseHelper.makeScanPurchase()
+                    } else {
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            Constants.PARSED_AMIIBO,
+                            amiibo
                         )
+                        if (navController.currentDestination?.route == AppNavigation.BottomNavScreens.NfcScanner.route) {
+                            navController.navigate(
+                                route = AppNavigation.NavigationItem.DetailsScreen.route,
+                            )
+                        }
                     }
                 }
             }

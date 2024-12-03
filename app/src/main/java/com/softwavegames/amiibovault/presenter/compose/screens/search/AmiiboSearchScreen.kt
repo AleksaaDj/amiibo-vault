@@ -53,6 +53,7 @@ import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
 import com.softwavegames.amiibovault.presenter.compose.common.ChipGroup
 import com.softwavegames.amiibovault.presenter.compose.common.FeaturedAmiiboCard
+import com.softwavegames.amiibovault.presenter.compose.common.RateDialog
 import com.softwavegames.amiibovault.presenter.compose.common.RemoveAdsDialog
 import com.softwavegames.amiibovault.presenter.compose.common.ScrollToTopButton
 import kotlinx.coroutines.delay
@@ -83,7 +84,12 @@ fun AmiiboListScreen(
     onSoundVolumeChanged: (Boolean) -> Unit,
     openRemoveAdsDialog: MutableState<Boolean>,
     onRemoveAdsClicked: () -> Unit,
-    onDialogDismissed: () -> Unit
+    onDialogAdsDismissed: () -> Unit,
+    onPurchaseClicked: () -> Unit,
+    buyEnabled: Boolean,
+    openRateDialog: MutableState<Boolean>,
+    onDialogRateDismissed: () -> Unit,
+    onRateClicked: () -> Unit,
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -159,10 +165,20 @@ fun AmiiboListScreen(
         when {
             openRemoveAdsDialog.value -> {
                 RemoveAdsDialog(
-                    onDismissRequest = { onDialogDismissed() },
+                    onDismissRequest = { onDialogAdsDismissed() },
                     onConfirmation = {
                         onRemoveAdsClicked()
                     },
+                )
+            }
+            openRateDialog.value -> {
+                RateDialog(
+                    onDismissRequest = {
+                        onDialogRateDismissed()
+                    },
+                    onConfirmation = {
+                        onRateClicked()
+                    }
                 )
             }
         }
@@ -207,20 +223,39 @@ fun AmiiboListScreen(
                 isPortrait = isPortrait
             )
 
-            IconButton(modifier = Modifier
-                .padding(end = 10.dp),
-                onClick = {
-                    onChangeListClick()
-                    isList = !isList
-                    onLayoutChange(isList)
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Absolute.Right
             ) {
-                Icon(
-                    painter = if (isList) painterResource(id = R.drawable.ic_grid) else painterResource(
-                        id = R.drawable.ic_list
-                    ), contentDescription = null,
-                    tint = Color.Red
-                )
+                if (buyEnabled) {
+                    IconButton(
+                        onClick = {
+                            onPurchaseClicked()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.ic_remove_ads
+                            ), contentDescription = null,
+                            tint = Color.Red
+                        )
+                    }
+                }
+                IconButton(modifier = Modifier
+                    .padding(end = 10.dp),
+                    onClick = {
+                        onChangeListClick()
+                        isList = !isList
+                        onLayoutChange(isList)
+                    }
+                ) {
+                    Icon(
+                        painter = if (isList) painterResource(id = R.drawable.ic_grid) else painterResource(
+                            id = R.drawable.ic_list
+                        ), contentDescription = null,
+                        tint = Color.Red
+                    )
+                }
             }
         }
 
@@ -243,7 +278,7 @@ fun AmiiboListScreen(
                         color = Color.Red,
                     )
                     LaunchedEffect(this) {
-                        delay(4500)
+                        delay(25000)
                         showProgress.value = false
                         showErrorScreen.value = true
                     }
@@ -307,7 +342,7 @@ fun AmiiboListScreen(
                         color = Color.Red,
                     )
                     LaunchedEffect(this) {
-                        delay(4500)
+                        delay(25000)
                         showProgress.value = false
                         showErrorScreen.value = true
                     }

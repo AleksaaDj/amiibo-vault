@@ -57,10 +57,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.android.play.core.review.ReviewInfo
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.softwavegames.amiibovault.AppNavigation
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.domain.ads.showInterstitial
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
+import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.CollectionScreenViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.MyCollectionScreen
@@ -74,8 +77,6 @@ import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboSear
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboFromSeriesListViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboGridScreen
 import com.softwavegames.amiibovault.presenter.compose.screens.support.SupportScreen
-import com.softwavegames.amiibovault.domain.util.Constants
-import com.softwavegames.amiibovault.domain.util.NavigationTypeHelper
 import kotlinx.coroutines.launch
 
 
@@ -87,27 +88,47 @@ fun BottomNavigationBar(
     bottomBarState: MutableState<Boolean>,
     navigationSelectedItem: MutableState<Int>,
     isPortrait: Boolean,
-    purchaseHelper: PurchaseHelper,
-    navigationMode: NavigationTypeHelper
+    purchaseHelper: PurchaseHelper
 ) {
 
     val navHostViewModel: NavHostViewModel = hiltViewModel()
     val statusText by purchaseHelper.statusText.collectAsState("")
-    val buyEnabled by purchaseHelper.buyEnabled.collectAsState(false)
+    val buyEnabledAds by purchaseHelper.buyEnabledNoAds.collectAsState(false)
+    val buyEnabledScan by purchaseHelper.buyEnabledScan.collectAsState(false)
     val openAlertDialog = remember { mutableStateOf(false) }
-    val openedTimes = rememberSaveable { mutableIntStateOf(navHostViewModel.getAppOpenedTimes()) }
+    val openRateDialog = remember { mutableStateOf(false) }
+    val reviewManager = remember { ReviewManagerFactory.create(context) }
+    var reviewInfo: ReviewInfo? by rememberSaveable { mutableStateOf(null) }
+    reviewManager.requestReviewFlow().addOnCompleteListener {
+        if (it.isSuccessful) {
+            reviewInfo = it.result
+        }
+    }
 
-    if (buyEnabled) {
-        navHostViewModel.setAppOpenedTimes(openedTimes.intValue + 1)
-        if (openedTimes.intValue == Constants.OPENED_TIMES_TARGET) {
+    val openedAdTimes =
+        rememberSaveable { mutableIntStateOf(navHostViewModel.getAppOpenedAdsTimes()) }
+    val openedRateTimes =
+        rememberSaveable { mutableIntStateOf(navHostViewModel.getAppOpenedRateTimes()) }
+
+    if (buyEnabledAds) {
+        navHostViewModel.setAppOpenedAdsTimes(openedAdTimes.intValue + 1)
+        if (isShowRemoveAdDialog(openedAdTimes.intValue)) {
             openAlertDialog.value = true
-            navHostViewModel.setAppOpenedTimes(0)
-            openedTimes.intValue = 0
+            navHostViewModel.setAppOpenedAdsTimes(0)
+            openedAdTimes.intValue = 0
+        }
+    }
+    if (!navHostViewModel.isRateClicked()) {
+        navHostViewModel.setAppOpenedRateTimes(openedRateTimes.intValue + 1)
+        if (isShowRateDialog(openedRateTimes.intValue)) {
+            openRateDialog.value = true
+            navHostViewModel.setAppOpenedRateTimes(0)
+            openedRateTimes.intValue = 0
         }
     }
 
     if (statusText == Constants.BILLING_STATUS_PURCHASE_COMPLETE) {
-        Toast.makeText(context, stringResource(R.string.remove_ads_purchased), Toast.LENGTH_LONG)
+        Toast.makeText(context, stringResource(R.string.product_purchased), Toast.LENGTH_LONG)
             .show()
     }
 
@@ -141,11 +162,7 @@ fun BottomNavigationBar(
                     NavigationBar(
                         modifier = Modifier
                             .height(
-                                when (navigationMode) {
-                                    NavigationTypeHelper.GESTURE -> 70.dp
-                                    NavigationTypeHelper.TWO_BUTTON -> 80.dp
-                                    NavigationTypeHelper.THREE_BUTTON -> 100.dp
-                                }
+                                80.dp
                             ),
                         contentColor = Color.White,
                         containerColor = Color.Black
@@ -279,7 +296,7 @@ fun BottomNavigationBar(
                             addInterstitialClickTime = {
                                 interstitialClickTimes.intValue += 1
                             },
-                            buyEnabled = buyEnabled
+                            buyEnabled = buyEnabledAds
                         )
                     },
                     onLayoutChange = {
@@ -356,11 +373,24 @@ fun BottomNavigationBar(
                     },
                     openRemoveAdsDialog = openAlertDialog,
                     onRemoveAdsClicked = {
-                        purchaseHelper.makePurchase()
+                        purchaseHelper.makeNoAdsPurchase()
                         openAlertDialog.value = false
                     },
-                    onDialogDismissed = {
+                    onDialogAdsDismissed = {
                         openAlertDialog.value = false
+                    },
+                    onPurchaseClicked = {
+                        openAlertDialog.value = true
+                    },
+                    buyEnabled = buyEnabledAds,
+                    openRateDialog = openRateDialog,
+                    onDialogRateDismissed = { openRateDialog.value = false },
+                    onRateClicked = {
+                        openRateDialog.value = false
+                        reviewInfo?.let {
+                            reviewManager.launchReviewFlow(activity, it)
+                            navHostViewModel.setRateClicked()
+                        }
                     }
                 )
             }
@@ -392,7 +422,7 @@ fun BottomNavigationBar(
                                     addInterstitialClickTime = {
                                         interstitialClickTimes.intValue += 1
                                     },
-                                    buyEnabled = buyEnabled
+                                    buyEnabled = buyEnabledAds
                                 )
                             },
                             saveToMyCollection = { amiibo ->
@@ -448,7 +478,7 @@ fun BottomNavigationBar(
                                 addInterstitialClickTime = {
                                     interstitialClickTimes.intValue += 1
                                 },
-                                buyEnabled = buyEnabled
+                                buyEnabled = buyEnabledAds
                             )
                         },
                         onBackClick = {
@@ -480,10 +510,12 @@ fun BottomNavigationBar(
                             },
                             onSelectionChange = {
                                 playSound(soundPool, iconSound, isSoundOn.value)
-                            }
+                            },
+                            showBannerAd = buyEnabledAds
                         )
                     }
             }
+
             composable(AppNavigation.BottomNavScreens.AmiiboMyCollection.route) {
                 val viewModel: CollectionScreenViewModel = hiltViewModel()
                 MyCollectionScreen(
@@ -495,7 +527,7 @@ fun BottomNavigationBar(
                             navController = navController,
                             amiibo = amiibo,
                             activity = activity,
-                            buyEnabled = buyEnabled,
+                            buyEnabled = buyEnabledAds,
                             interstitialClickTimes = interstitialClickTimes.intValue,
                             addInterstitialClickTime = {
                                 interstitialClickTimes.intValue += 1
@@ -511,31 +543,47 @@ fun BottomNavigationBar(
                     }
                 )
             }
+
             composable(AppNavigation.BottomNavScreens.NfcScanner.route) {
                 NfcScannerScreen(
                     onBackClick = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         navController.navigateUp()
                     },
-                    isPortrait = isPortrait
+                    isPortrait = isPortrait,
+                    showBannerAd = buyEnabledAds,
+                    buyEnabledScan = buyEnabledScan,
+                    onPurchaseScanClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        purchaseHelper.makeScanPurchase()
+                    }
                 )
             }
+
             composable(AppNavigation.NavigationItem.SupportScreen.route) {
                 SupportScreen(
-                    buyEnabled = buyEnabled,
+                    buyEnabled = buyEnabledAds,
                     onBackClick = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         navController.navigateUp()
                     },
                     onPurchaseClicked = {
                         playSound(soundPool, iconSound, isSoundOn.value)
-                        purchaseHelper.makePurchase()
+                        purchaseHelper.makeNoAdsPurchase()
+                    },
+                    onRateReviewClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        reviewInfo?.let {
+                            reviewManager.launchReviewFlow(activity, it)
+                            navHostViewModel.setRateClicked()
+                        }
                     }
                 )
             }
         }
     }
 }
+
 
 data class BottomNavigationItem(
     val label: String = "",
@@ -632,7 +680,7 @@ private fun navigateToSupportScreen(navController: NavController) {
     )
 }
 
-private fun playSound(soundPool: SoundPool, sound: Int, isSoundOn: Boolean) {
+fun playSound(soundPool: SoundPool, sound: Int, isSoundOn: Boolean) {
     if (isSoundOn) {
         soundPool.play(sound, 1F, 1F, 1, 0, 1F)
     }
@@ -642,7 +690,15 @@ private fun isShowAd(
     interstitialClickTimes: Int,
     buyEnabled: Boolean,
 ): Boolean {
-    return buyEnabled && interstitialClickTimes % 4 == 0
+    return buyEnabled && interstitialClickTimes % 3 == 0
+}
+
+private fun isShowRemoveAdDialog(openedTimes: Int): Boolean {
+    return openedTimes == Constants.OPENED_TIMES_TARGET_ADS_DIALOG
+}
+
+private fun isShowRateDialog(openedTimes: Int): Boolean {
+    return openedTimes == Constants.OPENED_TIMES_TARGET_RATE_DIALOG
 }
 
 private suspend fun scrollToTop(

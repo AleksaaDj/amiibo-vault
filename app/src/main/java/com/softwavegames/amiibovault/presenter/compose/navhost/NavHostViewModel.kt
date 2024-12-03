@@ -11,16 +11,39 @@ import javax.inject.Inject
 class NavHostViewModel @Inject constructor(private val sharedPref: SharedPreferences) :
     ViewModel() {
 
-
-    fun setAppOpenedTimes(number: Int) {
-        SharedPrefUtils.putInt(sharedPref, Constants.SHARED_PREFERENCES_OPENED_TIMES, number)
+    fun setAppOpenedAdsTimes(number: Int) {
+        SharedPrefUtils.putInt(sharedPref, Constants.SHARED_PREFERENCES_OPENED_ADS_TIMES, number)
     }
 
-    fun getAppOpenedTimes(): Int {
+    fun getAppOpenedAdsTimes(): Int {
         return SharedPrefUtils.getInt(
             sharedPref,
-            Constants.SHARED_PREFERENCES_OPENED_TIMES,
-            0
+            Constants.SHARED_PREFERENCES_OPENED_ADS_TIMES,
+            1
+        )
+    }
+
+    fun setAppOpenedRateTimes(number: Int) {
+        SharedPrefUtils.putInt(sharedPref, Constants.SHARED_PREFERENCES_OPENED_RATE_TIMES, number)
+    }
+
+    fun getAppOpenedRateTimes(): Int {
+        return SharedPrefUtils.getInt(
+            sharedPref,
+            Constants.SHARED_PREFERENCES_OPENED_RATE_TIMES,
+            1
+        )
+    }
+
+    fun setRateClicked() {
+        SharedPrefUtils.putBoolean(sharedPref, Constants.SHARED_PREFERENCES_RATE_CLICKED, true)
+    }
+
+    fun isRateClicked(): Boolean {
+        return SharedPrefUtils.getBoolean(
+            sharedPref,
+            Constants.SHARED_PREFERENCES_RATE_CLICKED,
+            false
         )
     }
 }

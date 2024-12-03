@@ -13,4 +13,14 @@ object SharedPrefUtils {
         prefsEditor.putInt(key, value)
         prefsEditor.apply()
     }
+
+    fun getBoolean(mSharedPref: SharedPreferences, key: String?, defValue: Boolean): Boolean {
+        return mSharedPref.getBoolean(key, defValue)
+    }
+
+    fun putBoolean(mSharedPref: SharedPreferences, key: String?, value: Boolean) {
+        val prefsEditor = mSharedPref.edit()
+        prefsEditor.putBoolean(key, value)
+        prefsEditor.apply()
+    }
 }

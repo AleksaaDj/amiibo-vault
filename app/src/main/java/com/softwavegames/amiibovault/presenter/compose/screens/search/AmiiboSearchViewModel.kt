@@ -18,12 +18,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
-import com.softwavegames.amiibovault.model.Amiibo
-import com.softwavegames.amiibovault.model.AmiiboCollection
-import com.softwavegames.amiibovault.model.AmiiboWishlist
 import com.softwavegames.amiibovault.domain.util.AverageColor
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.domain.util.Utils
+import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.model.AmiiboCollection
+import com.softwavegames.amiibovault.model.AmiiboWishlist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +31,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.net.UnknownHostException
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -94,7 +94,7 @@ class AmiiboSearchViewModel @Inject constructor(
                     Log.e("ErrorAmiiboList", amiiboListResponse.message())
                 }
             }
-        } catch (e: UnknownHostException) {
+        } catch (e: IOException) {
             Log.e("ErrorAmiiboList", "No Internet connection")
         }
         return amiiboListRemote
