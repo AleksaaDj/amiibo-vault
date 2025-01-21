@@ -42,4 +42,5 @@
     <string name="enable_scanning_btn">スキャンを有効にする</string>
     <string name="rate_dialog_title">あなたのフィードバックを大切にします！</string>
     <string name="rate_dialog_description">アプリを楽しんでいますか？ あなたのフィードバックは私たちが改善するのに役立ちます。ぜひAmiibo Vaultを評価し、あなたの考えを共有してください！</string>
+    <string name="sort">並び替え</string>
 </resources>

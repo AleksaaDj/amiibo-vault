@@ -42,6 +42,8 @@ class AmiiboSearchViewModel @Inject constructor(
 ) :
     ViewModel() {
 
+    var sortType = MutableLiveData<String?>()
+
     private var _amiiboList = MutableLiveData<List<Amiibo>?>()
     var amiiboList: LiveData<List<Amiibo>?> = _amiiboList
 
@@ -53,6 +55,7 @@ class AmiiboSearchViewModel @Inject constructor(
 
     private var _amiiboListWishlist = MutableLiveData<List<AmiiboWishlist>?>()
     var amiiboListWishlist: LiveData<List<AmiiboWishlist>?> = _amiiboListWishlist
+
 
     init {
         loadAmiibos()
@@ -105,6 +108,7 @@ class AmiiboSearchViewModel @Inject constructor(
         repository.searchAmiiboHome(name).onEach { localList ->
             amiiboLocalList = localList
             _amiiboList.postValue(amiiboLocalList)
+            sortType.value?.let { sortAmiiboList(it, amiiboLocalList) }
         }.launchIn(viewModelScope)
     }
 
@@ -118,6 +122,7 @@ class AmiiboSearchViewModel @Inject constructor(
                     it.type.contains(type) && it.amiiboSeries.contains(series)
                 }
             } else if (type.isNotEmpty() && series.isEmpty()) {
+                amiiboLocalList.sortedBy { it.name }
                 amiiboLocalList.filter {
                     it.type.contains(type)
                 }
@@ -129,7 +134,43 @@ class AmiiboSearchViewModel @Inject constructor(
                 amiiboLocalList
             }
             _amiiboList.postValue(amiiboFilteredList)
+            sortType.value?.let { sortAmiiboList(it,amiiboFilteredList) }
         }.launchIn(viewModelScope)
+    }
+
+    fun sortAmiiboList(sortType: String, amiiboList: List<Amiibo>?) {
+        val amiiboLocalList = amiiboList ?: emptyList()
+        val amiiboSortedList: List<Amiibo> = when (sortType) {
+            Constants.SORT_TYPE_NAME_ASC -> {
+                amiiboLocalList.sortedBy { it.name }
+            }
+
+            Constants.SORT_TYPE_NAME_DSC -> {
+                amiiboLocalList.sortedByDescending { it.name }
+            }
+
+            Constants.SORT_TYPE_RELEASE_ASC -> {
+                amiiboLocalList.sortedWith(compareBy<Amiibo> { it.release?.jp == "null" }.thenBy { it.release?.jp })
+            }
+
+            Constants.SORT_TYPE_RELEASE_DSC -> {
+                amiiboLocalList.sortedWith(compareBy<Amiibo> { it.release?.jp == "null" }.thenByDescending { it.release?.jp })
+            }
+
+            Constants.SORT_TYPE_SET_ASC -> {
+                amiiboLocalList.sortedBy { it.gameSeries }
+            }
+
+            Constants.SORT_TYPE_SET_DSC -> {
+                amiiboLocalList.sortedByDescending { it.gameSeries }
+            }
+
+            else -> {
+                amiiboLocalList
+            }
+        }
+        Log.d("Sort", "sort")
+        _amiiboList.postValue(amiiboSortedList)
     }
 
     private suspend fun addAmiiboListToDatabase(amiiboList: List<Amiibo>) {

@@ -25,7 +25,11 @@ import com.softwavegames.amiibovault.domain.util.AmiiboFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetType(onDismiss: () -> Unit, onItemClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
+fun BottomSheetType(
+    onDismiss: () -> Unit,
+    onItemClick: (String) -> Unit,
+    onRemoveClicked: () -> Unit
+) {
     val modalBottomSheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
@@ -84,7 +88,11 @@ fun TypeList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetSet(onDismiss: () -> Unit, onItemClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
+fun BottomSheetSet(
+    onDismiss: () -> Unit,
+    onItemClick: (String) -> Unit,
+    onRemoveClicked: () -> Unit
+) {
     val modalBottomSheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
@@ -140,3 +148,63 @@ fun SetList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: (
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheetSort(onDismiss: () -> Unit, onItemClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
+    val modalBottomSheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        containerColor = Color.White,
+        onDismissRequest = { onDismiss() },
+        sheetState = modalBottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() }
+    ) {
+        SortList(onDismiss, onItemClick, onRemoveClicked)
+    }
+}
+
+@Composable
+fun SortList(onDismiss: () -> Unit, onClick: (String) -> Unit, onRemoveClicked: () -> Unit) {
+    val sortTypes = AmiiboFilters.sortTypes
+
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onRemoveClicked()
+                    onDismiss()
+                },
+            text = stringResource(R.string.remove_filter),
+            color = Color.Red,
+            fontWeight = FontWeight.Normal,
+            textAlign = TextAlign.Center
+        )
+    }
+    LazyColumn(
+        contentPadding = PaddingValues(vertical = 30.dp),
+    ) {
+        items(sortTypes) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp, horizontal = 20.dp)
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onDismiss()
+                            onClick(it)
+                        },
+                    text = it,
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+

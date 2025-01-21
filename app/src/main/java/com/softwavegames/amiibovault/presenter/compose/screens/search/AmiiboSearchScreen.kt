@@ -4,9 +4,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -58,7 +62,7 @@ import com.softwavegames.amiibovault.presenter.compose.common.RemoveAdsDialog
 import com.softwavegames.amiibovault.presenter.compose.common.ScrollToTopButton
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AmiiboListScreen(
     amiiboCollection: List<AmiiboCollection>?,
@@ -78,18 +82,18 @@ fun AmiiboListScreen(
     onFilterTypeRemoved: () -> Unit,
     onFilterSetSelected: (String) -> Unit,
     onFilterSetRemoved: () -> Unit,
+    onSortTypeSelected: (String) -> Unit,
+    onSortTypeRemoved: () -> Unit,
     onLayoutChange: (Boolean) -> Unit,
     saveToWishlist: (Amiibo) -> Unit,
     removeFromWishlist: (Amiibo) -> Unit,
     onSoundVolumeChanged: (Boolean) -> Unit,
-    openRemoveAdsDialog: MutableState<Boolean>,
-    onRemoveAdsClicked: () -> Unit,
-    onDialogAdsDismissed: () -> Unit,
-    onPurchaseClicked: () -> Unit,
-    buyEnabled: Boolean,
     openRateDialog: MutableState<Boolean>,
     onDialogRateDismissed: () -> Unit,
     onRateClicked: () -> Unit,
+    openRemoveAdsDialog: MutableState<Boolean>,
+    onRemoveAdsClicked: () -> Unit,
+    onDialogAdsDismissed: () -> Unit,
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -171,6 +175,7 @@ fun AmiiboListScreen(
                     },
                 )
             }
+
             openRateDialog.value -> {
                 RateDialog(
                     onDismissRequest = {
@@ -198,9 +203,9 @@ fun AmiiboListScreen(
             Spacer(modifier = Modifier.height(3.dp))
         }
 
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom,
+            verticalArrangement = Arrangement.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             ChipGroup(
@@ -220,42 +225,37 @@ fun AmiiboListScreen(
                     searchText = ""
                     onFilterSetRemoved()
                 },
+                onSortTypeRemoved = {
+                    searchText = ""
+                    onSortTypeRemoved()
+                },
+                onSortTypeSelected = {
+                    searchText = ""
+                    onSortTypeSelected(it)
+                },
                 isPortrait = isPortrait
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(top = 10.dp, end = 13.dp, start = 10.dp, bottom = 4.dp),
                 horizontalArrangement = Arrangement.Absolute.Right
             ) {
-                if (buyEnabled) {
-                    IconButton(
-                        onClick = {
-                            onPurchaseClicked()
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                            onChangeListClick()
+                            isList = !isList
+                            onLayoutChange(isList)
                         }
-                    ) {
-                        Icon(
-                            painter = painterResource(
-                                id = R.drawable.ic_remove_ads
-                            ), contentDescription = null,
-                            tint = Color.Red
-                        )
-                    }
-                }
-                IconButton(modifier = Modifier
-                    .padding(end = 10.dp),
-                    onClick = {
-                        onChangeListClick()
-                        isList = !isList
-                        onLayoutChange(isList)
-                    }
-                ) {
-                    Icon(
-                        painter = if (isList) painterResource(id = R.drawable.ic_grid) else painterResource(
-                            id = R.drawable.ic_list
-                        ), contentDescription = null,
-                        tint = Color.Red
-                    )
-                }
+                        .size(24.dp),
+                    painter = if (isList) painterResource(id = R.drawable.ic_grid) else painterResource(
+                        id = R.drawable.ic_list
+                    ), contentDescription = null,
+                    tint = Color.Red
+                )
+
             }
         }
 

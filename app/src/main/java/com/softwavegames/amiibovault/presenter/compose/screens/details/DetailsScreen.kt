@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,10 +66,14 @@ fun DetailsScreen(
     saveToMyCollection: (Amiibo) -> Unit,
     removeFromMyCollection: (Amiibo) -> Unit,
     isAmiiboSavedMyCollection: State<Boolean?>,
-    isPortrait: Boolean
+    isPortrait: Boolean,
+    showAd: () -> Unit
 ) {
 
     val context = LocalContext.current
+    LaunchedEffect(true) {
+        showAd()
+    }
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -262,7 +267,10 @@ fun AmiiboDetailsInfo(amiibo: Amiibo, isLandscape: Boolean) {
 
     Spacer(modifier = Modifier.height(if (isLandscape) 5.dp else 7.dp))
 
-    InfoDetailItem(label = stringResource(R.string.serial), infoToDisplay = amiibo.head + amiibo.tail)
+    InfoDetailItem(
+        label = stringResource(R.string.serial),
+        infoToDisplay = amiibo.head + amiibo.tail
+    )
 
 }
 

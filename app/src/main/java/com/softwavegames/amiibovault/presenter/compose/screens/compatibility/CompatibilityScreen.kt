@@ -68,11 +68,14 @@ fun CompatibilityScreen(
     amiiboName: String,
     onCardClick: () -> Unit,
     onSelectionChange: () -> Unit,
-    showBannerAd: Boolean
+    showBannerAd: Boolean,
+    showAd: () -> Unit,
 ) {
 
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var showErrorScreen by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(true) {showAd() }
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(

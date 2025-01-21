@@ -43,4 +43,5 @@
     <string name="enable_scanning_btn">Scannen aktivieren</string>
     <string name="rate_dialog_title">Wir schätzen Ihr Feedback!</string>
     <string name="rate_dialog_description">Gefällt Ihnen die App? Ihr Feedback hilft uns, uns zu verbessern. Bitte nehmen Sie sich einen Moment Zeit, um Amiibo Vault zu bewerten und Ihre Gedanken zu teilen!</string>
+    <string name="sort">Sortieren</string>
 </resources>

@@ -13,7 +13,7 @@ object Constants {
 
     const val DONATE_URL = "https://ko-fi.com/softwavegames"
 
-    const val AMIIBO_WORLDWIDE_SIZE = 849f
+    const val AMIIBO_WORLDWIDE_SIZE = 855f
 
     const val BILLING_PRODUCT_NO_ADS_ID = "no_ads"
     const val BILLING_PRODUCT_SCAN_ID = "amiibo_scan"
@@ -22,7 +22,7 @@ object Constants {
     const val SHARED_PREFERENCES_OPENED_ADS_TIMES = "app_opened_times"
     const val SHARED_PREFERENCES_OPENED_RATE_TIMES = "app_opened_rate_times"
     const val SHARED_PREFERENCES_RATE_CLICKED = "rate_clicked"
-
+    const val SHARED_PREFERENCES_IS_DARK_MODE = "is_dark_mode"
 
     const val BILLING_STATUS_INITIALIZING = "Initializing..."
     const val BILLING_STATUS_CLIENT_CONNECTED = "Billing Client Connected"
@@ -34,8 +34,15 @@ object Constants {
     const val BILLING_STATUS_PURCHASE_ERROR = "Purchase Error"
     const val BILLING_STATUS_PURCHASE_COMPLETE = "Purchase Completed"
 
-    const val OPENED_TIMES_TARGET_ADS_DIALOG = 3
-    const val OPENED_TIMES_TARGET_RATE_DIALOG = 7
+    const val OPENED_TIMES_TARGET_ADS_DIALOG = 2
+    const val OPENED_TIMES_TARGET_RATE_DIALOG = 3
+
+    const val SORT_TYPE_NAME_ASC = "Name (A-Z)"
+    const val SORT_TYPE_NAME_DSC = "Name (Z-A)"
+    const val SORT_TYPE_RELEASE_ASC = "Release (Asc)"
+    const val SORT_TYPE_RELEASE_DSC = "Release (Dsc)"
+    const val SORT_TYPE_SET_ASC = "Set (A-Z)"
+    const val SORT_TYPE_SET_DSC = "Set (Z-A)"
 
 
     enum class CollectionLists {
@@ -48,5 +55,4 @@ object Console {
     const val SWITCH = "Switch"
     const val DS = "3DS"
     const val WII = "WiiU"
-
 }

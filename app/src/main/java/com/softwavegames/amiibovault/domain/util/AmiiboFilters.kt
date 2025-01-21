@@ -33,4 +33,13 @@ object AmiiboFilters {
     val types = listOf(
         "Figure", "Card", "Yarn", "Band"
     )
+
+    val sortTypes = listOf(
+        Constants.SORT_TYPE_NAME_ASC,
+        Constants.SORT_TYPE_NAME_DSC,
+        Constants.SORT_TYPE_RELEASE_ASC,
+        Constants.SORT_TYPE_RELEASE_DSC,
+        Constants.SORT_TYPE_SET_ASC,
+        Constants.SORT_TYPE_SET_DSC
+    )
 }

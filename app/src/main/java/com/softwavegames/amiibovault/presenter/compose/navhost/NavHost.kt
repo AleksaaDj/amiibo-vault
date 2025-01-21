@@ -64,6 +64,7 @@ import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.domain.ads.showInterstitial
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.ThemeState
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.CollectionScreenViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.MyCollectionScreen
@@ -95,8 +96,10 @@ fun BottomNavigationBar(
     val statusText by purchaseHelper.statusText.collectAsState("")
     val buyEnabledAds by purchaseHelper.buyEnabledNoAds.collectAsState(false)
     val buyEnabledScan by purchaseHelper.buyEnabledScan.collectAsState(false)
-    val openAlertDialog = remember { mutableStateOf(false) }
+    val openRemoveAdsDialog = remember { mutableStateOf(false) }
+    val openRemoveAdsCollectionDialog = remember { mutableStateOf(false) }
     val openRateDialog = remember { mutableStateOf(false) }
+    val isDark = ThemeState.darkModeState.value
     val reviewManager = remember { ReviewManagerFactory.create(context) }
     var reviewInfo: ReviewInfo? by rememberSaveable { mutableStateOf(null) }
     reviewManager.requestReviewFlow().addOnCompleteListener {
@@ -113,7 +116,7 @@ fun BottomNavigationBar(
     if (buyEnabledAds) {
         navHostViewModel.setAppOpenedAdsTimes(openedAdTimes.intValue + 1)
         if (isShowRemoveAdDialog(openedAdTimes.intValue)) {
-            openAlertDialog.value = true
+            openRemoveAdsDialog.value = true
             navHostViewModel.setAppOpenedAdsTimes(0)
             openedAdTimes.intValue = 0
         }
@@ -162,7 +165,7 @@ fun BottomNavigationBar(
                     NavigationBar(
                         modifier = Modifier
                             .height(
-                                80.dp
+                                90.dp
                             ),
                         contentColor = Color.White,
                         containerColor = Color.Black
@@ -272,15 +275,18 @@ fun BottomNavigationBar(
         ) {
             composable(AppNavigation.BottomNavScreens.AmiiboList.route) {
                 val viewModel: AmiiboSearchViewModel = hiltViewModel()
+
                 val isList = rememberSaveable { mutableStateOf(true) }
                 val isFilterTypeSelected = rememberSaveable { mutableStateOf(false) }
                 val filterType = rememberSaveable { mutableStateOf("") }
                 val isFilterSetSelected = rememberSaveable { mutableStateOf(false) }
                 val filterSet = rememberSaveable { mutableStateOf("") }
+                val isSortTypeSelected = rememberSaveable { mutableStateOf(false) }
                 navController.currentBackStackEntry?.savedStateHandle?.set(
                     Constants.PARSED_AMIIBO,
                     null
                 )
+
                 AmiiboListScreen(
                     amiiboCollection = viewModel.amiiboListCollection.observeAsState().value,
                     amiiboWishList = viewModel.amiiboListWishlist.observeAsState().value,
@@ -290,13 +296,7 @@ fun BottomNavigationBar(
                         playSound(soundPool, buttonSound, isSoundOn.value)
                         navigateToDetails(
                             navController = navController,
-                            amiibo = amiibo,
-                            interstitialClickTimes = interstitialClickTimes.intValue,
-                            activity = activity,
-                            addInterstitialClickTime = {
-                                interstitialClickTimes.intValue += 1
-                            },
-                            buyEnabled = buyEnabledAds
+                            amiibo = amiibo
                         )
                     },
                     onLayoutChange = {
@@ -356,6 +356,21 @@ fun BottomNavigationBar(
                         filterSet.value = ""
                         viewModel.searchAmiiboFiltered("", filterType.value, filterSet.value)
                     },
+                    onSortTypeSelected = { sortTypeSelected ->
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        viewModel.sortAmiiboList(sortTypeSelected, viewModel.amiiboList.value)
+                        isSortTypeSelected.value = true
+                        viewModel.sortType.value = sortTypeSelected
+                    },
+                    onSortTypeRemoved = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        isSortTypeSelected.value = false
+                        viewModel.sortType.value = Constants.SORT_TYPE_NAME_ASC
+                        viewModel.sortAmiiboList(
+                            viewModel.sortType.value.toString(),
+                            viewModel.amiiboList.value
+                        )
+                    },
                     saveToWishlist = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         viewModel.viewModelScope.launch {
@@ -371,18 +386,6 @@ fun BottomNavigationBar(
                     onSoundVolumeChanged = {
                         isSoundOn.value = it
                     },
-                    openRemoveAdsDialog = openAlertDialog,
-                    onRemoveAdsClicked = {
-                        purchaseHelper.makeNoAdsPurchase()
-                        openAlertDialog.value = false
-                    },
-                    onDialogAdsDismissed = {
-                        openAlertDialog.value = false
-                    },
-                    onPurchaseClicked = {
-                        openAlertDialog.value = true
-                    },
-                    buyEnabled = buyEnabledAds,
                     openRateDialog = openRateDialog,
                     onDialogRateDismissed = { openRateDialog.value = false },
                     onRateClicked = {
@@ -391,7 +394,17 @@ fun BottomNavigationBar(
                             reviewManager.launchReviewFlow(activity, it)
                             navHostViewModel.setRateClicked()
                         }
-                    }
+                    },
+                    onRemoveAdsClicked = {
+                        playSound(soundPool, buttonSound, isSoundOn.value)
+                        purchaseHelper.makeNoAdsPurchase()
+                        openRemoveAdsDialog.value = false
+                    },
+                    onDialogAdsDismissed = {
+                        playSound(soundPool, buttonSound, isSoundOn.value)
+                        openRemoveAdsDialog.value = false
+                    },
+                    openRemoveAdsDialog = openRemoveAdsDialog,
                 )
             }
             composable(AppNavigation.NavigationItem.DetailsScreen.route) {
@@ -417,12 +430,6 @@ fun BottomNavigationBar(
                                 navigateToCompatibility(
                                     navController = navController,
                                     amiibo = amiibo,
-                                    interstitialClickTimes = interstitialClickTimes.intValue,
-                                    activity = activity,
-                                    addInterstitialClickTime = {
-                                        interstitialClickTimes.intValue += 1
-                                    },
-                                    buyEnabled = buyEnabledAds
                                 )
                             },
                             saveToMyCollection = { amiibo ->
@@ -451,7 +458,14 @@ fun BottomNavigationBar(
                                 }
                             },
                             isAmiiboSavedWishlist = viewModel.amiiboSavedWishlist.observeAsState(),
-                            isPortrait = isPortrait
+                            isPortrait = isPortrait,
+                            showAd = {
+                                if (isShowAd(interstitialClickTimes.intValue, buyEnabledAds)) {
+                                    showInterstitial(activity = activity) {
+                                    }
+                                }
+                                interstitialClickTimes.intValue += 1
+                            },
                         )
                     }
             }
@@ -472,13 +486,7 @@ fun BottomNavigationBar(
                             playSound(soundPool, buttonSound, isSoundOn.value)
                             navigateToDetails(
                                 navController = navController,
-                                amiibo = amiibo,
-                                interstitialClickTimes = interstitialClickTimes.intValue,
-                                activity = activity,
-                                addInterstitialClickTime = {
-                                    interstitialClickTimes.intValue += 1
-                                },
-                                buyEnabled = buyEnabledAds
+                                amiibo = amiibo
                             )
                         },
                         onBackClick = {
@@ -511,7 +519,14 @@ fun BottomNavigationBar(
                             onSelectionChange = {
                                 playSound(soundPool, iconSound, isSoundOn.value)
                             },
-                            showBannerAd = buyEnabledAds
+                            showBannerAd = buyEnabledAds,
+                            showAd = {
+                                if (isShowAd(interstitialClickTimes.intValue, buyEnabledAds)) {
+                                    showInterstitial(activity = activity) {
+                                    }
+                                }
+                                interstitialClickTimes.intValue += 1
+                            },
                         )
                     }
             }
@@ -526,12 +541,7 @@ fun BottomNavigationBar(
                         navigateToDetails(
                             navController = navController,
                             amiibo = amiibo,
-                            activity = activity,
-                            buyEnabled = buyEnabledAds,
-                            interstitialClickTimes = interstitialClickTimes.intValue,
-                            addInterstitialClickTime = {
-                                interstitialClickTimes.intValue += 1
-                            })
+                        )
                     },
                     isPortrait = isPortrait,
                     onSupportClick = {
@@ -540,7 +550,27 @@ fun BottomNavigationBar(
                     },
                     onSelectionChange = {
                         playSound(soundPool, iconSound, isSoundOn.value)
-                    }
+                    },
+                    isDarkMode = isDark,
+                    onThemeModeClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        navHostViewModel.setThemeMode(!isDark)
+                    },
+                    onPurchaseClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        openRemoveAdsCollectionDialog.value = true
+                    },
+                    buyEnabled = buyEnabledAds,
+                    onRemoveAdsClicked = {
+                        playSound(soundPool, buttonSound, isSoundOn.value)
+                        purchaseHelper.makeNoAdsPurchase()
+                        openRemoveAdsCollectionDialog.value = false
+                    },
+                    onDialogAdsDismissed = {
+                        playSound(soundPool, buttonSound, isSoundOn.value)
+                        openRemoveAdsCollectionDialog.value = false
+                    },
+                    openRemoveAdsDialog = openRemoveAdsCollectionDialog,
                 )
             }
 
@@ -610,29 +640,14 @@ data class BottomNavigationItem(
 private fun navigateToDetails(
     navController: NavController,
     amiibo: Amiibo,
-    interstitialClickTimes: Int,
-    activity: Activity,
-    addInterstitialClickTime: () -> Unit,
-    buyEnabled: Boolean,
 ) {
-    if (isShowAd(interstitialClickTimes, buyEnabled)) {
-        showInterstitial(activity = activity) {
-            navController.currentBackStackEntry?.savedStateHandle?.set(
-                Constants.PARSED_AMIIBO,
-                amiibo
-            )
-            navController.navigate(
-                route = AppNavigation.NavigationItem.DetailsScreen.route
-            )
-            addInterstitialClickTime()
-        }
-    } else {
-        navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, amiibo)
-        navController.navigate(
-            route = AppNavigation.NavigationItem.DetailsScreen.route
-        )
-        addInterstitialClickTime()
-    }
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        Constants.PARSED_AMIIBO,
+        amiibo
+    )
+    navController.navigate(
+        route = AppNavigation.NavigationItem.DetailsScreen.route
+    )
 }
 
 private fun navigateToMore(navController: NavController, amiibo: Amiibo) {
@@ -643,29 +658,15 @@ private fun navigateToMore(navController: NavController, amiibo: Amiibo) {
 }
 
 private fun navigateToCompatibility(
-    navController: NavController, amiibo: Amiibo, interstitialClickTimes: Int,
-    activity: Activity,
-    addInterstitialClickTime: () -> Unit,
-    buyEnabled: Boolean,
+    navController: NavController, amiibo: Amiibo,
 ) {
-    if (isShowAd(interstitialClickTimes, buyEnabled)) {
-        showInterstitial(activity = activity) {
-            navController.currentBackStackEntry?.savedStateHandle?.set(
-                Constants.PARSED_AMIIBO,
-                amiibo
-            )
-            navController.navigate(
-                route = AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route
-            )
-            addInterstitialClickTime()
-        }
-    } else {
-        navController.currentBackStackEntry?.savedStateHandle?.set(Constants.PARSED_AMIIBO, amiibo)
-        navController.navigate(
-            route = AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route
-        )
-        addInterstitialClickTime()
-    }
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        Constants.PARSED_AMIIBO,
+        amiibo
+    )
+    navController.navigate(
+        route = AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route
+    )
 }
 
 private fun navigateToNfcScanner(navController: NavController) {
@@ -690,7 +691,7 @@ private fun isShowAd(
     interstitialClickTimes: Int,
     buyEnabled: Boolean,
 ): Boolean {
-    return buyEnabled && interstitialClickTimes % 3 == 0
+    return buyEnabled && interstitialClickTimes % 4 == 0
 }
 
 private fun isShowRemoveAdDialog(openedTimes: Int): Boolean {

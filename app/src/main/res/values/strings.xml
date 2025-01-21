@@ -42,4 +42,5 @@
     <string name="enable_scanning_btn">enable scanning</string>
     <string name="rate_dialog_title">We Value Your Feedback!</string>
     <string name="rate_dialog_description">Are you enjoying the app? Your feedback helps us improve. Please take a moment to rate Amiibo Vault and share your thoughts!</string>
+    <string name="sort">Sort</string>
 </resources>

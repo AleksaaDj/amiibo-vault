@@ -30,6 +30,7 @@ import com.softwavegames.amiibovault.domain.ads.loadInterstitial
 import com.softwavegames.amiibovault.domain.ads.removeInterstitial
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.ThemeState
 import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
 import com.softwavegames.amiibovault.presenter.compose.navhost.BottomNavigationBar
 import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.AmiiboNfcDetailsViewModel
@@ -57,6 +58,8 @@ class MainActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
 
+        ThemeState.darkModeState.value = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(Constants.SHARED_PREFERENCES_IS_DARK_MODE, false)
+
         setNFC()
         setNFCIntentListener()
         setAdMob()
@@ -74,13 +77,12 @@ class MainActivity : ComponentActivity() {
                 Configuration.ORIENTATION_LANDSCAPE -> {
                     false
                 }
-
                 else -> {
                     true
                 }
             }
 
-            AmiiboMvvmComposeTheme {
+            AmiiboMvvmComposeTheme(darkTheme = ThemeState.darkModeState.value) {
                 LogoAnim {
                     isAnimationFinished.value = true
                 }
@@ -195,7 +197,15 @@ class MainActivity : ComponentActivity() {
      * enable foreground dispatch to prevent intent-filter to launch the app again
      */
     private fun enableForegroundDispatch() {
-        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null)
+        try {
+            nfcAdapter?.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null)
+        } catch (error: Exception) {
+            Log.e(
+                "Foreground_Dispatcher",
+                "Error starting foreground dispatch",
+                error
+            )
+        }
     }
 
     /**
@@ -229,6 +239,7 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 }
+
 
 
 

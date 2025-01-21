@@ -179,7 +179,7 @@ private fun ListItemDetails(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    modifier = modifier.padding(top = 5.dp),
+                    modifier = modifier.padding(top = 5.dp, end = 30.dp),
                     text = amiibo.name,
                     color = MaterialTheme.colorScheme.onPrimary,
                     fontSize = 17.sp,
@@ -194,10 +194,9 @@ private fun ListItemDetails(
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
-
                 amiibo.release?.jp?.let {
                     Text(
-                        text = it,
+                        text = if (it == "null") "" else it,
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
@@ -209,12 +208,12 @@ private fun ListItemDetails(
             modifier = Modifier
                 .align(Alignment.TopEnd),
             onClick = {
-            if (showInWishlist) {
-                removeFromWishlist(amiibo)
-            } else {
-                saveToWishlist(amiibo)
-            }
-        }) {
+                if (showInWishlist) {
+                    removeFromWishlist(amiibo)
+                } else {
+                    saveToWishlist(amiibo)
+                }
+            }) {
             Icon(
                 painter = if (showInWishlist) painterResource(id = R.drawable.ic_bookmark) else painterResource(
                     id = R.drawable.ic_bookmark_outlined

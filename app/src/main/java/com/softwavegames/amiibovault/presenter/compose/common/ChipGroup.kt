@@ -32,22 +32,28 @@ fun ChipGroup(
     onFilterSetRemoved: () -> Unit,
     onFilterTypeSelected: (String) -> Unit,
     onFilterTypeRemoved: () -> Unit,
+    onSortTypeSelected: (String) -> Unit,
+    onSortTypeRemoved: () -> Unit,
     isPortrait: Boolean
 ) {
     Row(
         modifier = Modifier
-            .padding(start = if (isPortrait) 15.dp else 95.dp, bottom = 8.dp),
+            .padding(start = if (isPortrait) 13.dp else 95.dp, top = 5.dp, end = 7.dp, bottom = 7.dp),
         horizontalArrangement = Arrangement.Start,
     ) {
-
         ChipType(
-            onItemSelected = { onFilterTypeSelected(it)},
+            onItemSelected = { onFilterTypeSelected(it) },
             onFilterRemoved = onFilterTypeRemoved
         )
-        
+
         ChipSet(
             onItemSelected = onFilterSetSelected,
             onFilterRemoved = onFilterSetRemoved
+        )
+
+        ChipSortType(
+            onItemSelected = onSortTypeSelected,
+            onFilterRemoved = onSortTypeRemoved
         )
     }
 }
@@ -75,7 +81,7 @@ private fun ChipType(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Un
         )
     }
     Box(modifier = Modifier
-        .padding(end = 8.dp)
+        .padding(end = 3.dp)
         .clickable {
             showSheet = true
         }) {
@@ -88,12 +94,12 @@ private fun ChipType(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Un
                     text = if (selected) selectedItemLabel else stringResource(id = R.string.type),
                     modifier = Modifier.padding(
                         start = 7.dp,
-                        top = 5.dp,
-                        bottom = 5.dp
+                        top = 3.dp,
+                        bottom = 3.dp
                     ),
                     color = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
+                    fontSize = 12.sp
                 )
                 Icon(
                     Icons.Filled.ArrowDropDown,
@@ -111,7 +117,6 @@ private fun ChipSet(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Uni
     var selected by rememberSaveable { mutableStateOf(false) }
     var selectedItemLabel by rememberSaveable { mutableStateOf("") }
 
-
     if (showSheet) {
         BottomSheetSet(
             onDismiss = { showSheet = false },
@@ -128,7 +133,7 @@ private fun ChipSet(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Uni
         )
     }
     Box(modifier = Modifier
-        .padding(end = 5.dp)
+        .padding(end = 3.dp)
         .clickable {
             showSheet = true
         }) {
@@ -141,12 +146,64 @@ private fun ChipSet(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Uni
                     text = if (selected) selectedItemLabel else stringResource(id = R.string.set),
                     modifier = Modifier.padding(
                         start = 7.dp,
-                        top = 5.dp,
-                        bottom = 5.dp
+                        top = 3.dp,
+                        bottom = 3.dp
                     ),
                     color = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
+                    fontSize = 12.sp
+                )
+                Icon(
+                    Icons.Filled.ArrowDropDown,
+                    null,
+                    tint = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+    }
+}
+@Composable
+private fun ChipSortType(onItemSelected: (String) -> Unit, onFilterRemoved: () -> Unit) {
+    var showSheet by rememberSaveable { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableStateOf(false) }
+    var selectedItemLabel by rememberSaveable { mutableStateOf("") }
+
+    if (showSheet) {
+        BottomSheetSort(
+            onDismiss = { showSheet = false },
+            onItemClick = { selectedItem ->
+                selected = true
+                selectedItemLabel = selectedItem
+                onItemSelected(selectedItem)
+            },
+            onRemoveClicked = {
+                onFilterRemoved()
+                selected = false
+                selectedItemLabel = ""
+            }
+        )
+    }
+    Box(modifier = Modifier
+        .padding(end = 7.dp)
+        .clickable {
+            showSheet = true
+        }) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = if (selected) Black else MaterialTheme.colorScheme.secondaryContainer
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = if (selected) selectedItemLabel else stringResource(R.string.sort),
+                    modifier = Modifier.padding(
+                        start = 7.dp,
+                        top = 3.dp,
+                        bottom = 3.dp
+                    ),
+                    maxLines = 1,
+                    color = if (selected) Color.White else MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp
                 )
                 Icon(
                     Icons.Filled.ArrowDropDown,

@@ -43,4 +43,5 @@
     <string name="enable_scanning_btn">스캔 활성화</string>
     <string name="rate_dialog_title">고객님의 피드백을 소중히 여깁니다!</string>
     <string name="rate_dialog_description">앱이 마음에 드시나요? 고객님의 피드백은 저희가 개선하는 데 큰 도움이 됩니다. 잠시 시간을 내어 Amiibo Vault를 평가하고 의견을 공유해 주세요!</string>
+    <string name="sort">정렬</string>
 </resources>

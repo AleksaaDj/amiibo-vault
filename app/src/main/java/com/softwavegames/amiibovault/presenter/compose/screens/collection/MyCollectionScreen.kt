@@ -5,7 +5,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,14 +40,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.Utils
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
 import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
 import com.softwavegames.amiibovault.presenter.compose.common.GlowingCard
+import com.softwavegames.amiibovault.presenter.compose.common.RemoveAdsDialog
 import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
-import com.softwavegames.amiibovault.domain.util.Constants
-import com.softwavegames.amiibovault.domain.util.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +58,14 @@ fun MyCollectionScreen(
     navigateToDetails: (Amiibo) -> Unit,
     isPortrait: Boolean,
     onSupportClick: () -> Unit,
-    onSelectionChange: () -> Unit
+    onSelectionChange: () -> Unit,
+    isDarkMode: Boolean,
+    onThemeModeClicked: () -> Unit,
+    onPurchaseClicked: () -> Unit,
+    buyEnabled: Boolean,
+    openRemoveAdsDialog: MutableState<Boolean>,
+    onRemoveAdsClicked: () -> Unit,
+    onDialogAdsDismissed: () -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -71,26 +79,68 @@ fun MyCollectionScreen(
         title = { Text(text = stringResource(R.string.collections)) },
         actions = {
             Row(
-                modifier = Modifier
-                    .clickable {
-                        onSupportClick()
-                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = stringResource(id = R.string.support))
-                Image(
+                if (buyEnabled) {
+                    Icon(
+                        modifier = Modifier
+                            .clickable {
+                                onPurchaseClicked()
+                            }
+                            .padding(end = 15.dp, top = 3.dp)
+                            .size(24.dp),
+                        painter = painterResource(
+                            id = R.drawable.ic_remove_ads
+                        ), contentDescription = null,
+                        tint = Color.Red
+                    )
+                }
+                Icon(
                     modifier = Modifier
-                        .padding(end = 5.dp)
-                        .size(45.dp),
-                    painter = painterResource(id = R.drawable.ic_kofi),
+                        .padding(end = 15.dp, top = 3.dp)
+                        .size(24.dp)
+                        .clickable {
+                            onThemeModeClicked()
+                        },
+                    painter = if (isDarkMode) painterResource(id = R.drawable.ic_light_mode) else painterResource(
+                        id = R.drawable.ic_dark_mode
+                    ),
+                    tint = Color.Red,
                     contentDescription = stringResource(
                         R.string.donate
                     )
                 )
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            onSupportClick()
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 13.dp, top = 3.dp)
+                            .size(24.dp),
+                        painter = painterResource(id = R.drawable.ic_help),
+                        tint = Color.Red,
+                        contentDescription = stringResource(
+                            R.string.support
+                        ),
+                    )
+                }
             }
-
         }
     )
+    when {
+        openRemoveAdsDialog.value -> {
+            RemoveAdsDialog(
+                onDismissRequest = { onDialogAdsDismissed() },
+                onConfirmation = {
+                    onRemoveAdsClicked()
+                },
+            )
+        }
+    }
     Column(
         modifier = Modifier
             .padding(top = if (isPortrait) 110.dp else 90.dp)
