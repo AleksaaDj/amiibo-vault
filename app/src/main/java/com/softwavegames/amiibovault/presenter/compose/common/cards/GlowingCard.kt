@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.presenter.compose.common
+package com.softwavegames.amiibovault.presenter.compose.common.cards
 
 import android.graphics.Paint
 import androidx.compose.foundation.layout.Box

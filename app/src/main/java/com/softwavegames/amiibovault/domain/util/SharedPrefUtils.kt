@@ -23,4 +23,15 @@ object SharedPrefUtils {
         prefsEditor.putBoolean(key, value)
         prefsEditor.apply()
     }
+
+    fun putSet(mSharedPref: SharedPreferences, key: String?, value: Set<String>) {
+        val prefsEditor = mSharedPref.edit()
+        prefsEditor.putStringSet(key, value)
+        prefsEditor.apply()
+    }
+
+    fun getSet(mSharedPref: SharedPreferences, key: String?, defValue: Set<String>): Set<String>? {
+        return mSharedPref.getStringSet(key, defValue)
+    }
+
 }

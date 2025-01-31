@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.presenter.compose.common
+package com.softwavegames.amiibovault.presenter.compose.common.bottomsheets
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

@@ -37,6 +37,22 @@ class NavHostViewModel @Inject constructor(private val sharedPref: SharedPrefere
         )
     }
 
+    fun setCollectionPostsOpenedTimes(number: Int) {
+        SharedPrefUtils.putInt(
+            sharedPref,
+            Constants.SHARED_PREFERENCES_OPENED_COLLECTION_POSTS,
+            number
+        )
+    }
+
+    fun getCollectionPostsOpenedTimes(): Int {
+        return SharedPrefUtils.getInt(
+            sharedPref,
+            Constants.SHARED_PREFERENCES_OPENED_COLLECTION_POSTS,
+            0
+        )
+    }
+
     fun setRateClicked() {
         SharedPrefUtils.putBoolean(sharedPref, Constants.SHARED_PREFERENCES_RATE_CLICKED, true)
     }
@@ -56,6 +72,10 @@ class NavHostViewModel @Inject constructor(private val sharedPref: SharedPrefere
         }
         AppCompatDelegate.setDefaultNightMode(theme)
         ThemeState.darkModeState.value = isDarkMode
-        SharedPrefUtils.putBoolean(sharedPref, Constants.SHARED_PREFERENCES_IS_DARK_MODE, isDarkMode)
+        SharedPrefUtils.putBoolean(
+            sharedPref,
+            Constants.SHARED_PREFERENCES_IS_DARK_MODE,
+            isDarkMode
+        )
     }
 }

@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.presenter.compose.common
+package com.softwavegames.amiibovault.presenter.compose.common.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ import androidx.compose.ui.window.Dialog
 import com.softwavegames.amiibovault.R
 
 @Composable
-fun RemoveAdsDialog(
+fun RateDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
 ) {
@@ -67,15 +67,15 @@ fun RemoveAdsDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = stringResource(R.string.tired_of_ads),
+                        text = stringResource(R.string.rate_dialog_title),
                         modifier = Modifier.padding(top = 10.dp, bottom = 16.dp),
                         textAlign = TextAlign.Center,
-                        fontSize = 24.sp,
+                        fontSize = 22.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = stringResource(R.string.dialog_remove_ads_text),
+                        text = stringResource(R.string.rate_dialog_description),
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
@@ -104,7 +104,7 @@ fun RemoveAdsDialog(
                             modifier = Modifier.padding(8.dp),
                         ) {
                             Text(
-                                stringResource(R.string.remove_ads),
+                                stringResource(R.string.rate_amiibo_vault),
                                 fontSize = 18.sp,
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 fontWeight = FontWeight.SemiBold

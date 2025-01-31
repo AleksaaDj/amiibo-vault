@@ -43,4 +43,23 @@
     <string name="rate_dialog_title">We Value Your Feedback!</string>
     <string name="rate_dialog_description">Are you enjoying the app? Your feedback helps us improve. Please take a moment to rate Amiibo Vault and share your thoughts!</string>
     <string name="sort">Sort</string>
+    <string name="shared_by">Shared by: %1$s</string>
+    <string name="create_post">create post</string>
+    <string name="community_collections">community collections</string>
+    <string name="scanner">scanner</string>
+    <string name="community">community</string>
+    <string name="finish_creation">Finish Creation</string>
+    <string name="select_background_color">Select Background Color:</string>
+    <string name="select_avatar_image">Select Avatar Image:</string>
+    <string name="create_your_avatar">create your avatar</string>
+    <string name="name_to_be_displayed">Name to be displayed</string>
+    <string name="description_optional">Description (optional)</string>
+    <string name="upload_image_of_amiibo_collection">Upload image of amiibo collection</string>
+    <string name="please_fill_your_username">Please fill your Username</string>
+    <string name="please_upload_image">Please upload image</string>
+    <string name="publish_collection">publish collection</string>
+    <string name="error_getting_posts">Error getting posts</string>
+    <string name="new_feature_text">Be among the first to try our new feature! Share your collections with the community!\n\nFeatures to Explore: \n\n- Create Posts: Share images of your Amiibo collections. \n- Discover and Engage: Browse posts worldwide and like your favorites to support other collectors. \n\nHelp Us Improve! Your insights are invaluable in enhancing this feature: \n\n- Email Feedback: Send your suggestions and experiences to softwavegamess@gmail.com. \n- Play Store Reviews: Share your thoughts by leaving a review. \n\nThank you for contributing to our community and helping us make Amiibo Vault even better!</string>
+    <string name="got_it_btn">Got It!</string>
+    <string name="new_feature_title">New Feature!</string>
 </resources>

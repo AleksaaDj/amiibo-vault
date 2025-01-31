@@ -44,4 +44,23 @@
     <string name="rate_dialog_title">Nous apprécions vos commentaires !</string>
     <string name="rate_dialog_description">Appréciez-vous l\'application ? Vos commentaires nous aident à nous améliorer. Prenez un moment pour évaluer Amiibo Vault et partager vos pensées !</string>
     <string name="sort">Trier</string>
+    <string name="shared_by">Partagé par : %1$s</string>
+    <string name="create_post">créer un post</string>
+    <string name="community_collections">collections communautaires</string>
+    <string name="scanner">scanner</string>
+    <string name="community">communauté</string>
+    <string name="finish_creation">Terminer la création</string>
+    <string name="select_background_color">Sélectionner la couleur de fond :</string>
+    <string name="select_avatar_image">Sélectionner l\'image de l\'avatar :</string>
+    <string name="create_your_avatar">Créez votre avatar</string>
+    <string name="name_to_be_displayed">Nom à afficher</string>
+    <string name="description_optional">Description (optionnel)</string>
+    <string name="upload_image_of_amiibo_collection">Télécharger l\'image de la collection amiibo</string>
+    <string name="please_fill_your_username">Veuillez remplir votre nom d\'utilisateur</string>
+    <string name="please_upload_image">Veuillez télécharger une image</string>
+    <string name="publish_collection">Publier la collection</string>
+    <string name="error_getting_posts">Erreur lors de la récupération des publications</string>
+    <string name="new_feature_text">Soyez parmi les premiers à essayer notre nouvelle fonctionnalité! Partagez vos collections avec la communauté!\n\nFonctionnalités à explorer:\n\n- Créez des publications : Partagez des images de vos collections Amiibo.\n- Découvrir et interagir : Parcourez des publications du monde entier et aimez vos favoris pour soutenir d\'autres collectionneurs.\n\nAidez-nous à nous améliorer! Vos idées sont inestimables pour améliorer cette fonctionnalité:\n\n- Envoyer des commentaires par e-mail: Envoyez vos suggestions et expériences à softwavegamess@gmail.com.\n- Avis sur le Play Store: Partagez vos réflexions en laissant un avis.\n\nMerci de contribuer à notre communauté et de nous aider à rendre Amiibo Vault encore meilleur!</string>
+    <string name="got_it_btn">Compris !</string>
+    <string name="new_feature_title">Nouvelle fonctionnalité!</string>
 </resources>

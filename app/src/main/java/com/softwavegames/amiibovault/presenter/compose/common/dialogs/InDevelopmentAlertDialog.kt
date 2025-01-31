@@ -1,15 +1,16 @@
-package com.softwavegames.amiibovault.presenter.compose.common
+package com.softwavegames.amiibovault.presenter.compose.common.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,15 +29,14 @@ import androidx.compose.ui.window.Dialog
 import com.softwavegames.amiibovault.R
 
 @Composable
-fun RateDialog(
-    onDismissRequest: () -> Unit,
+fun InDevelopmentAlertDialog(
     onConfirmation: () -> Unit,
 ) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    Dialog(onDismissRequest = { onConfirmation() }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(260.dp),
+                .padding(top = 50.dp, bottom = 50.dp),
             shape = RoundedCornerShape(7.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background,
@@ -49,7 +49,6 @@ fun RateDialog(
                 modifier = Modifier
                     .fillMaxHeight()
                     .background(Color.Red),
-
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
@@ -62,54 +61,39 @@ fun RateDialog(
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = stringResource(R.string.rate_dialog_title),
-                        modifier = Modifier.padding(top = 10.dp, bottom = 16.dp),
+                        text = stringResource(R.string.new_feature_title),
+                        modifier = Modifier.padding(top = 15.dp, bottom = 16.dp),
                         textAlign = TextAlign.Center,
-                        fontSize = 22.sp,
+                        fontSize = 24.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        text = stringResource(R.string.rate_dialog_description),
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                        textAlign = TextAlign.Center,
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontWeight = FontWeight.Normal
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        horizontalArrangement = Arrangement.Center,
+                    SelectionContainer {
+                        Text(
+                            text = stringResource(R.string.new_feature_text),
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                            textAlign = TextAlign.Start,
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+                    TextButton(
+                        onClick = { onConfirmation() },
+                        modifier = Modifier.padding(top = 12.dp, bottom = 15.dp),
                     ) {
-                        TextButton(
-                            onClick = { onDismissRequest() },
-                            modifier = Modifier.padding(8.dp),
-                        ) {
-                            Text(
-                                stringResource(R.string.dismiss_dialog),
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                        TextButton(
-                            onClick = { onConfirmation() },
-                            modifier = Modifier.padding(8.dp),
-                        ) {
-                            Text(
-                                stringResource(R.string.rate_amiibo_vault),
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
+                        Text(
+                            text = stringResource(R.string.got_it_btn),
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
             }

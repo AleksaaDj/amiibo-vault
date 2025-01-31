@@ -43,4 +43,23 @@
     <string name="rate_dialog_title">あなたのフィードバックを大切にします！</string>
     <string name="rate_dialog_description">アプリを楽しんでいますか？ あなたのフィードバックは私たちが改善するのに役立ちます。ぜひAmiibo Vaultを評価し、あなたの考えを共有してください！</string>
     <string name="sort">並び替え</string>
+    <string name="shared_by">共有者: %1$s</string>
+    <string name="create_post">投稿を作成</string>
+    <string name="community_collections">コミュニティコレクション</string>
+    <string name="scanner">スキャナー</string>
+    <string name="community">コミュニティ</string>
+    <string name="finish_creation">作成を終了する</string>
+    <string name="select_background_color">背景色を選択：</string>
+    <string name="select_avatar_image">アバター画像を選択：</string>
+    <string name="create_your_avatar">アバターを作成</string>
+    <string name="name_to_be_displayed">表示する名前</string>
+    <string name="description_optional">説明（オプション）</string>
+    <string name="upload_image_of_amiibo_collection">アミーボコレクションの画像をアップロード</string>
+    <string name="please_fill_your_username">ユーザー名を入力してください</string>
+    <string name="please_upload_image">画像をアップロードしてください</string>
+    <string name="publish_collection">コレクションを公開</string>
+    <string name="error_getting_posts">投稿の取得エラー</string>
+    <string name="new_feature_text">新機能をいち早くお試しください！ コミュニティとコレクションを共有しましょう！\n\n探求する機能：\n\n- 投稿を作成する: Amiibo コレクションの画像を共有します。\n- 発見して交流する: 世界中の投稿を閲覧し、お気に入りにいいねをして他のコレクターをサポートしましょう。\n\n改善にご協力ください！ あなたの洞察は、この機能を向上させる上で非常に貴重です:\n\n- メールフィードバック: 提案や経験を softwavegamess@gmail.com に送信してください。\n- Play ストアのレビュー: レビューを残してあなたの考えを共有してください。\n\nコミュニティへの貢献と Amiibo Vault のさらなる向上にご協力いただき、ありがとうございます！</string>
+    <string name="got_it_btn">わかった！</string>
+    <string name="new_feature_title">新機能！</string>
 </resources>

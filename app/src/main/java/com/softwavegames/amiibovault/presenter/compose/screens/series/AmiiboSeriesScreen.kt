@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
-import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
+import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboGridItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

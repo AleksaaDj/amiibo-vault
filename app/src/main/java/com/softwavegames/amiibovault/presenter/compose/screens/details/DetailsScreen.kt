@@ -116,7 +116,6 @@ fun DetailsScreen(
                 .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
             AsyncImage(
                 modifier = Modifier
                     .size(260.dp)
