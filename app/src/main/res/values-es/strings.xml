@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Amiibo Vault</string>
+    <string name="character">Personaje</string>
+    <string name="featured_amiibo">Amiibo destacado</string>
+    <string name="collections">colecciones</string>
+    <string name="collection">" coleccion "</string>
+    <string name="wishlist">" lista de deseos"</string>
+    <string name="amiibo_in">" amiibo en"</string>
+    <string name="worldwide">" mundial"</string>
+    <string name="wishlist_empty">Tu lista de deseos esta vacia, anade amiibos haciendo clic en el icono de marcador en la pantalla de detalles del amiibo</string>
+    <string name="collection_empty">Tu coleccion esta vacia, agrega amiibos haciendo clic en el boton \'anadir a mi coleccion\' en la pantalla de detalles del amiibo.</string>
+    <string name="no_compatible_games_for">No hay juegos compatibles para %1$s</string>
+    <string name="amiibo">amiibo</string>
+    <string name="game_series">Serie de juegos</string>
+    <string name="type">Tipo</string>
+    <string name="more_from_series">mas de la serie</string>
+    <string name="compatibility_and_usage">compatibilidad y uso</string>
+    <string name="add_to_my_collection">" anadir a mi coleccion"</string>
+    <string name="remove_from_collection">quitar de la coleccion</string>
+    <string name="amiibo_reader">lector de amiibo</string>
+    <string name="tap_amiibo">Habilita la lectura NFC en la Configuracion y acerca el amiibo a la parte trasera del celular para escanear.</string>
+    <string name="search_amiibo">Buscar amiibo</string>
+    <string name="error_getting_compatible_games">Error al obtener juegos compatibles</string>
+    <string name="error_getting_amiibo_list">Error al obtener la lista de amiibos</string>
+    <string name="donate">donar</string>
+    <string name="error_opening_the_link">Error al abrir el enlace</string>
+    <string name="my_collection">mi coleccion</string>
+    <string name="set">Conjunto</string>
+    <string name="serial">Numero de serie</string>
+    <string name="no_amiibo_found">No se encontraron amiibos</string>
+    <string name="support_title">Apoya el desarrollo de Amiibo Vault</string>
+    <string name="support_text">Amiibo Vault depende de tu generoso apoyo para su desarrollo continuo. Si disfrutas usando Amiibo Vault y quieres contribuir a sus mejoras futuras, considera hacer una pequena donacion a nuestro equipo comprandonos un café. Puedes hacerlo simplemente haciendo clic en el boton de abajo.\n\nAdemás, tu valoracion de Amiibo Vault en Play Store también seria una valiosa contribucion, proporcionandonos retroalimentacion vital para adaptarnos y mejorar nuestras ofertas.\n\nTambién puedes eliminar completamente los anuncios y disfrutar de Amiibo Vault sin interrupciones.\n\nTu invaluable apoyo asegura que podamos continuar haciendo Amiibo Vault aun mas agradable para todos los entusiastas de Amiibo. Muchas gracias.</string>
+    <string name="rate_amiibo_vault">Valora Amiibo Vault</string>
+    <string name="support">Apoyo</string>
+    <string name="remove_filter">Eliminar filtro</string>
+    <string name="remove_ads">Eliminar anuncios</string>
+    <string name="product_purchased">Gracias por tu apoyo Disfruta Amiibo Vault</string>
+    <string name="tired_of_ads">Cansado de los anuncios</string>
+    <string name="dialog_remove_ads_text">Puedes eliminar los anuncios completamente y disfrutar de Amiibo Vault sin interrupciones con las compras dentro de la aplicacion de Google. Gracias por el apoyo</string>
+    <string name="dismiss_dialog">Cerrar</string>
+    <string name="enable_scanning_message">Para disfrutar del escaneo de amiibos, considera realizar una compra dentro de la aplicacion. Gracias por ayudarnos a mejorar</string>
+    <string name="enable_scanning_btn">habilitar escaneo</string>
+    <string name="rate_dialog_title">Valoramos tus comentarios</string>
+    <string name="rate_dialog_description">Estas disfrutando de la app Tus comentarios nos ayudan a mejorar Por favor, tomate un momento para calificar Amiibo Vault y compartir tus pensamientos</string>
+    <string name="sort">Ordenar</string>
+</resources>
