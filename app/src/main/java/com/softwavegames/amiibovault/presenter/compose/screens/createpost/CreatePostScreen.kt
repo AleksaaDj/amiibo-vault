@@ -80,6 +80,7 @@ fun CreatePostScreen(
     isPortrait: Boolean,
     showBannerAd: Boolean,
     onCreatePostClicked: (CollectionPost, bitmap: Bitmap) -> Unit,
+    onCreateAvatarClicked: () -> Unit,
     postPublished: Boolean?,
 ) {
     val context = LocalContext.current
@@ -157,6 +158,7 @@ fun CreatePostScreen(
                     avatarImageSelected = avatarIndex
                 }
                 showSheet = false
+                onCreateAvatarClicked()
             },
             isPortrait = isPortrait,
             onRemoveClicked = {
@@ -177,7 +179,10 @@ fun CreatePostScreen(
             AvatarCreationSection(brushColor = brushColor,
                 avatarBackgroundSelected = avatarBackgroundSelected,
                 avatarImageSelected = avatarImageSelected,
-                showSheet = { showSheet = true })
+                showSheet = {
+                    showSheet = true
+                    onCreateAvatarClicked()
+                })
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()

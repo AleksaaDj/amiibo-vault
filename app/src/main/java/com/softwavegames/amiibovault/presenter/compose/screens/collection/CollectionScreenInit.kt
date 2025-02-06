@@ -27,7 +27,7 @@ fun CollectionScreenInit(
     navHostViewModel: NavHostViewModel,
     openRemoveAdsCollectionDialog: MutableState<Boolean>,
     buyEnabledAds: Boolean,
-    purchaseHelper: PurchaseHelper
+    purchaseHelper: PurchaseHelper,
 ) {
     val isFilterTypeCollectionSelected = rememberSaveable { mutableStateOf(false) }
     val filterTypeCollection = rememberSaveable { mutableStateOf("") }
@@ -77,6 +77,10 @@ fun CollectionScreenInit(
                     "",
                     ""
                 )
+                viewModel.getAmiiboNumberWorldwide(
+                    "",
+                    ""
+                )
             } else {
                 isFilterTypeWishlistSelected.value = false
                 isFilterSetWishlistSelected.value = false
@@ -85,6 +89,10 @@ fun CollectionScreenInit(
                 filterSetWishlist.value = ""
                 viewModel.sortTypeWishList.value = null
                 viewModel.getAmiiboFilteredFromWishlist(
+                    "",
+                    ""
+                )
+                viewModel.getAmiiboNumberWorldwide(
                     "",
                     ""
                 )
@@ -120,6 +128,7 @@ fun CollectionScreenInit(
             )
             filterTypeCollection.value = typeFilter
             isFilterTypeCollectionSelected.value = true
+            viewModel.getAmiiboNumberWorldwide(typeFilter, filterSetCollection.value)
         },
         onFilterTypeCollectionRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -129,6 +138,7 @@ fun CollectionScreenInit(
                 filterTypeCollection.value,
                 filterSetCollection.value
             )
+            viewModel.getAmiiboNumberWorldwide(filterTypeCollection.value, filterSetCollection.value)
         },
         onFilterSetCollectionSelected = { setFilter ->
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -138,6 +148,7 @@ fun CollectionScreenInit(
             )
             filterSetCollection.value = setFilter
             isFilterSetCollectionSelected.value = true
+            viewModel.getAmiiboNumberWorldwide(filterTypeCollection.value, filterSetCollection.value)
         },
         onFilterSetCollectionRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -147,6 +158,7 @@ fun CollectionScreenInit(
                 filterTypeCollection.value,
                 filterSetCollection.value
             )
+            viewModel.getAmiiboNumberWorldwide(filterTypeCollection.value, filterSetCollection.value)
         },
         onSortTypeCollectionSelected = { sortTypeSelected ->
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -174,6 +186,7 @@ fun CollectionScreenInit(
             )
             filterTypeWishlist.value = typeFilter
             isFilterTypeWishlistSelected.value = true
+            viewModel.getAmiiboNumberWorldwide(typeFilter, filterSetWishlist.value)
         },
         onFilterTypeWishlistRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -183,6 +196,7 @@ fun CollectionScreenInit(
                 filterTypeWishlist.value,
                 filterSetWishlist.value
             )
+            viewModel.getAmiiboNumberWorldwide(filterTypeWishlist.value, filterSetWishlist.value)
         },
         onFilterSetWishlistSelected = { setFilter ->
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -192,6 +206,7 @@ fun CollectionScreenInit(
             )
             filterSetWishlist.value = setFilter
             isFilterSetWishlistSelected.value = true
+            viewModel.getAmiiboNumberWorldwide(filterTypeWishlist.value, filterSetWishlist.value)
         },
         onFilterSetWishlistRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -201,6 +216,7 @@ fun CollectionScreenInit(
                 filterTypeWishlist.value,
                 filterSetWishlist.value
             )
+            viewModel.getAmiiboNumberWorldwide(filterTypeWishlist.value, filterSetWishlist.value)
         },
         onSortTypeWishlistSelected = { sortTypeSelected ->
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -219,6 +235,8 @@ fun CollectionScreenInit(
                 viewModel.sortTypeWishList.value.toString(),
                 viewModel.amiiboListWishlist.value
             )
-        }
+        },
+        numberOfAmiiboWorldwide = viewModel.numberOfAmiiboWorldWide.observeAsState().value,
+
     )
 }

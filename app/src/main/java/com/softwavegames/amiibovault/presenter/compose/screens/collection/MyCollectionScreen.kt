@@ -83,6 +83,7 @@ fun MyCollectionScreen(
     onFilterSetWishlistRemoved: () -> Unit,
     onSortTypeWishlistSelected: (String) -> Unit,
     onSortTypeWishlistRemoved: () -> Unit,
+    numberOfAmiiboWorldwide: Int?
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -163,7 +164,7 @@ fun MyCollectionScreen(
             .padding(top = if (isPortrait) 110.dp else 90.dp)
     ) {
         if (isPortrait) {
-            DbStatisticInfo(selectedTab, amiiboListCollection, amiiboListWishlist)
+            DbStatisticInfo(selectedTab, amiiboListCollection, amiiboListWishlist, numberOfAmiiboWorldwide)
         }
 
         val context = LocalContext.current
@@ -392,7 +393,8 @@ fun Wishlist(
 fun DbStatisticInfo(
     selectedTab: Int,
     amiiboListCollection: List<AmiiboCollection>?,
-    amiiboListWishlist: List<AmiiboWishlist>?
+    amiiboListWishlist: List<AmiiboWishlist>?,
+    numberOfAmiiboWorldwide: Int?
 ) {
     var numberOfAmiibo by rememberSaveable { mutableIntStateOf(0) }
 
@@ -411,8 +413,8 @@ fun DbStatisticInfo(
     }
     val current =
         if (selectedTab == 0) amiiboListCollection?.size?.toFloat() else amiiboListWishlist?.size?.toFloat()
-    val amiiboWorldwide = Constants.AMIIBO_WORLDWIDE_SIZE
-    val percent = (current?.times(100.0f) ?: 0f) / amiiboWorldwide
+    val amiiboWorldwide = numberOfAmiiboWorldwide?.toFloat() ?: Constants.AMIIBO_WORLDWIDE_SIZE
+    val percent = if(amiiboWorldwide > 0){(current?.times(100.0f) ?: 0f) / amiiboWorldwide} else 0f
 
     GlowingCard(
         modifier = Modifier

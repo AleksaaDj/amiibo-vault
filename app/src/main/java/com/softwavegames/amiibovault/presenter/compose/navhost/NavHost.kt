@@ -557,7 +557,7 @@ fun BottomNavigationBar(
                     navHostViewModel = navHostViewModel,
                     openRemoveAdsCollectionDialog = openRemoveAdsCollectionDialog,
                     buyEnabledAds = buyEnabledAds,
-                    purchaseHelper = purchaseHelper,
+                    purchaseHelper = purchaseHelper
                 )
             }
 
@@ -637,6 +637,9 @@ fun BottomNavigationBar(
                             listStatePosts.scrollToItem(0)
                         }
                         navController.navigateUp()
+                    },
+                    onCreateAvatarClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
                     },
                 )
             }

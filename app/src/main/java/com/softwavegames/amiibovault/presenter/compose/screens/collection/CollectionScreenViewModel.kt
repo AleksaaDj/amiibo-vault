@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,9 @@ class CollectionScreenViewModel @Inject constructor(private val repository: Amii
 
     var sortTypeCollection = MutableLiveData<String?>()
     var sortTypeWishList = MutableLiveData<String?>()
+
+    private var _numberOfAmiiboWorldWide = MutableLiveData<Int>()
+    var numberOfAmiiboWorldWide: LiveData<Int> = _numberOfAmiiboWorldWide
 
 
     fun getAmiiboFilteredFromCollection(type: String, series: String) {
@@ -146,6 +150,31 @@ class CollectionScreenViewModel @Inject constructor(private val repository: Amii
             }
         }
         _amiiboListWishlist.postValue(amiiboSortedList)
+    }
+
+    fun getAmiiboNumberWorldwide(type: String, series: String) {
+        var amiiboLocalList: List<Amiibo>
+        var amiiboFilteredList: List<Amiibo>
+        repository.getAmiiboListFromDbHome().onEach { localList ->
+            amiiboLocalList = localList
+            amiiboFilteredList = if (type.isNotEmpty() && series.isNotEmpty()) {
+                amiiboLocalList.filter {
+                    it.type.contains(type) && it.amiiboSeries.contains(series)
+                }
+            } else if (type.isNotEmpty() && series.isEmpty()) {
+                amiiboLocalList.sortedBy { it.name }
+                amiiboLocalList.filter {
+                    it.type.contains(type)
+                }
+            } else if (type.isEmpty() && series.isNotEmpty()) {
+                amiiboLocalList.filter {
+                    it.amiiboSeries.contains(series)
+                }
+            } else {
+                amiiboLocalList
+            }
+            _numberOfAmiiboWorldWide.postValue(amiiboFilteredList.size)
+        }.launchIn(viewModelScope)
     }
 
 }
