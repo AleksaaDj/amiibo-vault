@@ -62,4 +62,9 @@
     <string name="new_feature_text">Be among the first to try our new feature! Share your collections with the community!\n\nFeatures to Explore: \n\n- Create Posts: Share images of your Amiibo collections. \n- Discover and Engage: Browse posts worldwide and like your favorites to support other collectors. \n\nHelp Us Improve! Your insights are invaluable in enhancing this feature: \n\n- Email Feedback: Send your suggestions and experiences to softwavegamess@gmail.com. \n- Play Store Reviews: Share your thoughts by leaving a review. \n\nThank you for contributing to our community and helping us make Amiibo Vault even better!</string>
     <string name="got_it_btn">Got It!</string>
     <string name="new_feature_title">New Feature!</string>
+    <string name="image_saved_msg">Image saved to Photos/amiibo Vault folder</string>
+    <string name="collection_image_title">Collection Image</string>
+    <string name="collection_image_txt">The image will be generated using your current collection and will be saved to your local storage, making it easy for you to share with others or creating post in community collection!</string>
+    <string name="example_image">Example image</string>
+    <string name="create_image_btn">Create Image</string>
 </resources>

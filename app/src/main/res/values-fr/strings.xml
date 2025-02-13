@@ -63,4 +63,9 @@
     <string name="new_feature_text">Soyez parmi les premiers à essayer notre nouvelle fonctionnalité! Partagez vos collections avec la communauté!\n\nFonctionnalités à explorer:\n\n- Créez des publications : Partagez des images de vos collections Amiibo.\n- Découvrir et interagir : Parcourez des publications du monde entier et aimez vos favoris pour soutenir d\'autres collectionneurs.\n\nAidez-nous à nous améliorer! Vos idées sont inestimables pour améliorer cette fonctionnalité:\n\n- Envoyer des commentaires par e-mail: Envoyez vos suggestions et expériences à softwavegamess@gmail.com.\n- Avis sur le Play Store: Partagez vos réflexions en laissant un avis.\n\nMerci de contribuer à notre communauté et de nous aider à rendre Amiibo Vault encore meilleur!</string>
     <string name="got_it_btn">Compris !</string>
     <string name="new_feature_title">Nouvelle fonctionnalité!</string>
+    <string name="image_saved_msg">Image enregistrée dans le dossier Photos/amiibo Vault</string>
+    <string name="collection_image_title">Image de collection</string>
+    <string name="collection_image_txt">L\'image sera générée à partir de votre collection actuelle et sera sauvegardée dans votre stockage local, ce qui facilite le partage avec d\'autres ou la création d\'une publication dans la collection communautaire!</string>
+    <string name="example_image">Image d\'exemple</string>
+    <string name="create_image_btn">Créer une image</string>
 </resources>

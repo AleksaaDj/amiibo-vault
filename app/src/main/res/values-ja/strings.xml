@@ -62,4 +62,9 @@
     <string name="new_feature_text">新機能をいち早くお試しください！ コミュニティとコレクションを共有しましょう！\n\n探求する機能：\n\n- 投稿を作成する: Amiibo コレクションの画像を共有します。\n- 発見して交流する: 世界中の投稿を閲覧し、お気に入りにいいねをして他のコレクターをサポートしましょう。\n\n改善にご協力ください！ あなたの洞察は、この機能を向上させる上で非常に貴重です:\n\n- メールフィードバック: 提案や経験を softwavegamess@gmail.com に送信してください。\n- Play ストアのレビュー: レビューを残してあなたの考えを共有してください。\n\nコミュニティへの貢献と Amiibo Vault のさらなる向上にご協力いただき、ありがとうございます！</string>
     <string name="got_it_btn">わかった！</string>
     <string name="new_feature_title">新機能！</string>
+    <string name="image_saved_msg">画像は写真/amiibo Vaultフォルダに保存されました</string>
+    <string name="collection_image_title">コレクション画像</string>
+    <string name="collection_image_txt">画像は現在のコレクションを使用して生成され、ローカルストレージに保存されます。他の人と共有したり、コミュニティコレクションに投稿を作成したりするのが簡単です！</string>
+    <string name="example_image">例の画像</string>
+    <string name="create_image_btn">画像を作成</string>
 </resources>

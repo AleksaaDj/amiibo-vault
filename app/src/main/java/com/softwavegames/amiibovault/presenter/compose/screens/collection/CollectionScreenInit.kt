@@ -1,12 +1,16 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.collection
 
 import android.media.SoundPool
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.presenter.compose.navhost.NavHostViewModel
@@ -29,6 +33,8 @@ fun CollectionScreenInit(
     buyEnabledAds: Boolean,
     purchaseHelper: PurchaseHelper,
 ) {
+    val context = LocalContext.current
+
     val isFilterTypeCollectionSelected = rememberSaveable { mutableStateOf(false) }
     val filterTypeCollection = rememberSaveable { mutableStateOf("") }
     val isFilterSetCollectionSelected = rememberSaveable { mutableStateOf(false) }
@@ -40,6 +46,9 @@ fun CollectionScreenInit(
     val isFilterSetWishlistSelected = rememberSaveable { mutableStateOf(false) }
     val filterSetWishlist = rememberSaveable { mutableStateOf("") }
     val isSortTypeWishlistSelected = rememberSaveable { mutableStateOf(false) }
+
+    val openDownloadImageDialog = remember { mutableStateOf(false) }
+
 
     viewModel.getAmiiboFilteredFromCollection(
         filterTypeCollection.value,
@@ -237,6 +246,20 @@ fun CollectionScreenInit(
             )
         },
         numberOfAmiiboWorldwide = viewModel.numberOfAmiiboWorldWide.observeAsState().value,
-
+        onConfirmDownloadCompositeImageClicked = {
+            playSound(soundPool, buttonSound, isSoundOn.value)
+            viewModel.createAndDownloadCompositeImage(context)
+            openDownloadImageDialog.value = false
+            Toast.makeText(context, context.getString(R.string.image_saved_msg), Toast.LENGTH_SHORT).show()
+        },
+        onDismissDownloadCompositeImageDialog = {
+            playSound(soundPool, buttonSound, isSoundOn.value)
+            openDownloadImageDialog.value = false
+        },
+        onShowDownloadDialogClicked = {
+            playSound(soundPool, iconSound, isSoundOn.value)
+            openDownloadImageDialog.value = true
+        },
+        openDownloadImageDialog = openDownloadImageDialog,
     )
 }

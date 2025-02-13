@@ -1,10 +1,12 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.collection
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
+import com.softwavegames.amiibovault.domain.util.CompositeImageHelper
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
@@ -12,6 +14,7 @@ import com.softwavegames.amiibovault.model.AmiiboWishlist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -177,4 +180,14 @@ class CollectionScreenViewModel @Inject constructor(private val repository: Amii
         }.launchIn(viewModelScope)
     }
 
+    fun createAndDownloadCompositeImage(context: Context) {
+        viewModelScope.launch {
+            amiiboListCollection.value?.let {
+                CompositeImageHelper().createAndSaveCompositeImage(
+                    it,
+                    context
+                )
+            }
+        }
+    }
 }
