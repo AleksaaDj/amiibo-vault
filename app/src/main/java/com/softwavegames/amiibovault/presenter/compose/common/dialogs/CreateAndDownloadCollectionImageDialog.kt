@@ -35,7 +35,7 @@ fun CreateAndDownloadCollectionImageDialog(
     onDismissClicked: () -> Unit,
     onConfirmation: () -> Unit,
 ) {
-    Dialog(onDismissRequest = { onConfirmation() }) {
+    Dialog(onDismissRequest = { onDismissClicked() }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
