@@ -24,6 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.presenter.compose.common.bottomsheets.BottomSheetSet
+import com.softwavegames.amiibovault.presenter.compose.common.bottomsheets.BottomSheetSort
+import com.softwavegames.amiibovault.presenter.compose.common.bottomsheets.BottomSheetType
 import com.softwavegames.amiibovault.ui.theme.Black
 
 @Composable

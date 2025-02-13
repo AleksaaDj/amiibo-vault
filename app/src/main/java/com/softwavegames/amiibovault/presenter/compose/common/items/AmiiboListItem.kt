@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.presenter.compose.common
+package com.softwavegames.amiibovault.presenter.compose.common.items
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -89,7 +89,7 @@ fun AmiiboListItem(
             .padding(start = 6.dp, end = 6.dp, top = 4.dp, bottom = 4.dp)
             .clickable { onClick(amiibo) },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 1.dp
         ),
         shape = RoundedCornerShape(
             topStart = 7.dp,

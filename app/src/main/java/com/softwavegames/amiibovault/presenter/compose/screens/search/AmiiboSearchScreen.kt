@@ -53,13 +53,13 @@ import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
-import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
-import com.softwavegames.amiibovault.presenter.compose.common.AmiiboListItem
+import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboGridItem
+import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboListItem
 import com.softwavegames.amiibovault.presenter.compose.common.ChipGroup
-import com.softwavegames.amiibovault.presenter.compose.common.FeaturedAmiiboCard
-import com.softwavegames.amiibovault.presenter.compose.common.RateDialog
-import com.softwavegames.amiibovault.presenter.compose.common.RemoveAdsDialog
-import com.softwavegames.amiibovault.presenter.compose.common.ScrollToTopButton
+import com.softwavegames.amiibovault.presenter.compose.common.cards.FeaturedAmiiboCard
+import com.softwavegames.amiibovault.presenter.compose.common.dialogs.RateDialog
+import com.softwavegames.amiibovault.presenter.compose.common.dialogs.RemoveAdsDialog
+import com.softwavegames.amiibovault.presenter.compose.common.buttons.ScrollToTopButton
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)

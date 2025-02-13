@@ -8,14 +8,19 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -45,10 +50,12 @@ import com.softwavegames.amiibovault.domain.util.Utils
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
-import com.softwavegames.amiibovault.presenter.compose.common.AmiiboGridItem
-import com.softwavegames.amiibovault.presenter.compose.common.GlowingCard
-import com.softwavegames.amiibovault.presenter.compose.common.RemoveAdsDialog
+import com.softwavegames.amiibovault.presenter.compose.common.ChipGroup
 import com.softwavegames.amiibovault.presenter.compose.common.TextSwitch
+import com.softwavegames.amiibovault.presenter.compose.common.cards.GlowingCard
+import com.softwavegames.amiibovault.presenter.compose.common.dialogs.CreateAndDownloadCollectionImageDialog
+import com.softwavegames.amiibovault.presenter.compose.common.dialogs.RemoveAdsDialog
+import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboGridItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +65,7 @@ fun MyCollectionScreen(
     navigateToDetails: (Amiibo) -> Unit,
     isPortrait: Boolean,
     onSupportClick: () -> Unit,
-    onSelectionChange: () -> Unit,
+    onSelectionChange: (Int) -> Unit,
     isDarkMode: Boolean,
     onThemeModeClicked: () -> Unit,
     onPurchaseClicked: () -> Unit,
@@ -66,6 +73,23 @@ fun MyCollectionScreen(
     openRemoveAdsDialog: MutableState<Boolean>,
     onRemoveAdsClicked: () -> Unit,
     onDialogAdsDismissed: () -> Unit,
+    onFilterTypeCollectionSelected: (String) -> Unit,
+    onFilterTypeCollectionRemoved: () -> Unit,
+    onFilterSetCollectionSelected: (String) -> Unit,
+    onFilterSetCollectionRemoved: () -> Unit,
+    onSortTypeCollectionSelected: (String) -> Unit,
+    onSortTypeCollectionRemoved: () -> Unit,
+    onFilterTypeWishlistSelected: (String) -> Unit,
+    onFilterTypeWishlistRemoved: () -> Unit,
+    onFilterSetWishlistSelected: (String) -> Unit,
+    onFilterSetWishlistRemoved: () -> Unit,
+    onSortTypeWishlistSelected: (String) -> Unit,
+    onSortTypeWishlistRemoved: () -> Unit,
+    numberOfAmiiboWorldwide: Int?,
+    onConfirmDownloadCompositeImageClicked: () -> Unit,
+    onDismissDownloadCompositeImageDialog: () -> Unit,
+    onShowDownloadDialogClicked: () -> Unit,
+    openDownloadImageDialog: MutableState<Boolean>
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -146,7 +170,12 @@ fun MyCollectionScreen(
             .padding(top = if (isPortrait) 110.dp else 90.dp)
     ) {
         if (isPortrait) {
-            DbStatisticInfo(selectedTab, amiiboListCollection, amiiboListWishlist)
+            DbStatisticInfo(
+                selectedTab,
+                amiiboListCollection,
+                amiiboListWishlist,
+                numberOfAmiiboWorldwide
+            )
         }
 
         val context = LocalContext.current
@@ -162,14 +191,14 @@ fun MyCollectionScreen(
             TextSwitch(
                 modifier = Modifier
                     .padding(
-                        top = if (isPortrait) 10.dp else 0.dp,
+                        top = if (isPortrait) 5.dp else 0.dp,
                         start = if (isPortrait) 10.dp else 110.dp,
                         end = if (isPortrait) 10.dp else 50.dp
                     ),
                 selectedIndex = selectedIndex,
                 items = items,
                 onSelectionChange = {
-                    onSelectionChange()
+                    onSelectionChange(selectedIndex)
                     selectedIndex = it
                     selectedTab = selectedIndex
                 }
@@ -177,28 +206,144 @@ fun MyCollectionScreen(
 
             when (selectedTab) {
                 0 -> amiiboListCollection?.let {
-                    MyCollection(isPortrait = isPortrait, amiiboList = it) { amiibo ->
-                        navigateToDetails(amiibo)
-                    }
+                    MyCollection(
+                        isPortrait = isPortrait, amiiboList = it,
+                        navigateToDetails = { amiibo ->
+                            navigateToDetails(amiibo)
+                        },
+                        onFilterTypeCollectionSelected = { type ->
+                            onFilterTypeCollectionSelected(type)
+                        },
+                        onFilterTypeCollectionRemoved = { onFilterTypeCollectionRemoved() },
+                        onFilterSetCollectionSelected = { series ->
+                            onFilterSetCollectionSelected(series)
+                        },
+                        onFilterSetCollectionRemoved = { onFilterSetCollectionRemoved() },
+                        onSortTypeCollectionSelected = { sortType ->
+                            onSortTypeCollectionSelected(sortType)
+                        },
+                        onSortTypeCollectionRemoved = { onSortTypeCollectionRemoved() },
+                        onDownloadCompositeImageClicked = {
+                            onConfirmDownloadCompositeImageClicked()
+                        },
+                        onDismissDownloadCompositeImageDialog = {
+                            onDismissDownloadCompositeImageDialog()
+                        },
+                        openDownloadImageDialog = openDownloadImageDialog,
+                        onShowDownloadDialogClicked = {
+                            onShowDownloadDialogClicked()
+                        }
+                    )
                 }
 
                 1 -> amiiboListWishlist?.let {
-                    Wishlist(isPortrait = isPortrait, amiiboList = it) { amiibo ->
-                        navigateToDetails(amiibo)
-                    }
+                    Wishlist(isPortrait = isPortrait,
+                        amiiboList = it,
+                        navigateToDetails = { amiibo ->
+                            navigateToDetails(amiibo)
+                        },
+                        onFilterTypeWishlistSelected = { type ->
+                            onFilterTypeWishlistSelected(type)
+                        },
+                        onFilterTypeWishlistRemoved = { onFilterTypeWishlistRemoved() },
+                        onFilterSetWishlistSelected = { series ->
+                            onFilterSetWishlistSelected(series)
+                        },
+                        onFilterSetWishlistRemoved = { onFilterSetWishlistRemoved() },
+                        onSortTypeWishlistSelected = { sortType ->
+                            onSortTypeWishlistSelected(sortType)
+                        },
+                        onSortTypeWishlistRemoved = { onSortTypeWishlistRemoved() }
+                    )
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MyCollection(
     isPortrait: Boolean,
     amiiboList: List<AmiiboCollection>,
-    navigateToDetails: (amiibo: Amiibo) -> Unit
+    navigateToDetails: (amiibo: Amiibo) -> Unit,
+    onFilterTypeCollectionSelected: (String) -> Unit,
+    onFilterTypeCollectionRemoved: () -> Unit,
+    onFilterSetCollectionSelected: (String) -> Unit,
+    onFilterSetCollectionRemoved: () -> Unit,
+    onSortTypeCollectionSelected: (String) -> Unit,
+    onSortTypeCollectionRemoved: () -> Unit,
+    onDismissDownloadCompositeImageDialog: () -> Unit,
+    onDownloadCompositeImageClicked: () -> Unit,
+    onShowDownloadDialogClicked: () -> Unit,
+    openDownloadImageDialog: MutableState<Boolean>
 ) {
+
+    if (openDownloadImageDialog.value) {
+        CreateAndDownloadCollectionImageDialog(
+            onDismissClicked = {
+                onDismissDownloadCompositeImageDialog()
+            },
+            onConfirmation = {
+                onDownloadCompositeImageClicked()
+            }
+        )
+    }
+
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 5.dp, end = 5.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        ChipGroup(
+            onFilterTypeSelected = {
+                onFilterTypeCollectionSelected(it)
+            },
+            onFilterTypeRemoved = {
+                onFilterTypeCollectionRemoved()
+            },
+            onFilterSetSelected = {
+                onFilterSetCollectionSelected(it)
+            },
+            onFilterSetRemoved = {
+                onFilterSetCollectionRemoved()
+            },
+            onSortTypeRemoved = {
+                onSortTypeCollectionRemoved()
+            },
+            onSortTypeSelected = {
+                onSortTypeCollectionSelected(it)
+            },
+            isPortrait = isPortrait
+        )
+        Row(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(top = 10.dp, end = 13.dp, start = 10.dp, bottom = 4.dp),
+            horizontalArrangement = Arrangement.Absolute.Right
+        ) {
+            Icon(
+                modifier = Modifier
+                    .clickable {
+                        onShowDownloadDialogClicked()
+                    }
+                    .size(24.dp),
+                painter = painterResource(id = R.drawable.ic_download), contentDescription = null,
+                tint = Color.Red
+            )
+
+        }
+    }
+    HorizontalDivider(
+        modifier = Modifier
+            .height(0.5.dp)
+            .padding(start = if (isPortrait) 5.dp else 90.dp, bottom = 5.dp),
+        color = Color.LightGray
+    )
     if (amiiboList.isNotEmpty()) {
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(if (isPortrait) 3 else 5),
             modifier = Modifier
@@ -207,7 +352,7 @@ fun MyCollection(
                     end = if (isPortrait) 20.dp else 45.dp,
                 ),
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            contentPadding = PaddingValues(bottom = 30.dp, top = 10.dp)
+            contentPadding = PaddingValues(vertical = 20.dp)
         ) {
             items(count = amiiboList.size) {
                 val amiiboConverted = Utils().convertAmiiboCollectionToAmiibo(amiiboList[it])
@@ -224,12 +369,54 @@ fun MyCollection(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Wishlist(
     isPortrait: Boolean,
     amiiboList: List<AmiiboWishlist>,
-    navigateToDetails: (amiibo: Amiibo) -> Unit
+    navigateToDetails: (amiibo: Amiibo) -> Unit,
+    onFilterTypeWishlistSelected: (String) -> Unit,
+    onFilterTypeWishlistRemoved: () -> Unit,
+    onFilterSetWishlistSelected: (String) -> Unit,
+    onFilterSetWishlistRemoved: () -> Unit,
+    onSortTypeWishlistSelected: (String) -> Unit,
+    onSortTypeWishlistRemoved: () -> Unit
 ) {
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 5.dp, end = 5.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        ChipGroup(
+            onFilterTypeSelected = {
+                onFilterTypeWishlistSelected(it)
+            },
+            onFilterTypeRemoved = {
+                onFilterTypeWishlistRemoved()
+            },
+            onFilterSetSelected = {
+                onFilterSetWishlistSelected(it)
+            },
+            onFilterSetRemoved = {
+                onFilterSetWishlistRemoved()
+            },
+            onSortTypeRemoved = {
+                onSortTypeWishlistRemoved()
+            },
+            onSortTypeSelected = {
+                onSortTypeWishlistSelected(it)
+            },
+            isPortrait = isPortrait
+        )
+    }
+    HorizontalDivider(
+        modifier = Modifier
+            .height(0.5.dp)
+            .padding(start = if (isPortrait) 5.dp else 90.dp, bottom = 5.dp),
+        color = Color.LightGray
+    )
     if (amiiboList.isNotEmpty()) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(if (isPortrait) 3 else 5),
@@ -239,7 +426,7 @@ fun Wishlist(
                     end = if (isPortrait) 20.dp else 45.dp,
                 ),
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            contentPadding = PaddingValues(bottom = 30.dp, top = 10.dp)
+            contentPadding = PaddingValues(vertical = 20.dp)
         ) {
             items(count = amiiboList.size) {
                 val amiiboConverted = Utils().convertAmiiboWishlistToAmiibo(amiiboList[it])
@@ -260,7 +447,8 @@ fun Wishlist(
 fun DbStatisticInfo(
     selectedTab: Int,
     amiiboListCollection: List<AmiiboCollection>?,
-    amiiboListWishlist: List<AmiiboWishlist>?
+    amiiboListWishlist: List<AmiiboWishlist>?,
+    numberOfAmiiboWorldwide: Int?
 ) {
     var numberOfAmiibo by rememberSaveable { mutableIntStateOf(0) }
 
@@ -279,8 +467,10 @@ fun DbStatisticInfo(
     }
     val current =
         if (selectedTab == 0) amiiboListCollection?.size?.toFloat() else amiiboListWishlist?.size?.toFloat()
-    val amiiboWorldwide = Constants.AMIIBO_WORLDWIDE_SIZE
-    val percent = (current?.times(100.0f) ?: 0f) / amiiboWorldwide
+    val amiiboWorldwide = numberOfAmiiboWorldwide?.toFloat() ?: Constants.AMIIBO_WORLDWIDE_SIZE
+    val percent = if (amiiboWorldwide > 0) {
+        (current?.times(100.0f) ?: 0f) / amiiboWorldwide
+    } else 0f
 
     GlowingCard(
         modifier = Modifier

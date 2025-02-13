@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.presenter.compose.screens.nfcreader
+package com.softwavegames.amiibovault.presenter.compose.screens.main
 
 import android.content.Intent
 import android.nfc.NfcAdapter
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class AmiiboNfcDetailsViewModel @Inject constructor(private val repository: AmiiboRepository) :
+class NfcScannerViewModel @Inject constructor(private val repository: AmiiboRepository) :
     ViewModel() {
 
     private var myTag: Tag? = null

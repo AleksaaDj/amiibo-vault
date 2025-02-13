@@ -5,7 +5,8 @@ class AppNavigation {
         AmiiboDetails,
         AmiiboGridScreen,
         AmiiboCompatibilityScreen,
-        SupportScreen
+        SupportScreen,
+        CreatePostScreen
     }
 
     enum class BottomScreen {
@@ -20,7 +21,7 @@ class AppNavigation {
         data object AmiiboSeriesScreen : NavigationItem(Screen.AmiiboGridScreen.name)
         data object AmiiboCompatibilityScreen : NavigationItem(Screen.AmiiboCompatibilityScreen.name)
         data object SupportScreen : NavigationItem(Screen.SupportScreen.name)
-
+        data object CreatePostScreen : NavigationItem(Screen.CreatePostScreen.name)
     }
 
     sealed class BottomNavScreens(val route : String) {

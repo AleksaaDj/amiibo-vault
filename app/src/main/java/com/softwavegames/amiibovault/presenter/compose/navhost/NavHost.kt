@@ -66,13 +66,16 @@ import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.domain.util.ThemeState
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.presenter.compose.screens.collection.CollectionScreenInit
 import com.softwavegames.amiibovault.presenter.compose.screens.collection.CollectionScreenViewModel
-import com.softwavegames.amiibovault.presenter.compose.screens.collection.MyCollectionScreen
 import com.softwavegames.amiibovault.presenter.compose.screens.compatibility.CompatibilityConsolesViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.compatibility.CompatibilityScreen
+import com.softwavegames.amiibovault.presenter.compose.screens.createpost.CreatePostScreen
+import com.softwavegames.amiibovault.presenter.compose.screens.createpost.CreatePostViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.details.AmiiboDetailsScreenViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.details.DetailsScreen
-import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.NfcScannerScreen
+import com.softwavegames.amiibovault.presenter.compose.screens.main.CollectionPostsViewModel
+import com.softwavegames.amiibovault.presenter.compose.screens.main.MainScannerPostsScreen
 import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboListScreen
 import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboSearchViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboFromSeriesListViewModel
@@ -98,6 +101,7 @@ fun BottomNavigationBar(
     val buyEnabledScan by purchaseHelper.buyEnabledScan.collectAsState(false)
     val openRemoveAdsDialog = remember { mutableStateOf(false) }
     val openRemoveAdsCollectionDialog = remember { mutableStateOf(false) }
+    val openInDevelopmentDialog = remember { mutableStateOf(false) }
     val openRateDialog = remember { mutableStateOf(false) }
     val isDark = ThemeState.darkModeState.value
     val reviewManager = remember { ReviewManagerFactory.create(context) }
@@ -130,6 +134,12 @@ fun BottomNavigationBar(
         }
     }
 
+    if (navHostViewModel.getCollectionPostsOpenedTimes() == 0) {
+        openInDevelopmentDialog.value = true
+    } else {
+        navHostViewModel.setCollectionPostsOpenedTimes(1)
+    }
+
     if (statusText == Constants.BILLING_STATUS_PURCHASE_COMPLETE) {
         Toast.makeText(context, stringResource(R.string.product_purchased), Toast.LENGTH_LONG)
             .show()
@@ -145,6 +155,7 @@ fun BottomNavigationBar(
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
+    val listStatePosts = rememberLazyListState()
     val showScrollToTopButtonList by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 10
@@ -282,6 +293,7 @@ fun BottomNavigationBar(
                 val isFilterSetSelected = rememberSaveable { mutableStateOf(false) }
                 val filterSet = rememberSaveable { mutableStateOf("") }
                 val isSortTypeSelected = rememberSaveable { mutableStateOf(false) }
+
                 navController.currentBackStackEntry?.savedStateHandle?.set(
                     Constants.PARSED_AMIIBO,
                     null
@@ -533,49 +545,25 @@ fun BottomNavigationBar(
 
             composable(AppNavigation.BottomNavScreens.AmiiboMyCollection.route) {
                 val viewModel: CollectionScreenViewModel = hiltViewModel()
-                MyCollectionScreen(
-                    amiiboListCollection = viewModel.amiiboListCollection.observeAsState().value,
-                    amiiboListWishlist = viewModel.amiiboListWishlist.observeAsState().value,
-                    navigateToDetails = { amiibo ->
-                        playSound(soundPool, buttonSound, isSoundOn.value)
-                        navigateToDetails(
-                            navController = navController,
-                            amiibo = amiibo,
-                        )
-                    },
+                CollectionScreenInit(
+                    viewModel = viewModel,
+                    navController = navController,
+                    soundPool = soundPool,
+                    buttonSound = buttonSound,
+                    iconSound = iconSound,
+                    isSoundOn = isSoundOn,
                     isPortrait = isPortrait,
-                    onSupportClick = {
-                        playSound(soundPool, iconSound, isSoundOn.value)
-                        navigateToSupportScreen(navController)
-                    },
-                    onSelectionChange = {
-                        playSound(soundPool, iconSound, isSoundOn.value)
-                    },
-                    isDarkMode = isDark,
-                    onThemeModeClicked = {
-                        playSound(soundPool, iconSound, isSoundOn.value)
-                        navHostViewModel.setThemeMode(!isDark)
-                    },
-                    onPurchaseClicked = {
-                        playSound(soundPool, iconSound, isSoundOn.value)
-                        openRemoveAdsCollectionDialog.value = true
-                    },
-                    buyEnabled = buyEnabledAds,
-                    onRemoveAdsClicked = {
-                        playSound(soundPool, buttonSound, isSoundOn.value)
-                        purchaseHelper.makeNoAdsPurchase()
-                        openRemoveAdsCollectionDialog.value = false
-                    },
-                    onDialogAdsDismissed = {
-                        playSound(soundPool, buttonSound, isSoundOn.value)
-                        openRemoveAdsCollectionDialog.value = false
-                    },
-                    openRemoveAdsDialog = openRemoveAdsCollectionDialog,
+                    isDark = isDark,
+                    navHostViewModel = navHostViewModel,
+                    openRemoveAdsCollectionDialog = openRemoveAdsCollectionDialog,
+                    buyEnabledAds = buyEnabledAds,
+                    purchaseHelper = purchaseHelper
                 )
             }
 
             composable(AppNavigation.BottomNavScreens.NfcScanner.route) {
-                NfcScannerScreen(
+                val viewModel: CollectionPostsViewModel = hiltViewModel()
+                MainScannerPostsScreen(
                     onBackClick = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         navController.navigateUp()
@@ -586,7 +574,27 @@ fun BottomNavigationBar(
                     onPurchaseScanClicked = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         purchaseHelper.makeScanPurchase()
-                    }
+                    },
+                    onSelectionChange = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                    },
+                    collectionPostList = viewModel.collectionPost.observeAsState().value,
+                    onCreatePostClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        navigateToCreatePostScreen(navController)
+                    },
+                    onLikeDislikeClicked = { postId ->
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        viewModel.likeDislikePost(postId)
+                    },
+                    likedPostsIds = viewModel.likedPostsIds.observeAsState().value,
+                    listState = listStatePosts,
+                    onConfirmationClicked = {
+                        playSound(soundPool, buttonSound, isSoundOn.value)
+                        navHostViewModel.setCollectionPostsOpenedTimes(1)
+                        openInDevelopmentDialog.value = false
+                    },
+                    openInDevelopmentDialog = openInDevelopmentDialog
                 )
             }
 
@@ -608,6 +616,31 @@ fun BottomNavigationBar(
                             navHostViewModel.setRateClicked()
                         }
                     }
+                )
+            }
+            composable(AppNavigation.NavigationItem.CreatePostScreen.route) {
+                val viewModel: CreatePostViewModel = hiltViewModel()
+                CreatePostScreen(
+                    onBackClick = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        navController.navigateUp()
+                    },
+                    isPortrait = isPortrait,
+                    showBannerAd = buyEnabledAds,
+                    onCreatePostClicked = { collectionPost, bitmap ->
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        viewModel.uploadImage(collectionPost, bitmap)
+                    },
+                    postPublished = viewModel.postPublished.observeAsState().value,
+                    onPostPublished = {
+                        coroutineScope.launch {
+                            listStatePosts.scrollToItem(0)
+                        }
+                        navController.navigateUp()
+                    },
+                    onCreateAvatarClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                    },
                 )
             }
         }
@@ -637,7 +670,7 @@ data class BottomNavigationItem(
     }
 }
 
-private fun navigateToDetails(
+fun navigateToDetails(
     navController: NavController,
     amiibo: Amiibo,
 ) {
@@ -650,14 +683,14 @@ private fun navigateToDetails(
     )
 }
 
-private fun navigateToMore(navController: NavController, amiibo: Amiibo) {
+fun navigateToMore(navController: NavController, amiibo: Amiibo) {
     navController.currentBackStackEntry?.savedStateHandle?.set(Constants.SERIES, amiibo.gameSeries)
     navController.navigate(
         route = AppNavigation.NavigationItem.AmiiboSeriesScreen.route
     )
 }
 
-private fun navigateToCompatibility(
+fun navigateToCompatibility(
     navController: NavController, amiibo: Amiibo,
 ) {
     navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -669,15 +702,21 @@ private fun navigateToCompatibility(
     )
 }
 
-private fun navigateToNfcScanner(navController: NavController) {
+fun navigateToNfcScanner(navController: NavController) {
     navController.navigate(
         route = AppNavigation.BottomNavScreens.NfcScanner.route
     )
 }
 
-private fun navigateToSupportScreen(navController: NavController) {
+fun navigateToSupportScreen(navController: NavController) {
     navController.navigate(
         route = AppNavigation.NavigationItem.SupportScreen.route
+    )
+}
+
+fun navigateToCreatePostScreen(navController: NavController) {
+    navController.navigate(
+        route = AppNavigation.NavigationItem.CreatePostScreen.route
     )
 }
 

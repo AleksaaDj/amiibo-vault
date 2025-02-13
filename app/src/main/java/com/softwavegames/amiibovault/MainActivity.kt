@@ -33,7 +33,7 @@ import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.domain.util.ThemeState
 import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
 import com.softwavegames.amiibovault.presenter.compose.navhost.BottomNavigationBar
-import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.AmiiboNfcDetailsViewModel
+import com.softwavegames.amiibovault.presenter.compose.screens.main.NfcScannerViewModel
 import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private var pendingIntent: PendingIntent? = null
     private lateinit var navController: NavHostController
-    private val viewModel: AmiiboNfcDetailsViewModel by viewModels()
+    private val viewModel: NfcScannerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
