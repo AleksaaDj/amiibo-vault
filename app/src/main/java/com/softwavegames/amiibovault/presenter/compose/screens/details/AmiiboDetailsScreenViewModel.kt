@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softwavegames.amiibovault.Utils
+import com.softwavegames.amiibovault.domain.util.Utils
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.Amiibo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,31 +23,33 @@ class AmiiboDetailsScreenViewModel @Inject constructor(private val repository: A
     var amiiboSavedWishlist: LiveData<Boolean?> = _amiiboSavedWishlist
 
     suspend fun upsertAmiiboToMyCollection(amiibo: Amiibo) {
-        repository.upsertAmiiboMyCollection(amiibo = amiibo)
+        val amiiboCollection = Utils().convertAmiiboToAmiiboCollection(amiibo)
+        repository.upsertAmiiboDbMyCollection(amiibo = amiiboCollection)
     }
 
     suspend fun deleteAmiiboFromMyCollection(amiibo: Amiibo) {
-        repository.deleteAmiiboMyCollection(amiibo = amiibo)
+        val amiiboCollection = Utils().convertAmiiboToAmiiboCollection(amiibo)
+        repository.deleteAmiiboFromDbMyCollection(amiibo = amiiboCollection)
     }
 
     fun checkIsAmiiboSavedInMyCollection(tail: String) {
-        repository.selectAmiiboSpecificDbMyCollection(tail).onEach {
+        repository.getAmiiboFromDbMyCollection(tail).onEach {
             _amiiboSavedMyCollection.value = it.isNotEmpty()
         }.launchIn(viewModelScope)
     }
 
     suspend fun upsertAmiiboToWishList(amiibo: Amiibo) {
         val amiiboWishlist = Utils().convertAmiiboToAmiiboWishlist(amiibo)
-        repository.upsertAmiiboWishlist(amiibo = amiiboWishlist)
+        repository.upsertAmiiboDbWishlist(amiibo = amiiboWishlist)
     }
 
     suspend fun deleteAmiiboFromWishList(amiibo: Amiibo) {
         val amiiboWishlist = Utils().convertAmiiboToAmiiboWishlist(amiibo)
-        repository.deleteAmiiboWishlist(amiibo = amiiboWishlist)
+        repository.deleteAmiiboFromDbWishlist(amiibo = amiiboWishlist)
     }
 
     fun checkIsAmiiboSavedInWishList(tail: String) {
-        repository.selectAmiiboSpecificDbWishlist(tail).onEach {
+        repository.getAmiiboFromDbWishlist(tail).onEach {
             _amiiboSavedWishlist.value = it.isNotEmpty()
         }.launchIn(viewModelScope)
     }

@@ -1,47 +1,45 @@
 package com.softwavegames.amiibovault
 
-import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
-import android.health.connect.datatypes.units.Length
+import android.content.res.Configuration
 import android.nfc.NfcAdapter
 import android.nfc.TagLostException
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.softwavegames.amiibovault.presenter.BottomNavigationBar
-import com.softwavegames.amiibovault.presenter.compose.screens.nfcreader.AmiiboNfcDetailsViewModel
+import com.google.android.gms.ads.MobileAds
+import com.softwavegames.amiibovault.domain.ads.loadInterstitial
+import com.softwavegames.amiibovault.domain.ads.removeInterstitial
+import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
+import com.softwavegames.amiibovault.domain.util.Constants
+import com.softwavegames.amiibovault.domain.util.ThemeState
+import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
+import com.softwavegames.amiibovault.presenter.compose.navhost.BottomNavigationBar
+import com.softwavegames.amiibovault.presenter.compose.screens.main.NfcScannerViewModel
 import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.reflect.InvocationTargetException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -50,24 +48,41 @@ class MainActivity : ComponentActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private var pendingIntent: PendingIntent? = null
     private lateinit var navController: NavHostController
-    private val viewModel: AmiiboNfcDetailsViewModel by viewModels()
-
+    private val viewModel: NfcScannerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(
+                getColor(R.color.status_bar_light), getColor(R.color.status_bar_dark)
+            ),
+        )
         super.onCreate(savedInstanceState)
-        val window = window
-        window.statusBarColor = ContextCompat.getColor(window.context, R.color.black)
+
+        ThemeState.darkModeState.value = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(Constants.SHARED_PREFERENCES_IS_DARK_MODE, false)
 
         setNFC()
         setNFCIntentListener()
+        setAdMob()
 
         setContent {
 
+            val purchaseHelper = PurchaseHelper(this)
+            val buyEnabledScan by purchaseHelper.buyEnabledScan.collectAsState(false)
             val bottomBarState = rememberSaveable { mutableStateOf(true) }
             val navigationItemSelectedIndex = rememberSaveable { mutableIntStateOf(0) }
             val isAnimationFinished = rememberSaveable { mutableStateOf(false) }
+            var isPortrait by rememberSaveable { mutableStateOf(true) }
+            val configuration = LocalConfiguration.current
+            isPortrait = when (configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    false
+                }
+                else -> {
+                    true
+                }
+            }
 
-            AmiiboMvvmComposeTheme {
+            AmiiboMvvmComposeTheme(darkTheme = ThemeState.darkModeState.value) {
                 LogoAnim {
                     isAnimationFinished.value = true
                 }
@@ -79,41 +94,60 @@ class MainActivity : ComponentActivity() {
                             AppNavigation.BottomNavScreens.AmiiboList.route -> {
                                 navigationItemSelectedIndex.intValue = 0
                                 bottomBarState.value = true
+                                disableForegroundDispatch()
                             }
 
                             AppNavigation.BottomNavScreens.AmiiboMyCollection.route -> {
                                 navigationItemSelectedIndex.intValue = 1
                                 bottomBarState.value = true
+                                disableForegroundDispatch()
+                            }
+
+                            AppNavigation.BottomNavScreens.NfcScanner.route -> {
+                                bottomBarState.value = false
+                                enableForegroundDispatch()
                             }
 
                             else -> {
                                 bottomBarState.value = false
+                                disableForegroundDispatch()
                             }
                         }
                     }
                     navController.addOnDestinationChangedListener(callback)
                     onDispose {
                         navController.removeOnDestinationChangedListener(callback)
-
                     }
                 }
 
                 if (isAnimationFinished.value) {
                     BottomNavigationBar(
+                        context = applicationContext,
+                        activity = this@MainActivity,
+                        purchaseHelper = purchaseHelper,
                         navController = navController,
                         bottomBarState = bottomBarState,
-                        navigationSelectedItem = navigationItemSelectedIndex
+                        navigationSelectedItem = navigationItemSelectedIndex,
+                        isPortrait = isPortrait
                     )
                 }
             }
             viewModel.amiiboNfc.observe(this) { amiibo ->
-                navController.currentBackStackEntry?.savedStateHandle?.set(
-                    Constants.PARSED_AMIIBO,
-                    amiibo
-                )
-                navController.navigate(
-                    route = AppNavigation.NavigationItem.DetailsScreen.route,
-                )
+                if (amiibo != null) {
+                    if (buyEnabledScan) {
+                        purchaseHelper.makeScanPurchase()
+                    } else {
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            Constants.PARSED_AMIIBO,
+                            amiibo
+                        )
+                        if (navController.currentDestination?.route == AppNavigation.BottomNavScreens.NfcScanner.route) {
+                            navController.navigate(
+                                route = AppNavigation.NavigationItem.DetailsScreen.route,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -137,6 +171,14 @@ class MainActivity : ComponentActivity() {
         writeTagFilters = arrayOf(tagDetected)
     }
 
+    private fun setAdMob() {
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        backgroundScope.launch {
+            // Initialize the Google Mobile Ads SDK on a background thread.
+            MobileAds.initialize(this@MainActivity) {}
+        }
+        loadInterstitial(this)
+    }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -146,7 +188,8 @@ class MainActivity : ComponentActivity() {
         } catch (e: TagLostException) {
             Log.e("NFC read", e.message.toString())
             Toast.makeText(this, "amiibo contact was lost, try again", Toast.LENGTH_LONG).show()
-
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error reading amiibo", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -154,56 +197,52 @@ class MainActivity : ComponentActivity() {
      * enable foreground dispatch to prevent intent-filter to launch the app again
      */
     private fun enableForegroundDispatch() {
-        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null)
+        try {
+            nfcAdapter?.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null)
+        } catch (error: Exception) {
+            Log.e(
+                "Foreground_Dispatcher",
+                "Error starting foreground dispatch",
+                error
+            )
+        }
     }
 
     /**
      * disable foreground dispatch to allow intent-filter to launch the app
      */
     private fun disableForegroundDispatch() {
-        nfcAdapter?.disableForegroundDispatch(this)
+        try {
+            nfcAdapter?.disableForegroundDispatch(this)
+        } catch (error: Exception) {
+            Log.e(
+                "Foreground_Dispatcher",
+                "Error stopping foreground dispatch",
+                error
+            )
+        }
     }
 
-    public override fun onPause() {
-        super.onPause()
-        disableForegroundDispatch()
-    }
-
-    public override fun onResume() {
+    override fun onResume() {
         super.onResume()
         enableForegroundDispatch()
     }
 
-}
+    override fun onPause() {
+        super.onPause()
+        disableForegroundDispatch()
+        viewModel.clearAmiibo()
+    }
 
-@Composable
-fun LogoAnim(onAnimationFinished: () -> Unit) {
-    val alphaValue = remember { Animatable(0f) }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.opening),
-            contentDescription = "Boats",
-            alpha = alphaValue.value,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-        )
-        LaunchedEffect(key1 = this) {
-            alphaValue.animateTo(
-                1f,
-                animationSpec = tween(1600),
-            )
-            alphaValue.animateTo(
-                0f,
-                animationSpec = tween(1500),
-            )
-            onAnimationFinished()
-        }
+    override fun onDestroy() {
+        removeInterstitial()
+        super.onDestroy()
     }
 }
+
+
+
+
+
 
 

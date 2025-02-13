@@ -1,17 +1,22 @@
 package com.softwavegames.amiibovault.di
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
-import com.softwavegames.amiibovault.Constants.BASE_URL
-import com.softwavegames.amiibovault.Constants.DB_NAME
 import com.softwavegames.amiibovault.data.local.AmiiboDao
 import com.softwavegames.amiibovault.data.local.AmiiboDatabase
-import com.softwavegames.amiibovault.data.local.AmiiboTypeConverter
+import com.softwavegames.amiibovault.data.local.ReleaseTypeConverter
 import com.softwavegames.amiibovault.data.remote.AmiiboApi
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
+import com.softwavegames.amiibovault.domain.util.Constants.BASE_URL
+import com.softwavegames.amiibovault.domain.util.Constants.DB_NAME
+import com.softwavegames.amiibovault.domain.util.Constants.SHARED_PREFERENCES_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.internal.Contexts.getApplication
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -33,6 +38,7 @@ object AppModule {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
                 .build()
         )
         .build()
@@ -46,7 +52,7 @@ object AppModule {
             context = application,
             klass = AmiiboDatabase::class.java,
             name = DB_NAME
-        ).addTypeConverter(AmiiboTypeConverter())
+        ).addTypeConverter(ReleaseTypeConverter())
             .fallbackToDestructiveMigration().build()
     }
 
@@ -55,6 +61,15 @@ object AppModule {
     fun provideAmiiboDao(
         amiiboDatabase: AmiiboDatabase
     ): AmiiboDao = amiiboDatabase.amiiboDao
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferences(@ApplicationContext appContext: Context): SharedPreferences {
+        return getApplication(appContext).getSharedPreferences(
+            SHARED_PREFERENCES_NAME,
+            Context.MODE_PRIVATE
+        )
+    }
 
     @Singleton
     @Provides

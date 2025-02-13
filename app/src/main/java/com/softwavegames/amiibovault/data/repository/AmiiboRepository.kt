@@ -3,42 +3,75 @@ package com.softwavegames.amiibovault.data.repository
 import com.softwavegames.amiibovault.data.local.AmiiboDao
 import com.softwavegames.amiibovault.data.remote.AmiiboApi
 import com.softwavegames.amiibovault.model.Amiibo
+import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
 import kotlinx.coroutines.flow.Flow
 
 class AmiiboRepository(private val amiiboApi: AmiiboApi, private val amiiboDao: AmiiboDao) {
 
+    /**
+     * Remote
+     */
+    suspend fun getAmiiboList() =
+        amiiboApi.getAmiiboList()
 
-    // Remote
-    suspend fun getAmiiboList(name: String) = amiiboApi.getAmiiboList(name)
+    suspend fun getCompatibilityConsoles(tail: String) =
+        amiiboApi.getAmiiboConsoles(tail)
 
-    suspend fun getAmiiboFromSeriesList(gameSeries: String) =
-        amiiboApi.getAmiiboFromSeriesList(gameSeries)
+    /**
+     * Local
+     * Home List DB
+     */
+    suspend fun upsertAmiiboDbHomeList(amiibo: List<Amiibo>) =
+        amiiboDao.upsertAmiiboHomeList(amiibo)
 
-    suspend fun getCompatibilityConsoles(tail: String) = amiiboApi.getAmiiboConsoles(tail)
+    fun getAmiiboListFromDbHome(): Flow<List<Amiibo>> =
+        amiiboDao.getAmiiboListFromHome()
 
-    suspend fun getAmiiboNfc(tail: String) = amiiboApi.getAmiiboNfc(tail)
+    fun searchAmiiboHome(name: String): Flow<List<Amiibo>> =
+        amiiboDao.searchAmiiboHome(name)
 
+    fun getAmiiboListFromSeries(gameSeries: String) =
+        amiiboDao.getAmiiboListFromSeries(gameSeries)
 
-    // Local
-    // My Collection DB
-    suspend fun upsertAmiiboMyCollection(amiibo: Amiibo) = amiiboDao.upsertMyCollection(amiibo)
+    fun getAmiiboSpecific(tail: String) =
+        amiiboDao.getAmiiboFromNFC(tail)
 
-    suspend fun deleteAmiiboMyCollection(amiibo: Amiibo) = amiiboDao.deleteFromMyCollection(amiibo)
+    fun getCurrentFeaturedAmiibo() =
+        amiiboDao.getCurrentFeaturedAmiibo()
+    fun removeCurrentFeaturedAmiibo(tail: String) =
+        amiiboDao.removeFeaturedAmiibo(tail)
+    fun setFeaturedAmiibo(featured: Boolean, color: Int, tail: String) =
+        amiiboDao.setFeaturedAmiibo(featured, color, tail)
 
-    fun selectAmiiboDbMyCollection(): Flow<List<Amiibo>> = amiiboDao.getAmiiboFromMyCollection()
+    /**
+     * My Collection DB
+     */
+    suspend fun upsertAmiiboDbMyCollection(amiibo: AmiiboCollection) =
+        amiiboDao.upsertMyCollection(amiibo)
 
-    fun selectAmiiboSpecificDbMyCollection(tail: String): Flow<List<Amiibo>> =
-        amiiboDao.getAmiiboSpecificCollection(tail)
+    suspend fun deleteAmiiboFromDbMyCollection(amiibo: AmiiboCollection) =
+        amiiboDao.deleteAmiiboFromMyCollection(amiibo)
 
-    // Wishlist DB
-    suspend fun upsertAmiiboWishlist(amiibo: AmiiboWishlist) = amiiboDao.upsertWishlist(amiibo)
+    fun getAmiiboListFromDbMyCollection(): Flow<List<AmiiboCollection>> =
+        amiiboDao.getAmiiboListFromMyCollection()
 
-    suspend fun deleteAmiiboWishlist(amiibo: AmiiboWishlist) = amiiboDao.deleteFromWishlist(amiibo)
+    fun getAmiiboFromDbMyCollection(tail: String): Flow<List<AmiiboCollection>> =
+        amiiboDao.getAmiiboFromMyCollection(tail)
 
-    fun selectAmiiboDdWishlist(): Flow<List<AmiiboWishlist>> = amiiboDao.getAmiiboFromWishlist()
+    /**
+     * Wishlist DB
+     */
+    suspend fun upsertAmiiboDbWishlist(amiibo: AmiiboWishlist) =
+        amiiboDao.upsertWishlist(amiibo)
 
-    fun selectAmiiboSpecificDbWishlist(tail: String): Flow<List<AmiiboWishlist>> =
-        amiiboDao.getAmiiboSpecificWishlist(tail)
+    suspend fun deleteAmiiboFromDbWishlist(amiibo: AmiiboWishlist) =
+        amiiboDao.deleteAmiiboFromWishlist(amiibo)
+
+    fun getAmiiboListFromDdWishlist(): Flow<List<AmiiboWishlist>> =
+        amiiboDao.getAmiiboListFromWishlist()
+
+    fun getAmiiboFromDbWishlist(tail: String): Flow<List<AmiiboWishlist>> =
+        amiiboDao.getAmiiboFromWishlist(tail)
 
 }

@@ -1,6 +1,5 @@
 package com.softwavegames.amiibovault.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -11,13 +10,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.colorResource
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
-import com.softwavegames.amiibovault.R
 
 private val DarkColorScheme = darkColorScheme(
     background = LightBlack,
@@ -28,7 +22,9 @@ private val DarkColorScheme = darkColorScheme(
     secondaryContainer = Color.DarkGray,
     onSecondaryContainer = Color.LightGray,
     onPrimary = Color.White,
-    onBackground =Color.White,
+    onBackground = Color.White,
+    surface = Color.DarkGray,
+    inverseSurface = DarkRed
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -41,8 +37,8 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = Color.Gray,
     onPrimary = Black,
     onBackground = Color.Gray,
-
-
+    surface = Color.Black,
+    inverseSurface = LightRed
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -74,7 +70,7 @@ fun AmiiboMvvmComposeTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
+
         }
     }
 

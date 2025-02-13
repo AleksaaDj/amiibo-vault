@@ -76,7 +76,6 @@ fun TextSwitch(
 
             Row(modifier = Modifier
                 .fillMaxWidth()
-
                 .drawWithContent {
 
                     // This is for setting black tex while drawing on white background

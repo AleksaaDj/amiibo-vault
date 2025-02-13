@@ -9,6 +9,7 @@ import com.softwavegames.amiibovault.data.repository.AmiiboRepository
 import com.softwavegames.amiibovault.model.AmiiboGames
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,18 +21,21 @@ class CompatibilityConsolesViewModel @Inject constructor(private val repository:
 
     fun loadAmiiboConsoleInfo(amiiboTail: String) {
         viewModelScope.launch {
-            val amiiboConsoles = repository.getCompatibilityConsoles(amiiboTail)
-
-            when (amiiboConsoles.isSuccessful) {
-                true -> {
-                    with(amiiboConsoles.body()) {
-                        val amiiboList = this?.amiibo
-                        _amiiboConsolesList.postValue(amiiboList?.get(0))
+            try {
+                val amiiboConsoles = repository.getCompatibilityConsoles(amiiboTail)
+                when (amiiboConsoles.isSuccessful) {
+                    true -> {
+                        with(amiiboConsoles.body()) {
+                            val amiiboList = this?.amiibo
+                            _amiiboConsolesList.postValue(amiiboList?.get(0))
+                        }
+                    }
+                    else -> {
+                        Log.e("ErrorAmiiboConsoles", amiiboConsoles.message())
                     }
                 }
-                else -> {
-                    Log.e("ErrorAmiiboConsoles", amiiboConsoles.message())
-                }
+            } catch (e: UnknownHostException) {
+                Log.e("ErrorAmiiboList", "No Internet connection")
             }
         }
     }
