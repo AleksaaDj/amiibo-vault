@@ -89,7 +89,7 @@ fun MyCollectionScreen(
     onConfirmDownloadCompositeImageClicked: () -> Unit,
     onDismissDownloadCompositeImageDialog: () -> Unit,
     onShowDownloadDialogClicked: () -> Unit,
-    openDownloadImageDialog: MutableState<Boolean>
+    openDownloadImageDialog: MutableState<Boolean>,
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 

@@ -25,10 +25,10 @@ import kotlin.math.roundToInt
 
 class CompositeImageHelper {
 
-    private val targetWidth = 3500
-    private val targetHeight = 2960
-    private val padding = 20 // Padding between images
-    private val topBottomPadding = 380 // Extra padding at top and bottom
+    private val targetWidth = 1750
+    private val targetHeight = 1480
+    private val padding = 10 // Padding between images
+    private val topBottomPadding = 190 // Extra padding at top and bottom
 
 
     suspend fun createAndSaveCompositeImage(
@@ -118,14 +118,14 @@ class CompositeImageHelper {
 
     private fun calculateOptimalColumns(totalImages: Int): Int {
         val estimatedCellWidth = when (totalImages) {
-            in 0..20 -> 600
-            in 21..50 -> 350
-            in 51..100 -> 250
-            in 101..300 -> 150
-            in 301..500 -> 130
-            in 501..600 -> 100
-            in 601..800 -> 80
-            else -> 60
+            in 0..20 -> 300
+            in 21..50 -> 175
+            in 51..100 -> 125
+            in 101..300 -> 75
+            in 301..500 -> 65
+            in 501..600 -> 50
+            in 601..800 -> 40
+            else -> 30
         }
         val maxColumnsBasedOnWidth = (targetWidth + padding) / (estimatedCellWidth + padding)
         return minOf(totalImages, maxColumnsBasedOnWidth)
