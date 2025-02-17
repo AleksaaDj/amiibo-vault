@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.presenter.compose.screens.main
+package com.softwavegames.amiibovault.presenter.compose.screens.posts
 
 import android.content.SharedPreferences
 import android.util.Log

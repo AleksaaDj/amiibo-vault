@@ -33,7 +33,7 @@ import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.domain.util.ThemeState
 import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
 import com.softwavegames.amiibovault.presenter.compose.navhost.BottomNavigationBar
-import com.softwavegames.amiibovault.presenter.compose.screens.main.NfcScannerViewModel
+import com.softwavegames.amiibovault.presenter.compose.screens.scanner.NfcScannerViewModel
 import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -96,18 +96,21 @@ class MainActivity : ComponentActivity() {
                                 bottomBarState.value = true
                                 disableForegroundDispatch()
                             }
-
-                            AppNavigation.BottomNavScreens.AmiiboMyCollection.route -> {
+                            AppNavigation.BottomNavScreens.NfcScanner.route -> {
                                 navigationItemSelectedIndex.intValue = 1
+                                bottomBarState.value = true
+                                enableForegroundDispatch()
+                            }
+                            AppNavigation.BottomNavScreens.CollectionPosts.route -> {
+                                navigationItemSelectedIndex.intValue = 2
                                 bottomBarState.value = true
                                 disableForegroundDispatch()
                             }
-
-                            AppNavigation.BottomNavScreens.NfcScanner.route -> {
-                                bottomBarState.value = false
-                                enableForegroundDispatch()
+                            AppNavigation.BottomNavScreens.AmiiboMyCollection.route -> {
+                                navigationItemSelectedIndex.intValue = 3
+                                bottomBarState.value = true
+                                disableForegroundDispatch()
                             }
-
                             else -> {
                                 bottomBarState.value = false
                                 disableForegroundDispatch()

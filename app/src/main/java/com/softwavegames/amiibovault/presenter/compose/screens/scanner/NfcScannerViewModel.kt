@@ -1,4 +1,4 @@
-package com.softwavegames.amiibovault.presenter.compose.screens.main
+package com.softwavegames.amiibovault.presenter.compose.screens.scanner
 
 import android.content.Intent
 import android.nfc.NfcAdapter

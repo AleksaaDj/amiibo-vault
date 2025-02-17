@@ -1,5 +1,6 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.collection
 
+import android.app.Activity
 import android.media.SoundPool
 import android.widget.Toast
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.domain.ads.showInterstitial
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.presenter.compose.navhost.NavHostViewModel
@@ -32,6 +34,7 @@ fun CollectionScreenInit(
     openRemoveAdsCollectionDialog: MutableState<Boolean>,
     buyEnabledAds: Boolean,
     purchaseHelper: PurchaseHelper,
+    activity: Activity
 ) {
     val context = LocalContext.current
 
@@ -147,7 +150,10 @@ fun CollectionScreenInit(
                 filterTypeCollection.value,
                 filterSetCollection.value
             )
-            viewModel.getAmiiboNumberWorldwide(filterTypeCollection.value, filterSetCollection.value)
+            viewModel.getAmiiboNumberWorldwide(
+                filterTypeCollection.value,
+                filterSetCollection.value
+            )
         },
         onFilterSetCollectionSelected = { setFilter ->
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -157,7 +163,10 @@ fun CollectionScreenInit(
             )
             filterSetCollection.value = setFilter
             isFilterSetCollectionSelected.value = true
-            viewModel.getAmiiboNumberWorldwide(filterTypeCollection.value, filterSetCollection.value)
+            viewModel.getAmiiboNumberWorldwide(
+                filterTypeCollection.value,
+                filterSetCollection.value
+            )
         },
         onFilterSetCollectionRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -167,7 +176,10 @@ fun CollectionScreenInit(
                 filterTypeCollection.value,
                 filterSetCollection.value
             )
-            viewModel.getAmiiboNumberWorldwide(filterTypeCollection.value, filterSetCollection.value)
+            viewModel.getAmiiboNumberWorldwide(
+                filterTypeCollection.value,
+                filterSetCollection.value
+            )
         },
         onSortTypeCollectionSelected = { sortTypeSelected ->
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -250,7 +262,12 @@ fun CollectionScreenInit(
             playSound(soundPool, buttonSound, isSoundOn.value)
             viewModel.createAndDownloadCompositeImage(context)
             openDownloadImageDialog.value = false
-            Toast.makeText(context, context.getString(R.string.image_saved_msg), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.image_saved_msg), Toast.LENGTH_SHORT)
+                .show()
+            if (buyEnabledAds) {
+                showInterstitial(activity) {
+                }
+            }
         },
         onDismissDownloadCompositeImageDialog = {
             playSound(soundPool, buttonSound, isSoundOn.value)

@@ -11,8 +11,9 @@ class AppNavigation {
 
     enum class BottomScreen {
         AmiiboList,
+        NfcScanner,
         AmiiboCollection,
-        NfcScanner
+        CollectionPosts
     }
 
 
@@ -26,7 +27,8 @@ class AppNavigation {
 
     sealed class BottomNavScreens(val route : String) {
         data object AmiiboList : BottomNavScreens(BottomScreen.AmiiboList.name)
-        data object AmiiboMyCollection  : BottomNavScreens(BottomScreen.AmiiboCollection.name)
         data object NfcScanner  : BottomNavScreens(BottomScreen.NfcScanner.name)
+        data object CollectionPosts  : BottomNavScreens(BottomScreen.CollectionPosts.name)
+        data object AmiiboMyCollection  : BottomNavScreens(BottomScreen.AmiiboCollection.name)
     }
 }

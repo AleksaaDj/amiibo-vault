@@ -4,24 +4,16 @@ import android.app.Activity
 import android.content.Context
 import android.media.SoundPool
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -43,12 +35,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
@@ -74,8 +65,9 @@ import com.softwavegames.amiibovault.presenter.compose.screens.createpost.Create
 import com.softwavegames.amiibovault.presenter.compose.screens.createpost.CreatePostViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.details.AmiiboDetailsScreenViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.details.DetailsScreen
-import com.softwavegames.amiibovault.presenter.compose.screens.main.CollectionPostsViewModel
-import com.softwavegames.amiibovault.presenter.compose.screens.main.MainScannerPostsScreen
+import com.softwavegames.amiibovault.presenter.compose.screens.posts.CollectionPosts
+import com.softwavegames.amiibovault.presenter.compose.screens.posts.CollectionPostsViewModel
+import com.softwavegames.amiibovault.presenter.compose.screens.scanner.NfcScanner
 import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboListScreen
 import com.softwavegames.amiibovault.presenter.compose.screens.search.AmiiboSearchViewModel
 import com.softwavegames.amiibovault.presenter.compose.screens.series.AmiiboFromSeriesListViewModel
@@ -185,14 +177,15 @@ fun BottomNavigationBar(
                             .forEachIndexed { index, navigationItem ->
                                 NavigationBarItem(
                                     colors = NavigationBarItemDefaults.colors(
-                                        indicatorColor = Color.DarkGray
+                                        indicatorColor = Color.DarkGray,
+                                        selectedIconColor = Color.Red,
+                                        unselectedIconColor = Color.White
                                     ),
                                     selected = index == navigationSelectedItem.value,
                                     icon = {
                                         Icon(
                                             navigationItem.icon,
                                             contentDescription = navigationItem.label,
-                                            tint = Color.White
                                         )
                                     },
                                     onClick = {
@@ -205,7 +198,8 @@ fun BottomNavigationBar(
                                             launchSingleTop = true
                                             restoreState = true
                                         }
-                                    }
+                                    },
+
                                 )
                             }
                     }
@@ -213,7 +207,7 @@ fun BottomNavigationBar(
             }
         },
 
-        floatingActionButton = {
+        /*floatingActionButton = {
             if (bottomBarState.value) {
                 Box(
                     modifier = Modifier
@@ -242,9 +236,8 @@ fun BottomNavigationBar(
                 }
             }
         },
-        floatingActionButtonPosition = if (isPortrait) FabPosition.Center else FabPosition.Start,
+        floatingActionButtonPosition = if (isPortrait) FabPosition.Center else FabPosition.Start,*/
     ) { paddingValues ->
-
         if (!isPortrait && bottomBarState.value) {
             NavigationRail(
                 contentColor = Color.White,
@@ -254,14 +247,15 @@ fun BottomNavigationBar(
                     .forEachIndexed { index, navigationItem ->
                         NavigationRailItem(
                             colors = NavigationRailItemDefaults.colors(
-                                indicatorColor = Color.DarkGray
+                                indicatorColor = Color.DarkGray,
+                                selectedIconColor = Color.Red,
+                                unselectedIconColor = Color.White
                             ),
                             selected = index == navigationSelectedItem.value,
                             icon = {
                                 Icon(
                                     navigationItem.icon,
                                     contentDescription = navigationItem.label,
-                                    tint = Color.White
                                 )
                             },
                             onClick = {
@@ -419,6 +413,25 @@ fun BottomNavigationBar(
                     openRemoveAdsDialog = openRemoveAdsDialog,
                 )
             }
+            composable(AppNavigation.BottomNavScreens.CollectionPosts.route) {
+                val viewModel: CollectionPostsViewModel = hiltViewModel()
+                CollectionPosts(
+                    collectionPostList = viewModel.collectionPost.observeAsState().value,
+                    onCreatePostClicked = {
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        navigateToCreatePostScreen(navController)
+                    },
+                    isPortrait = isPortrait,
+                    onLikeDislikeClicked = { postId ->
+                        playSound(soundPool, iconSound, isSoundOn.value)
+                        viewModel.likeDislikePost(postId)
+                    },
+                    likedPostsIds = viewModel.likedPostsIds.observeAsState().value,
+                    listState = listStatePosts,
+                    showBannerAd = buyEnabledAds,
+                )
+
+            }
             composable(AppNavigation.NavigationItem.DetailsScreen.route) {
                 navController.previousBackStackEntry?.savedStateHandle?.get<Amiibo?>(Constants.PARSED_AMIIBO)
                     ?.let {
@@ -557,13 +570,14 @@ fun BottomNavigationBar(
                     navHostViewModel = navHostViewModel,
                     openRemoveAdsCollectionDialog = openRemoveAdsCollectionDialog,
                     buyEnabledAds = buyEnabledAds,
-                    purchaseHelper = purchaseHelper
+                    purchaseHelper = purchaseHelper,
+                    activity = activity,
                 )
             }
 
             composable(AppNavigation.BottomNavScreens.NfcScanner.route) {
                 val viewModel: CollectionPostsViewModel = hiltViewModel()
-                MainScannerPostsScreen(
+                NfcScanner(
                     onBackClick = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         navController.navigateUp()
@@ -626,7 +640,7 @@ fun BottomNavigationBar(
                         navController.navigateUp()
                     },
                     isPortrait = isPortrait,
-                    showBannerAd = buyEnabledAds,
+                    showAd = buyEnabledAds,
                     onCreatePostClicked = { collectionPost, bitmap ->
                         playSound(soundPool, iconSound, isSoundOn.value)
                         viewModel.uploadImage(collectionPost, bitmap)
@@ -653,17 +667,27 @@ data class BottomNavigationItem(
     val icon: ImageVector = Icons.Filled.Home,
     val route: String = ""
 ) {
-
+    @Composable
     fun bottomNavigationItems(): List<BottomNavigationItem> {
         return listOf(
             BottomNavigationItem(
                 label = "Home",
-                icon = Icons.Outlined.Search,
+                icon = ImageVector.vectorResource(id = R.drawable.ic_search),
                 route = AppNavigation.BottomNavScreens.AmiiboList.route
             ),
             BottomNavigationItem(
+                label = "Scanner",
+                icon = ImageVector.vectorResource(id = R.drawable.ic_nfc),
+                route = AppNavigation.BottomNavScreens.NfcScanner.route
+            ),
+            BottomNavigationItem(
+                label = "Posts",
+                icon = ImageVector.vectorResource(id = R.drawable.ic_collection_posts),
+                route = AppNavigation.BottomNavScreens.CollectionPosts.route
+            ),
+            BottomNavigationItem(
                 label = "Collection",
-                icon = Icons.Filled.FavoriteBorder,
+                icon = ImageVector.vectorResource(id = R.drawable.ic_my_collection),
                 route = AppNavigation.BottomNavScreens.AmiiboMyCollection.route
             ),
         )
@@ -699,12 +723,6 @@ fun navigateToCompatibility(
     )
     navController.navigate(
         route = AppNavigation.NavigationItem.AmiiboCompatibilityScreen.route
-    )
-}
-
-fun navigateToNfcScanner(navController: NavController) {
-    navController.navigate(
-        route = AppNavigation.BottomNavScreens.NfcScanner.route
     )
 }
 

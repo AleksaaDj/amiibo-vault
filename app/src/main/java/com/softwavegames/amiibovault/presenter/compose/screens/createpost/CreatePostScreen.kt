@@ -63,6 +63,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softwavegames.amiibovault.R
+import com.softwavegames.amiibovault.domain.ads.LargeBannerAd
 import com.softwavegames.amiibovault.domain.util.rainbowColorsBrush
 import com.softwavegames.amiibovault.model.CollectionPost
 import com.softwavegames.amiibovault.presenter.compose.common.bottomsheets.BottomSheetAvatarCreation
@@ -78,7 +79,7 @@ fun CreatePostScreen(
     onBackClick: () -> Unit,
     onPostPublished: () -> Unit,
     isPortrait: Boolean,
-    showBannerAd: Boolean,
+    showAd: Boolean,
     onCreatePostClicked: (CollectionPost, bitmap: Bitmap) -> Unit,
     onCreateAvatarClicked: () -> Unit,
     postPublished: Boolean?,
@@ -282,6 +283,18 @@ fun CreatePostScreen(
                         Text(text = stringResource(R.string.publish_collection))
                     }
                 }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .padding(bottom = 20.dp),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                LargeBannerAd(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             }
         }
     }
