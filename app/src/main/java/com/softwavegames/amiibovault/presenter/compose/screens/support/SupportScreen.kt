@@ -1,8 +1,5 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.support
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,15 +20,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import com.softwavegames.amiibovault.R
-import com.softwavegames.amiibovault.domain.util.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,10 +33,9 @@ fun SupportScreen(
     onBackClick: () -> Unit,
     onPurchaseClicked: () -> Unit,
     buyEnabled: Boolean,
-    onRateReviewClicked: () -> Unit
+    onRateReviewClicked: () -> Unit,
+    onSupportClicked: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -112,15 +105,7 @@ fun SupportScreen(
         Image(
             modifier = Modifier
                 .clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Constants.DONATE_URL.toUri())
-                    try {
-                        context.startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.error_opening_the_link), Toast.LENGTH_LONG
-                        ).show()
-                    }
+                    onSupportClicked()
                 },
             painter = painterResource(id = R.drawable.kofi_button_dark),
             contentDescription = null,

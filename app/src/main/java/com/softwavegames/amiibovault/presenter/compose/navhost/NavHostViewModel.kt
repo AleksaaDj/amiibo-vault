@@ -3,6 +3,7 @@ package com.softwavegames.amiibovault.presenter.compose.navhost
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
+import com.softwavegames.amiibovault.domain.analytics.FirebaseEventsLogs
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.domain.util.SharedPrefUtils
 import com.softwavegames.amiibovault.domain.util.ThemeState
@@ -10,7 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class NavHostViewModel @Inject constructor(private val sharedPref: SharedPreferences) :
+class NavHostViewModel @Inject constructor(private val sharedPref: SharedPreferences, private val firebaseEventsLogs: FirebaseEventsLogs) :
     ViewModel() {
 
     fun setAppOpenedAdsTimes(number: Int) {
@@ -77,5 +78,9 @@ class NavHostViewModel @Inject constructor(private val sharedPref: SharedPrefere
             Constants.SHARED_PREFERENCES_IS_DARK_MODE,
             isDarkMode
         )
+    }
+
+    fun logFirebaseEvent(eventId: String, id: String, name: String) {
+        firebaseEventsLogs.logEvent(eventId, id, name)
     }
 }

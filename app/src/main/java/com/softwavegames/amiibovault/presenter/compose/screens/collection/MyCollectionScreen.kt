@@ -70,7 +70,7 @@ fun MyCollectionScreen(
     onThemeModeClicked: () -> Unit,
     onPurchaseClicked: () -> Unit,
     buyEnabled: Boolean,
-    openRemoveAdsDialog: MutableState<Boolean>,
+    openRemoveAdsDialog: Boolean,
     onRemoveAdsClicked: () -> Unit,
     onDialogAdsDismissed: () -> Unit,
     onFilterTypeCollectionSelected: (String) -> Unit,
@@ -156,13 +156,15 @@ fun MyCollectionScreen(
         }
     )
     when {
-        openRemoveAdsDialog.value -> {
-            RemoveAdsDialog(
-                onDismissRequest = { onDialogAdsDismissed() },
-                onConfirmation = {
-                    onRemoveAdsClicked()
-                },
-            )
+        openRemoveAdsDialog -> {
+            if (buyEnabled) {
+                RemoveAdsDialog(
+                    onDismissRequest = { onDialogAdsDismissed() },
+                    onConfirmation = {
+                        onRemoveAdsClicked()
+                    },
+                )
+            }
         }
     }
     Column(

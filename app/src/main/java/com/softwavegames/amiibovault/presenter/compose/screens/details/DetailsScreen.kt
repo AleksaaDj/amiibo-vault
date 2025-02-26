@@ -66,6 +66,7 @@ fun DetailsScreen(
     saveToMyCollection: (Amiibo) -> Unit,
     removeFromMyCollection: (Amiibo) -> Unit,
     isAmiiboSavedMyCollection: State<Boolean?>,
+    onAmazonLinkClicked: (Amiibo) -> Unit,
     isPortrait: Boolean,
     showAd: () -> Unit
 ) {
@@ -92,6 +93,16 @@ fun DetailsScreen(
         },
         actions = {
             IconButton(onClick = {
+                onAmazonLinkClicked(amiibo)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_amazon),
+                    contentDescription = null,
+                    Modifier.size(28.dp),
+                    tint = Color.Red,
+                )
+            }
+            IconButton(onClick = {
                 if (isAmiiboSavedWishlist.value == true) {
                     removeFromWishlist(amiibo)
                 } else {
@@ -103,6 +114,7 @@ fun DetailsScreen(
                         id = R.drawable.ic_bookmark_outlined
                     ),
                     contentDescription = null,
+                    Modifier.size(28.dp),
                     tint = Color.Red,
                 )
             }

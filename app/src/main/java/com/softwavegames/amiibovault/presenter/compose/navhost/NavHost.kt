@@ -1,8 +1,11 @@
 package com.softwavegames.amiibovault.presenter.compose.navhost
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.media.SoundPool
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +44,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -53,6 +57,7 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.softwavegames.amiibovault.AppNavigation
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.domain.ads.showInterstitial
+import com.softwavegames.amiibovault.domain.analytics.FirebaseEventsLogs
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.domain.util.ThemeState
@@ -91,7 +96,6 @@ fun BottomNavigationBar(
     val statusText by purchaseHelper.statusText.collectAsState("")
     val buyEnabledAds by purchaseHelper.buyEnabledNoAds.collectAsState(false)
     val buyEnabledScan by purchaseHelper.buyEnabledScan.collectAsState(false)
-    val openRemoveAdsDialog = remember { mutableStateOf(false) }
     val openRemoveAdsCollectionDialog = remember { mutableStateOf(false) }
     val openInDevelopmentDialog = remember { mutableStateOf(false) }
     val openRateDialog = remember { mutableStateOf(false) }
@@ -109,14 +113,14 @@ fun BottomNavigationBar(
     val openedRateTimes =
         rememberSaveable { mutableIntStateOf(navHostViewModel.getAppOpenedRateTimes()) }
 
-    if (buyEnabledAds) {
+    if (isShowRemoveAdDialog(openedAdTimes.intValue)) {
+        openRemoveAdsCollectionDialog.value = true
+        navHostViewModel.setAppOpenedAdsTimes(0)
+        openedAdTimes.intValue = 0
+    } else {
         navHostViewModel.setAppOpenedAdsTimes(openedAdTimes.intValue + 1)
-        if (isShowRemoveAdDialog(openedAdTimes.intValue)) {
-            openRemoveAdsDialog.value = true
-            navHostViewModel.setAppOpenedAdsTimes(0)
-            openedAdTimes.intValue = 0
-        }
     }
+
     if (!navHostViewModel.isRateClicked()) {
         navHostViewModel.setAppOpenedRateTimes(openedRateTimes.intValue + 1)
         if (isShowRateDialog(openedRateTimes.intValue)) {
@@ -198,9 +202,34 @@ fun BottomNavigationBar(
                                             launchSingleTop = true
                                             restoreState = true
                                         }
+                                        when (index) {
+                                            0 -> navHostViewModel.logFirebaseEvent(
+                                                FirebaseEventsLogs.AMIIBO_SEARCH_SCREEN_OPENED,
+                                                "0",
+                                                FirebaseEventsLogs.AMIIBO_SEARCH_SCREEN_OPENED
+                                            )
+
+                                            1 -> navHostViewModel.logFirebaseEvent(
+                                                FirebaseEventsLogs.AMIIBO_SCANNER_SCREEN_OPENED,
+                                                "1",
+                                                FirebaseEventsLogs.AMIIBO_SCANNER_SCREEN_OPENED,
+                                            )
+
+                                            2 -> navHostViewModel.logFirebaseEvent(
+                                                FirebaseEventsLogs.AMIIBO_COMMUNITY_SCREEN_OPENED,
+                                                "2",
+                                                FirebaseEventsLogs.AMIIBO_COMMUNITY_SCREEN_OPENED
+                                            )
+
+                                            3 -> navHostViewModel.logFirebaseEvent(
+                                                FirebaseEventsLogs.AMIIBO_COLLECTIONS_SCREEN_OPENED,
+                                                "3",
+                                                FirebaseEventsLogs.AMIIBO_COLLECTIONS_SCREEN_OPENED
+                                            )
+                                        }
                                     },
 
-                                )
+                                    )
                             }
                     }
                 }
@@ -268,6 +297,31 @@ fun BottomNavigationBar(
                                     launchSingleTop = true
                                     restoreState = true
                                 }
+                                when (index) {
+                                    0 -> navHostViewModel.logFirebaseEvent(
+                                        FirebaseEventsLogs.AMIIBO_SEARCH_SCREEN_OPENED,
+                                        "0",
+                                        FirebaseEventsLogs.AMIIBO_SEARCH_SCREEN_OPENED
+                                    )
+
+                                    1 -> navHostViewModel.logFirebaseEvent(
+                                        FirebaseEventsLogs.AMIIBO_SCANNER_SCREEN_OPENED,
+                                        "1",
+                                        FirebaseEventsLogs.AMIIBO_SCANNER_SCREEN_OPENED,
+                                    )
+
+                                    2 -> navHostViewModel.logFirebaseEvent(
+                                        FirebaseEventsLogs.AMIIBO_COMMUNITY_SCREEN_OPENED,
+                                        "2",
+                                        FirebaseEventsLogs.AMIIBO_COMMUNITY_SCREEN_OPENED
+                                    )
+
+                                    3 -> navHostViewModel.logFirebaseEvent(
+                                        FirebaseEventsLogs.AMIIBO_COLLECTIONS_SCREEN_OPENED,
+                                        "3",
+                                        FirebaseEventsLogs.AMIIBO_COLLECTIONS_SCREEN_OPENED
+                                    )
+                                }
                             }
                         )
                     }
@@ -304,9 +358,27 @@ fun BottomNavigationBar(
                             navController = navController,
                             amiibo = amiibo
                         )
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_DETAILS_OPENED,
+                            amiibo.tail,
+                            FirebaseEventsLogs.AMIIBO_DETAILS_OPENED
+                        )
                     },
                     onLayoutChange = {
                         isList.value = it
+                        if (it) {
+                            navHostViewModel.logFirebaseEvent(
+                                FirebaseEventsLogs.AMIIBO_LIST,
+                                FirebaseEventsLogs.AMIIBO_LIST,
+                                FirebaseEventsLogs.AMIIBO_LIST
+                            )
+                        } else {
+                            navHostViewModel.logFirebaseEvent(
+                                FirebaseEventsLogs.AMIIBO_GRID,
+                                FirebaseEventsLogs.AMIIBO_GRID,
+                                FirebaseEventsLogs.AMIIBO_GRID
+                            )
+                        }
                     },
                     onSearchQueryChange = { query ->
                         if (isFilterTypeSelected.value && filterType.value.isNotEmpty() || isFilterSetSelected.value && filterSet.value.isNotEmpty()) {
@@ -343,6 +415,11 @@ fun BottomNavigationBar(
                         viewModel.searchAmiiboFiltered("", typeFilter, filterSet.value)
                         filterType.value = typeFilter
                         isFilterTypeSelected.value = true
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_FILTER_TYPE_SEARCH,
+                            typeFilter,
+                            FirebaseEventsLogs.AMIIBO_FILTER_TYPE_SEARCH
+                        )
                     },
                     onFilterTypeRemoved = {
                         playSound(soundPool, iconSound, isSoundOn.value)
@@ -355,6 +432,11 @@ fun BottomNavigationBar(
                         viewModel.searchAmiiboFiltered("", filterType.value, setFilter)
                         filterSet.value = setFilter
                         isFilterSetSelected.value = true
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_FILTER_SET_SEARCH,
+                            setFilter,
+                            FirebaseEventsLogs.AMIIBO_FILTER_SET_SEARCH
+                        )
                     },
                     onFilterSetRemoved = {
                         playSound(soundPool, iconSound, isSoundOn.value)
@@ -367,6 +449,11 @@ fun BottomNavigationBar(
                         viewModel.sortAmiiboList(sortTypeSelected, viewModel.amiiboList.value)
                         isSortTypeSelected.value = true
                         viewModel.sortType.value = sortTypeSelected
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_SORT_SEARCH,
+                            sortTypeSelected,
+                            FirebaseEventsLogs.AMIIBO_SORT_SEARCH
+                        )
                     },
                     onSortTypeRemoved = {
                         playSound(soundPool, iconSound, isSoundOn.value)
@@ -382,6 +469,11 @@ fun BottomNavigationBar(
                         viewModel.viewModelScope.launch {
                             viewModel.upsertAmiiboToWishList(it)
                         }
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_ADD_WISHLIST,
+                            it.tail,
+                            FirebaseEventsLogs.AMIIBO_ADD_WISHLIST
+                        )
                     },
                     removeFromWishlist = {
                         playSound(soundPool, iconSound, isSoundOn.value)
@@ -391,6 +483,11 @@ fun BottomNavigationBar(
                     },
                     onSoundVolumeChanged = {
                         isSoundOn.value = it
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_SOUND,
+                            FirebaseEventsLogs.AMIIBO_SOUND,
+                            FirebaseEventsLogs.AMIIBO_SOUND
+                        )
                     },
                     openRateDialog = openRateDialog,
                     onDialogRateDismissed = { openRateDialog.value = false },
@@ -400,17 +497,12 @@ fun BottomNavigationBar(
                             reviewManager.launchReviewFlow(activity, it)
                             navHostViewModel.setRateClicked()
                         }
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_RATE,
+                            FirebaseEventsLogs.AMIIBO_RATE,
+                            FirebaseEventsLogs.AMIIBO_RATE
+                        )
                     },
-                    onRemoveAdsClicked = {
-                        playSound(soundPool, buttonSound, isSoundOn.value)
-                        purchaseHelper.makeNoAdsPurchase()
-                        openRemoveAdsDialog.value = false
-                    },
-                    onDialogAdsDismissed = {
-                        playSound(soundPool, buttonSound, isSoundOn.value)
-                        openRemoveAdsDialog.value = false
-                    },
-                    openRemoveAdsDialog = openRemoveAdsDialog,
                 )
             }
             composable(AppNavigation.BottomNavScreens.CollectionPosts.route) {
@@ -420,11 +512,21 @@ fun BottomNavigationBar(
                     onCreatePostClicked = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         navigateToCreatePostScreen(navController)
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_CREATE_POST,
+                            FirebaseEventsLogs.AMIIBO_CREATE_POST,
+                            FirebaseEventsLogs.AMIIBO_CREATE_POST
+                        )
                     },
                     isPortrait = isPortrait,
                     onLikeDislikeClicked = { postId ->
                         playSound(soundPool, iconSound, isSoundOn.value)
                         viewModel.likeDislikePost(postId)
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_LIKED,
+                            postId,
+                            FirebaseEventsLogs.AMIIBO_LIKED
+                        )
                     },
                     likedPostsIds = viewModel.likedPostsIds.observeAsState().value,
                     listState = listStatePosts,
@@ -449,6 +551,11 @@ fun BottomNavigationBar(
                             navigateToMore = { amiibo ->
                                 playSound(soundPool, buttonSound, isSoundOn.value)
                                 navigateToMore(navController = navController, amiibo = amiibo)
+                                navHostViewModel.logFirebaseEvent(
+                                    FirebaseEventsLogs.AMIIBO_MORE,
+                                    amiibo.tail,
+                                    FirebaseEventsLogs.AMIIBO_MORE
+                                )
                             },
                             navigateToCompatibility = { amiibo ->
                                 playSound(soundPool, buttonSound, isSoundOn.value)
@@ -456,12 +563,22 @@ fun BottomNavigationBar(
                                     navController = navController,
                                     amiibo = amiibo,
                                 )
+                                navHostViewModel.logFirebaseEvent(
+                                    FirebaseEventsLogs.AMIIBO_USAGE,
+                                    amiibo.tail,
+                                    FirebaseEventsLogs.AMIIBO_USAGE
+                                )
                             },
                             saveToMyCollection = { amiibo ->
                                 playSound(soundPool, iconSound, isSoundOn.value)
                                 viewModel.viewModelScope.launch {
                                     viewModel.upsertAmiiboToMyCollection(amiibo)
                                 }
+                                navHostViewModel.logFirebaseEvent(
+                                    FirebaseEventsLogs.AMIIBO_ADD_COLLECTION,
+                                    amiibo.tail,
+                                    FirebaseEventsLogs.AMIIBO_ADD_COLLECTION
+                                )
                             },
                             removeFromMyCollection = { amiibo ->
                                 playSound(soundPool, iconSound, isSoundOn.value)
@@ -475,6 +592,11 @@ fun BottomNavigationBar(
                                 viewModel.viewModelScope.launch {
                                     viewModel.upsertAmiiboToWishList(amiibo)
                                 }
+                                navHostViewModel.logFirebaseEvent(
+                                    FirebaseEventsLogs.AMIIBO_ADD_WISHLIST,
+                                    amiibo.tail,
+                                    FirebaseEventsLogs.AMIIBO_ADD_WISHLIST
+                                )
                             },
                             removeFromWishlist = { amiibo ->
                                 playSound(soundPool, iconSound, isSoundOn.value)
@@ -491,6 +613,15 @@ fun BottomNavigationBar(
                                 }
                                 interstitialClickTimes.intValue += 1
                             },
+                            onAmazonLinkClicked = { amiibo ->
+                                playSound(soundPool, iconSound, isSoundOn.value)
+                                openAmazonLink(viewModel.createAmazonLink(amiibo), context)
+                                navHostViewModel.logFirebaseEvent(
+                                    FirebaseEventsLogs.AMIIBO_AMAZON,
+                                    amiibo.tail,
+                                    FirebaseEventsLogs.AMIIBO_AMAZON
+                                )
+                            }
                         )
                     }
             }
@@ -512,6 +643,11 @@ fun BottomNavigationBar(
                             navigateToDetails(
                                 navController = navController,
                                 amiibo = amiibo
+                            )
+                            navHostViewModel.logFirebaseEvent(
+                                FirebaseEventsLogs.AMIIBO_DETAILS_OPENED,
+                                amiibo.tail,
+                                FirebaseEventsLogs.AMIIBO_DETAILS_OPENED
                             )
                         },
                         onBackClick = {
@@ -572,11 +708,13 @@ fun BottomNavigationBar(
                     buyEnabledAds = buyEnabledAds,
                     purchaseHelper = purchaseHelper,
                     activity = activity,
+                    logEvent = { eventId, name ->
+                        navHostViewModel.logFirebaseEvent(eventId, eventId, name)
+                    },
                 )
             }
 
             composable(AppNavigation.BottomNavScreens.NfcScanner.route) {
-                val viewModel: CollectionPostsViewModel = hiltViewModel()
                 NfcScanner(
                     onBackClick = {
                         playSound(soundPool, iconSound, isSoundOn.value)
@@ -589,26 +727,7 @@ fun BottomNavigationBar(
                         playSound(soundPool, iconSound, isSoundOn.value)
                         purchaseHelper.makeScanPurchase()
                     },
-                    onSelectionChange = {
-                        playSound(soundPool, iconSound, isSoundOn.value)
-                    },
-                    collectionPostList = viewModel.collectionPost.observeAsState().value,
-                    onCreatePostClicked = {
-                        playSound(soundPool, iconSound, isSoundOn.value)
-                        navigateToCreatePostScreen(navController)
-                    },
-                    onLikeDislikeClicked = { postId ->
-                        playSound(soundPool, iconSound, isSoundOn.value)
-                        viewModel.likeDislikePost(postId)
-                    },
-                    likedPostsIds = viewModel.likedPostsIds.observeAsState().value,
                     listState = listStatePosts,
-                    onConfirmationClicked = {
-                        playSound(soundPool, buttonSound, isSoundOn.value)
-                        navHostViewModel.setCollectionPostsOpenedTimes(1)
-                        openInDevelopmentDialog.value = false
-                    },
-                    openInDevelopmentDialog = openInDevelopmentDialog
                 )
             }
 
@@ -622,6 +741,11 @@ fun BottomNavigationBar(
                     onPurchaseClicked = {
                         playSound(soundPool, iconSound, isSoundOn.value)
                         purchaseHelper.makeNoAdsPurchase()
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_REMOVE_ADS,
+                            FirebaseEventsLogs.AMIIBO_REMOVE_ADS,
+                            FirebaseEventsLogs.AMIIBO_REMOVE_ADS
+                        )
                     },
                     onRateReviewClicked = {
                         playSound(soundPool, iconSound, isSoundOn.value)
@@ -629,6 +753,19 @@ fun BottomNavigationBar(
                             reviewManager.launchReviewFlow(activity, it)
                             navHostViewModel.setRateClicked()
                         }
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_RATE,
+                            FirebaseEventsLogs.AMIIBO_RATE,
+                            FirebaseEventsLogs.AMIIBO_RATE
+                        )
+                    },
+                    onSupportClicked = {
+                        openKofiSupport(context)
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_KOFI,
+                            FirebaseEventsLogs.AMIIBO_KOFI,
+                            FirebaseEventsLogs.AMIIBO_KOFI
+                        )
                     }
                 )
             }
@@ -644,6 +781,11 @@ fun BottomNavigationBar(
                     onCreatePostClicked = { collectionPost, bitmap ->
                         playSound(soundPool, iconSound, isSoundOn.value)
                         viewModel.uploadImage(collectionPost, bitmap)
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_CREATE_POST,
+                            FirebaseEventsLogs.AMIIBO_CREATE_POST,
+                            FirebaseEventsLogs.AMIIBO_CREATE_POST
+                        )
                     },
                     postPublished = viewModel.postPublished.observeAsState().value,
                     onPostPublished = {
@@ -654,6 +796,11 @@ fun BottomNavigationBar(
                     },
                     onCreateAvatarClicked = {
                         playSound(soundPool, iconSound, isSoundOn.value)
+                        navHostViewModel.logFirebaseEvent(
+                            FirebaseEventsLogs.AMIIBO_CREATE_AVATAR,
+                            FirebaseEventsLogs.AMIIBO_CREATE_AVATAR,
+                            FirebaseEventsLogs.AMIIBO_CREATE_AVATAR
+                        )
                     },
                 )
             }
@@ -736,6 +883,34 @@ fun navigateToCreatePostScreen(navController: NavController) {
     navController.navigate(
         route = AppNavigation.NavigationItem.CreatePostScreen.route
     )
+}
+
+fun openAmazonLink(uri: Uri, context: Context) {
+    val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.error_opening_the_link), Toast.LENGTH_LONG
+        ).show()
+    }
+}
+
+fun openKofiSupport(context: Context) {
+    val intent = Intent(Intent.ACTION_VIEW, Constants.DONATE_URL.toUri()).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.error_opening_the_link), Toast.LENGTH_LONG
+        ).show()
+    }
 }
 
 fun playSound(soundPool: SoundPool, sound: Int, isSoundOn: Boolean) {
