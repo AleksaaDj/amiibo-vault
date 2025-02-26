@@ -4,11 +4,13 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.softwavegames.amiibovault.data.local.AmiiboDao
 import com.softwavegames.amiibovault.data.local.AmiiboDatabase
 import com.softwavegames.amiibovault.data.local.ReleaseTypeConverter
 import com.softwavegames.amiibovault.data.remote.AmiiboApi
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
+import com.softwavegames.amiibovault.domain.analytics.FirebaseEventsLogs
 import com.softwavegames.amiibovault.domain.util.Constants.BASE_URL
 import com.softwavegames.amiibovault.domain.util.Constants.DB_NAME
 import com.softwavegames.amiibovault.domain.util.Constants.SHARED_PREFERENCES_NAME
@@ -79,4 +81,11 @@ object AppModule {
     @Provides
     fun providesRepository(apiService: AmiiboApi, amiiboDao: AmiiboDao) =
         AmiiboRepository(apiService, amiiboDao)
+
+    @Singleton
+    @Provides
+    fun provideFirebaseEventsLogs(@ApplicationContext appContext: Context): FirebaseEventsLogs {
+        val firebaseAnalytics = FirebaseAnalytics.getInstance(appContext)
+        return FirebaseEventsLogs(firebaseAnalytics)
+    }
 }

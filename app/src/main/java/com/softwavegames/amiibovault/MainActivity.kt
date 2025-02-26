@@ -31,7 +31,6 @@ import com.softwavegames.amiibovault.domain.ads.removeInterstitial
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.domain.util.ThemeState
-import com.softwavegames.amiibovault.presenter.compose.common.LogoAnim
 import com.softwavegames.amiibovault.presenter.compose.navhost.BottomNavigationBar
 import com.softwavegames.amiibovault.presenter.compose.screens.scanner.NfcScannerViewModel
 import com.softwavegames.amiibovault.ui.theme.AmiiboMvvmComposeTheme
@@ -58,7 +57,11 @@ class MainActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
 
-        ThemeState.darkModeState.value = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(Constants.SHARED_PREFERENCES_IS_DARK_MODE, false)
+        ThemeState.darkModeState.value =
+            getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
+                Constants.SHARED_PREFERENCES_IS_DARK_MODE,
+                false
+            )
 
         setNFC()
         setNFCIntentListener()
@@ -70,22 +73,19 @@ class MainActivity : ComponentActivity() {
             val buyEnabledScan by purchaseHelper.buyEnabledScan.collectAsState(false)
             val bottomBarState = rememberSaveable { mutableStateOf(true) }
             val navigationItemSelectedIndex = rememberSaveable { mutableIntStateOf(0) }
-            val isAnimationFinished = rememberSaveable { mutableStateOf(false) }
             var isPortrait by rememberSaveable { mutableStateOf(true) }
             val configuration = LocalConfiguration.current
             isPortrait = when (configuration.orientation) {
                 Configuration.ORIENTATION_LANDSCAPE -> {
                     false
                 }
+
                 else -> {
                     true
                 }
             }
 
             AmiiboMvvmComposeTheme(darkTheme = ThemeState.darkModeState.value) {
-                LogoAnim {
-                    isAnimationFinished.value = true
-                }
                 navController = rememberNavController()
 
                 DisposableEffect(Unit) {
@@ -96,21 +96,25 @@ class MainActivity : ComponentActivity() {
                                 bottomBarState.value = true
                                 disableForegroundDispatch()
                             }
+
                             AppNavigation.BottomNavScreens.NfcScanner.route -> {
                                 navigationItemSelectedIndex.intValue = 1
                                 bottomBarState.value = true
                                 enableForegroundDispatch()
                             }
+
                             AppNavigation.BottomNavScreens.CollectionPosts.route -> {
                                 navigationItemSelectedIndex.intValue = 2
                                 bottomBarState.value = true
                                 disableForegroundDispatch()
                             }
+
                             AppNavigation.BottomNavScreens.AmiiboMyCollection.route -> {
                                 navigationItemSelectedIndex.intValue = 3
                                 bottomBarState.value = true
                                 disableForegroundDispatch()
                             }
+
                             else -> {
                                 bottomBarState.value = false
                                 disableForegroundDispatch()
@@ -123,17 +127,15 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (isAnimationFinished.value) {
-                    BottomNavigationBar(
-                        context = applicationContext,
-                        activity = this@MainActivity,
-                        purchaseHelper = purchaseHelper,
-                        navController = navController,
-                        bottomBarState = bottomBarState,
-                        navigationSelectedItem = navigationItemSelectedIndex,
-                        isPortrait = isPortrait
-                    )
-                }
+                BottomNavigationBar(
+                    context = applicationContext,
+                    activity = this@MainActivity,
+                    purchaseHelper = purchaseHelper,
+                    navController = navController,
+                    bottomBarState = bottomBarState,
+                    navigationSelectedItem = navigationItemSelectedIndex,
+                    isPortrait = isPortrait
+                )
             }
             viewModel.amiiboNfc.observe(this) { amiibo ->
                 if (amiibo != null) {

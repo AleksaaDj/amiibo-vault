@@ -1,11 +1,13 @@
 package com.softwavegames.amiibovault.presenter.compose.screens.details
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softwavegames.amiibovault.domain.util.Utils
 import com.softwavegames.amiibovault.data.repository.AmiiboRepository
+import com.softwavegames.amiibovault.domain.util.AmazonLinkHelper
+import com.softwavegames.amiibovault.domain.util.Utils
 import com.softwavegames.amiibovault.model.Amiibo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -52,5 +54,9 @@ class AmiiboDetailsScreenViewModel @Inject constructor(private val repository: A
         repository.getAmiiboFromDbWishlist(tail).onEach {
             _amiiboSavedWishlist.value = it.isNotEmpty()
         }.launchIn(viewModelScope)
+    }
+
+    fun createAmazonLink(amiibo: Amiibo): Uri {
+        return AmazonLinkHelper().createAmazonLink(amiibo)
     }
 }

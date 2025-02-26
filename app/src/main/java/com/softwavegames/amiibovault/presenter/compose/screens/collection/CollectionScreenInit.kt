@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.domain.ads.showInterstitial
+import com.softwavegames.amiibovault.domain.analytics.FirebaseEventsLogs
 import com.softwavegames.amiibovault.domain.billing.PurchaseHelper
 import com.softwavegames.amiibovault.domain.util.Constants
 import com.softwavegames.amiibovault.presenter.compose.navhost.NavHostViewModel
@@ -34,7 +35,8 @@ fun CollectionScreenInit(
     openRemoveAdsCollectionDialog: MutableState<Boolean>,
     buyEnabledAds: Boolean,
     purchaseHelper: PurchaseHelper,
-    activity: Activity
+    activity: Activity,
+    logEvent: (String, String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -71,11 +73,13 @@ fun CollectionScreenInit(
                 navController = navController,
                 amiibo = amiibo,
             )
+            logEvent(FirebaseEventsLogs.AMIIBO_DETAILS_OPENED, FirebaseEventsLogs.AMIIBO_DETAILS_OPENED)
         },
         isPortrait = isPortrait,
         onSupportClick = {
             playSound(soundPool, iconSound, isSoundOn.value)
             navigateToSupportScreen(navController)
+            logEvent(FirebaseEventsLogs.AMIIBO_SUPPORT_SCREEN_OPENED, FirebaseEventsLogs.AMIIBO_SUPPORT_SCREEN_OPENED)
         },
         onSelectionChange = { index ->
             if (index == 0) {
@@ -115,10 +119,12 @@ fun CollectionScreenInit(
         onThemeModeClicked = {
             playSound(soundPool, iconSound, isSoundOn.value)
             navHostViewModel.setThemeMode(!isDark)
+            logEvent(FirebaseEventsLogs.AMIIBO_THEME, FirebaseEventsLogs.AMIIBO_THEME)
         },
         onPurchaseClicked = {
             playSound(soundPool, iconSound, isSoundOn.value)
             openRemoveAdsCollectionDialog.value = true
+            logEvent(FirebaseEventsLogs.AMIIBO_REMOVE_ADS, FirebaseEventsLogs.AMIIBO_REMOVE_ADS)
         },
         buyEnabled = buyEnabledAds,
         onRemoveAdsClicked = {
@@ -130,7 +136,7 @@ fun CollectionScreenInit(
             playSound(soundPool, buttonSound, isSoundOn.value)
             openRemoveAdsCollectionDialog.value = false
         },
-        openRemoveAdsDialog = openRemoveAdsCollectionDialog,
+        openRemoveAdsDialog = openRemoveAdsCollectionDialog.value,
 
         onFilterTypeCollectionSelected = { typeFilter ->
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -141,6 +147,7 @@ fun CollectionScreenInit(
             filterTypeCollection.value = typeFilter
             isFilterTypeCollectionSelected.value = true
             viewModel.getAmiiboNumberWorldwide(typeFilter, filterSetCollection.value)
+            logEvent(FirebaseEventsLogs.AMIIBO_FILTER_TYPE_COLLECTION, FirebaseEventsLogs.AMIIBO_FILTER_TYPE_COLLECTION)
         },
         onFilterTypeCollectionRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -167,6 +174,7 @@ fun CollectionScreenInit(
                 filterTypeCollection.value,
                 filterSetCollection.value
             )
+            logEvent(FirebaseEventsLogs.AMIIBO_FILTER_SET_COLLECTION, FirebaseEventsLogs.AMIIBO_FILTER_SET_COLLECTION)
         },
         onFilterSetCollectionRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -189,6 +197,7 @@ fun CollectionScreenInit(
             )
             isSortTypeCollectionSelected.value = true
             viewModel.sortTypeCollection.value = sortTypeSelected
+            logEvent(FirebaseEventsLogs.AMIIBO_SORT_COLLECTION, FirebaseEventsLogs.AMIIBO_SORT_COLLECTION)
         },
         onSortTypeCollectionRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -208,6 +217,7 @@ fun CollectionScreenInit(
             filterTypeWishlist.value = typeFilter
             isFilterTypeWishlistSelected.value = true
             viewModel.getAmiiboNumberWorldwide(typeFilter, filterSetWishlist.value)
+            logEvent(FirebaseEventsLogs.AMIIBO_FILTER_TYPE_WISHLIST, FirebaseEventsLogs.AMIIBO_FILTER_TYPE_WISHLIST)
         },
         onFilterTypeWishlistRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -228,6 +238,7 @@ fun CollectionScreenInit(
             filterSetWishlist.value = setFilter
             isFilterSetWishlistSelected.value = true
             viewModel.getAmiiboNumberWorldwide(filterTypeWishlist.value, filterSetWishlist.value)
+            logEvent(FirebaseEventsLogs.AMIIBO_FILTER_SET_WISHLIST, FirebaseEventsLogs.AMIIBO_FILTER_SET_WISHLIST)
         },
         onFilterSetWishlistRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -247,6 +258,7 @@ fun CollectionScreenInit(
             )
             isSortTypeWishlistSelected.value = true
             viewModel.sortTypeWishList.value = sortTypeSelected
+            logEvent(FirebaseEventsLogs.AMIIBO_SORT_WISHLIST, FirebaseEventsLogs.AMIIBO_SORT_WISHLIST)
         },
         onSortTypeWishlistRemoved = {
             playSound(soundPool, iconSound, isSoundOn.value)
@@ -268,6 +280,7 @@ fun CollectionScreenInit(
                 showInterstitial(activity) {
                 }
             }
+            logEvent(FirebaseEventsLogs.AMIIBO_IMAGE_DOWNLOAD_CONFIRMED, FirebaseEventsLogs.AMIIBO_IMAGE_DOWNLOAD_CONFIRMED)
         },
         onDismissDownloadCompositeImageDialog = {
             playSound(soundPool, buttonSound, isSoundOn.value)
@@ -276,6 +289,7 @@ fun CollectionScreenInit(
         onShowDownloadDialogClicked = {
             playSound(soundPool, iconSound, isSoundOn.value)
             openDownloadImageDialog.value = true
+            logEvent(FirebaseEventsLogs.AMIIBO_IMAGE_DOWNLOAD, FirebaseEventsLogs.AMIIBO_IMAGE_DOWNLOAD)
         },
         openDownloadImageDialog = openDownloadImageDialog,
     )

@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +32,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.domain.ads.LargeBannerAd
-import com.softwavegames.amiibovault.model.CollectionPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,14 +41,7 @@ fun NfcScanner(
     showBannerAd: Boolean,
     onPurchaseScanClicked: () -> Unit,
     buyEnabledScan: Boolean,
-    onSelectionChange: () -> Unit,
-    collectionPostList: List<CollectionPost>?,
-    onCreatePostClicked: () -> Unit,
-    onLikeDislikeClicked: (String) -> Unit,
-    likedPostsIds: List<String>?,
     listState: LazyListState,
-    openInDevelopmentDialog: MutableState<Boolean>,
-    onConfirmationClicked: () -> Unit,
 ) {
 
     TopAppBar(

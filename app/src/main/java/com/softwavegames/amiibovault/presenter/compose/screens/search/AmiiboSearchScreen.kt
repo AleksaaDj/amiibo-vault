@@ -53,13 +53,12 @@ import com.softwavegames.amiibovault.R
 import com.softwavegames.amiibovault.model.Amiibo
 import com.softwavegames.amiibovault.model.AmiiboCollection
 import com.softwavegames.amiibovault.model.AmiiboWishlist
-import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboGridItem
-import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboListItem
 import com.softwavegames.amiibovault.presenter.compose.common.ChipGroup
+import com.softwavegames.amiibovault.presenter.compose.common.buttons.ScrollToTopButton
 import com.softwavegames.amiibovault.presenter.compose.common.cards.FeaturedAmiiboCard
 import com.softwavegames.amiibovault.presenter.compose.common.dialogs.RateDialog
-import com.softwavegames.amiibovault.presenter.compose.common.dialogs.RemoveAdsDialog
-import com.softwavegames.amiibovault.presenter.compose.common.buttons.ScrollToTopButton
+import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboGridItem
+import com.softwavegames.amiibovault.presenter.compose.common.items.AmiiboListItem
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -91,9 +90,6 @@ fun AmiiboListScreen(
     openRateDialog: MutableState<Boolean>,
     onDialogRateDismissed: () -> Unit,
     onRateClicked: () -> Unit,
-    openRemoveAdsDialog: MutableState<Boolean>,
-    onRemoveAdsClicked: () -> Unit,
-    onDialogAdsDismissed: () -> Unit,
 ) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -167,15 +163,6 @@ fun AmiiboListScreen(
             )
         }
         when {
-            openRemoveAdsDialog.value -> {
-                RemoveAdsDialog(
-                    onDismissRequest = { onDialogAdsDismissed() },
-                    onConfirmation = {
-                        onRemoveAdsClicked()
-                    },
-                )
-            }
-
             openRateDialog.value -> {
                 RateDialog(
                     onDismissRequest = {
